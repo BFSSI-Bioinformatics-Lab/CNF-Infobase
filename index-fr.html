@@ -1,0 +1,209 @@
+<!DOCTYPE html><!--[if lt IE 9]>
+    <html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]--><!--[if gt IE 8]><!-->
+    <html class="no-js" lang="fr" dir="ltr">
+    <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+                wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+        <title>Calculatrice des apports nutritionnels de référence</title>
+        <meta content="width=device-width,initial-scale=1" name="viewport">
+        <meta name="description"
+              content="">
+        <!--[if gte IE 9 | !IE ]><!-->
+        <link href="./static/GCWeb/assets/favicon.ico" rel="icon" type="image/x-icon">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css" integrity="sha384-REHJTs1r2ErKBuJB0fCK99gCYsVjwxHrSU0N7I1zl9vZbggVJXRMsv/sLlOAGb4M" crossorigin="anonymous">
+        <link rel="stylesheet" href="./static/GCWeb/css/theme.min.css">
+
+        <link rel="stylesheet" href="EER_Calculator.css">
+
+
+<!--        <link href="/src/GCWeb/assets/favicon.ico" rel="shortcut icon"/>-->
+<!--        <link rel="stylesheet" href="/src/GCWeb/css/ie8-theme.min.css"/>-->
+<!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.js"></script>-->
+<!--        <script src="/src/wet-boew/js/ie8-wet-boew.min.js"></script>-->
+
+        <link rel="stylesheet" href="./static/GCWeb2/css/theme.min.css">
+        <link rel="stylesheet" href="./static/css/global.css">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+
+        <script src="https://cdn.jsdelivr.net/npm/d3-interpolate-path@2.3.0/build/d3-interpolate-path.min.js"></script>
+        <noscript>
+            <link rel="stylesheet" href=".static/wet-boew/css/noscript.min.css"/>
+        </noscript>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js"></script>
+
+        <noscript>
+            <link rel="stylesheet" href="./static/wet-boew/css/noscript.min.css" />
+        </noscript>
+    </head>
+    <body vocab="http://schema.org/" typeof="WebPage">
+    <nav>
+        <ul id="wb-tphp">
+            <li class="wb-slc">
+                <a class="wb-sl" href="#wb-cont">Passer au contenu principal</a>
+            </li>
+            <li class="wb-slc">
+                <a class="wb-sl" href="#wb-info">Passer à « Au sujet du gouvernement »</a>
+            </li>
+            <li class="wb-slc">
+                <a class="wb-sl" rel="alternate" href="?wbdisable=true">Version HTML simplifiée</a>
+            </li>
+        </ul>
+    </nav>
+    <header>
+        <div id="wb-bnr" class="container">
+            <section id="wb-lng" class="text-right">
+                <h2 class="wb-inv">Language selection</h2>
+                <ul class="list-inline margin-bottom-none">
+                    <li><a lang="en" hreflang="en" href="index.html">English</a></li>
+                </ul>
+            </section>
+            <div class="row">
+                <div class="brand col-xs-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
+                    <a href="https://www.canada.ca/fr.html" property="url"><img
+                            src="./static/GCWeb/assets/sig-blk-fr.svg" alt="" property="logo"><span
+                            class="wb-inv" property="name"> Government of Canada / <span
+                            lang="fr">Gouvernement du Canada</span></span></a>
+                    <meta property="areaServed" typeof="Country" content="Canada">
+                    <link property="logo" href="/static/GCWeb/assets/wmms-blk.svg">
+                </div>
+                <section id="wb-srch" class="col-lg-8 text-right">
+                    <h2>Recherche</h2>
+                    <form action="https://canada.ca/fr/sr/srb.html" method="post" name="cse-search-box" role="search" class="form-inline">
+                        <div class="form-group">
+                            <label for="wb-srch-q" class="wb-inv">Rechercher dans Canada.ca</label>
+                            <input id="wb-srch-q" list="wb-srch-q-ac" class="wb-srch-q form-control" name="q" type="search"
+                                   value="" size="34" maxlength="170" placeholder="Rechercher dans Canada.ca<">
+                            <datalist id="wb-srch-q-ac">
+                            </datalist>
+                        </div>
+                        <div class="form-group submit">
+                            <button type="submit" id="wb-srch-sub" class="btn btn-primary btn-small" name="wb-srch-sub">
+                                <span class="glyphicon-search glyphicon"></span><span class="wb-inv">Recherche</span></button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+<!--        <nav class="gcweb-menu" typeof="SiteNavigationElement">-->
+<!--            <div class="container">-->
+<!--                <h2 class="wb-inv">Menu</h2>-->
+<!--                <button type="button" aria-haspopup="true" aria-expanded="false"><span class="wb-inv">principal </span>Menu <span-->
+<!--                        class="expicon glyphicon glyphicon-chevron-down"></span></button>-->
+<!--                <ul role="menu" aria-orientation="vertical"-->
+<!--                    data-ajax-replace="./static/ajax/sitemenu-v5-fr.html">-->
+
+<!--                </ul>-->
+<!--            </div>-->
+<!--        </nav>-->
+
+        <nav id="wb-bc" property="breadcrumb">
+            <h2>You are here:</h2>
+            <div class="container">
+                <ol class="breadcrumb">
+                        <li><a href="https://www.canada.ca/fr.html">Canada.ca</a></li>
+                        <li><a href="https://canadiensensante.gc.ca/index-fra.php">Santé</a></li>
+                        <li><a href="https://canadiensensante.gc.ca/science-research-sciences-recherches/index-fra.php">Science, recherche et données</a></li>
+                        <li><a href="https://sante-infobase.canada.ca/">Infobase de la santé publique</a></li>
+                        <li>Calculatrice des apports nutritionnels de référence</li>
+                    </ol>
+            </div>
+        </nav>
+    </header>
+
+    <main property="mainContentOfPage"  typeof="WebPageElement">
+        <section class="blue-header well well-sm brdr-0 mrgn-bttm-0 mrgn-tp-0">
+            <div class="container mrgn-tp-sm">
+                <h1 class="mrgn-tp-md" property="name" id="wb-cont" dir="ltr"><span
+                        class="stacked"><span>Calculatrice des apports nutritionnels de référence <small style="color:#fff;">de Santé Canada</small></span>: <span></span></span></h1> <!-- <a class="app-name" href="https://health-infobase.canada.ca/">Health Infobase</a> -->
+                <p>Un outil interactif pour calculer les recommandations d'apports en nutriments quotidiens</p>
+                <ul class="list-inline small mrgn-bttm-sm" style="line-height:1.65em" id="list-inline-desktop-only">
+                    <li class="mrgn-rght-lg"> Dernière mise à jour : 2025-05-27</li>
+                    <!--<li> <a class="pdf" href="https://www.canada.ca/content/dam/hc-sc/documents/services/food-nutrition/healthy-eating/nutrient-value-some-common-foods-2015/nutrient-value-some-common-foods-2015-among-Canadian-adults.pdf"><i class="fas fa-download" aria-hidden="true"></i> <span class="wb-invisible">Download page in </span>PDF<span class="wb-invisible"> format</span></a></li>-->
+                    <!--<li> <a class="pdf" href="#"><i class="fas fa-download" aria-hidden="true"></i> <span class="wb-invisible">Download data in </span>CSV<span class="wb-invisible"> format</span></a></li>-->
+                </ul>
+            </div>
+        </section>
+
+        <div class="container">
+
+            <h1>This is the main page</h1>
+
+        </div>
+    </main>
+    <footer id="wb-info">
+        <div class="landscape">
+            <nav class="container wb-navcurr">
+                <h2 class="wb-inv">Au sujet du gouvernement</h2>
+                <ul class="list-unstyled colcount-sm-2 colcount-md-3">
+                    <li><a href="https://www.canada.ca/fr/contact.html" target="_blank">Contactez-nous</a></li>
+                    <li><a href="https://www.canada.ca/fr/gouvernement/min.html" target="_blank">Ministères et
+                        organismes</a></li>
+                    <li><a href="https://www.canada.ca/fr/gouvernement/fonctionpublique.html" target="_blank"
+                    >Fonction publique et force militaire</a></li>
+                    <li><a href="https://www.canada.ca/fr/nouvelles.html" target="_blank">Nouvelles</a></li>
+                    <li><a href="https://www.canada.ca/fr/gouvernement/systeme/lois.html" target="_blank">Traités,
+                        lois et règlements</a></li>
+                    <li><a href="https://www.canada.ca/fr/transparence/rapports.html" target="_blank">Rapports à
+                        l'échelle du gouvernement</a></li>
+                    <li><a href="https://pm.gc.ca/fra" target="_blank">Premier ministre</a></li>
+                    <li><a href="https://www.canada.ca/fr/gouvernement/systeme.html" target="_blank">Comment le
+                        gouvernement fonctionne</a></li>
+                    <li><a href="https://ouvert.canada.ca/" target="_blank">Gouvernement ouvert</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="brand">
+            <div class="container">
+                <div class="row">
+                    <nav class="col-md-9 col-lg-10 ftr-urlt-lnk">
+                        <h2 class="wb-inv">À propos du site</h2>
+                        <ul>
+                            <li><a href="https://www.canada.ca/fr/sociaux.html">Médias sociaux</a></li>
+                            <li><a href="https://www.canada.ca/fr/mobile.html">Applications mobiles</a></li>
+                            <li><a href="https://www1.canada.ca/fr/nouveausite.html">À propos de Canada.ca</a></li>
+                            <li><a href="https://www.canada.ca/fr/transparence/avis.html">Avis</a></li>
+                            <li><a href="https://www.canada.ca/fr/transparence/confidentialite.html">Confidentialité</a></li>
+                        </ul>
+                    </nav>
+                    <div class="col-xs-6 visible-sm visible-xs tofpg">
+                        <a href="#wb-cont">Haut de la page <span class="glyphicon glyphicon-chevron-up"></span></a>
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-lg-2 text-right">
+                        <img src="./static/GCWeb/assets/wmms-blk.svg" alt="Symbole du gouvernement du Canada">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+    <!--[if gte IE 9 | !IE ]><!-->
+    <script src="./static/wet-boew/js/jquery/2.2.4/jquery.js"></script>
+    <script src="./static/wet-boew/js/wet-boew.min.js"></script>
+    
+    <!--{# d3 #}-->
+    <script src="./static/js/d3.v5.min.js"></script>
+    <!--<script src="https://d3js.org/d3.v5.js"></script>-->
+    <script src="./static/js/textures.js"></script>
+    
+    <!--<![endif]-->
+    <!--[if lt IE 9]>
+    <script src="/src/wet-boew/js/ie8-wet-boew2.min.js"></script>
+    <![endif]-->
+    <script src="./static/GCWeb/js/theme.min.js"></script>
+    <script src="./static/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/23.7.19/i18next.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-browser-languagedetector/7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
+
+    <!-- <script type="module" src="./app.js"></script> -->
+
+    </body>
+    </html>
+    
