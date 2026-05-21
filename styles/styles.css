@@ -1,0 +1,129 @@
+/*********************************************************************
+ *                                                                   *
+ * Purpose: Defines the styles for some commonly used html elements  *
+ *                                                                   *
+ * What it Contains:                                                 *
+ *      - positioning of the buttons and filter dropdowns for the    *
+ *          graphs                                                   *
+ *********************************************************************/
+
+
+:root {
+    /** colour theme **
+
+    Note: 
+      - The colours are based off Android's Material colour theme:
+         https://m2.material.io/develop/android/theming/color
+         https://m2.material.io/design/color/the-color-system.html
+
+    *******************/
+    --fontColour: #333333;
+    --background: #ffffff;
+    --surface: #ffffff;
+    --secondarySurface: #fbfcf8;
+    --error: #ff0000;
+    --onBackground: #000000;
+    --onSurface: #000000;
+    --onSecondarySurface: #000000;
+    --onError: #ffffff;
+    --primary: #26374a;
+    --primaryVariant: #3B4B5C;
+    --onPrimary: #ffffff;
+    --primaryBorderColour: #7D828B;
+    --primaryHover: #444444;
+    --onPrimaryHover: #ffffff;
+    --secondary: #335075;
+    --onSecondary: #ffffff;
+    --secondaryHover: #26374a;
+    --onSecondaryHover: #f2f2f2;
+    --secondaryBorderColour: #bbbfc5;
+    --secondaryBgColour: #cfd1d5;
+    --tertiary: #d7faff;
+    --tertiaryBorderColour: #269abc;
+    --onTertiary: #333333;
+    --link: #284162;
+    --headerTitleColor: #000000;
+
+    --smBorderRadius: 5px;
+    --borderRadius: 10px;
+
+    --fastTransition: all 0.25s ease-in-out;
+    --medTransition: all 0.5s ease-in-out;
+    --slowTransition: all 0.75s ease-in-out;
+    --defaultTransition: var(--medTransition);
+}
+
+
+/* For small phone screeens */
+@media screen and (max-width: 600px) {
+    body { 
+        font-size: calc(0.8em + 1vw) !important; 
+    }
+
+    main {
+        font-size: calc(0.8em + 1vw) !important;
+    }
+    
+    h1 {
+        font-size: calc(1.7em + 1vw) !important; 
+    }
+    
+    h3 {
+        font-size: calc(1em + 1vw) !important; 
+    }
+
+    .btn {
+        font-size: calc(0.6em + 1vw) !important;
+        margin: 3px 0;
+    }
+}
+
+.searchTab {
+    width: 20%;
+}
+
+
+/* =========== Buttons ================================ */
+
+.btn-secondary {
+    --bs-btn-color: var(--fontColour);
+    --bs-btn-bg: var(--secondaryBgColour);
+    --bs-btn-border-color: var(--secondaryBorderColour);
+    --bs-btn-hover-color: var(--onSecondaryHover);
+    --bs-btn-hover-bg: var(--secondaryHover);
+    --bs-btn-hover-border-color: var(--secondaryBorderColour);
+    --bs-btn-active-color: var(--onSecondaryHover);
+    --bs-btn-active-bg: var(--secondaryHover);
+    --bs-btn-active-border-color: var(--secondaryBorderColour);
+    --bs-btn-disabled-color: var(--onSecondary);
+    --bs-btn-disabled-bg: var(--secondary);
+    --bs-btn-disabled-border-color: var(--secondaryBorderColour);
+    transition: var(--defaultTransition);
+}
+
+.btn.btn-secondary:hover {
+    color: var(--onSecondaryHover) !important;
+}
+
+.btn.btn-secondary:active {
+    color: var(--onSecondaryHover) !important;
+}
+
+.btn.btn-secondary:focus {
+    color: var(--onSecondaryHover) !important;
+}
+
+/* ==================================================== */
+
+
+.leftSearchTab {
+    border-radius: var(--borderRadius) 0 0 var(--borderRadius);
+}
+
+.middleSearchTab {
+    border-radius: 0;
+}
+
+.rightSearchTab {
+    border-radius: 0 var(--borderRadius) var(--borderRadius) 0;
+}

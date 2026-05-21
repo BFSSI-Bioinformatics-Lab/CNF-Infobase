@@ -6,37 +6,24 @@
         <meta charset="utf-8">
         <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
                 wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
-        <title>Calculatrice des apports nutritionnels de référence</title>
+        <title>Fichier canadien sur les éléments nutritifs (FCÉN)</title>
         <meta content="width=device-width,initial-scale=1" name="viewport">
         <meta name="description"
-              content="">
-        <!--[if gte IE 9 | !IE ]><!-->
+              content="REMPLACER MOI: Description">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" crossorigin="anonymous">
+
         <link href="./static/GCWeb/assets/favicon.ico" rel="icon" type="image/x-icon">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css" integrity="sha384-REHJTs1r2ErKBuJB0fCK99gCYsVjwxHrSU0N7I1zl9vZbggVJXRMsv/sLlOAGb4M" crossorigin="anonymous">
         <link rel="stylesheet" href="./static/GCWeb/css/theme.min.css">
-
-        <link rel="stylesheet" href="EER_Calculator.css">
-
-
-<!--        <link href="/src/GCWeb/assets/favicon.ico" rel="shortcut icon"/>-->
-<!--        <link rel="stylesheet" href="/src/GCWeb/css/ie8-theme.min.css"/>-->
-<!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.js"></script>-->
-<!--        <script src="/src/wet-boew/js/ie8-wet-boew.min.js"></script>-->
-
         <link rel="stylesheet" href="./static/GCWeb2/css/theme.min.css">
         <link rel="stylesheet" href="./static/css/global.css">
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    
+        <link rel="stylesheet" href="./styles/styles.css">
 
-        <script src="https://cdn.jsdelivr.net/npm/d3-interpolate-path@2.3.0/build/d3-interpolate-path.min.js"></script>
         <noscript>
             <link rel="stylesheet" href=".static/wet-boew/css/noscript.min.css"/>
-        </noscript>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js"></script>
-
-        <noscript>
-            <link rel="stylesheet" href="./static/wet-boew/css/noscript.min.css" />
         </noscript>
     </head>
     <body vocab="http://schema.org/" typeof="WebPage">
@@ -88,17 +75,6 @@
                 </section>
             </div>
         </div>
-<!--        <nav class="gcweb-menu" typeof="SiteNavigationElement">-->
-<!--            <div class="container">-->
-<!--                <h2 class="wb-inv">Menu</h2>-->
-<!--                <button type="button" aria-haspopup="true" aria-expanded="false"><span class="wb-inv">principal </span>Menu <span-->
-<!--                        class="expicon glyphicon glyphicon-chevron-down"></span></button>-->
-<!--                <ul role="menu" aria-orientation="vertical"-->
-<!--                    data-ajax-replace="./static/ajax/sitemenu-v5-fr.html">-->
-
-<!--                </ul>-->
-<!--            </div>-->
-<!--        </nav>-->
 
         <nav id="wb-bc" property="breadcrumb">
             <h2>You are here:</h2>
@@ -108,7 +84,7 @@
                         <li><a href="https://canadiensensante.gc.ca/index-fra.php">Santé</a></li>
                         <li><a href="https://canadiensensante.gc.ca/science-research-sciences-recherches/index-fra.php">Science, recherche et données</a></li>
                         <li><a href="https://sante-infobase.canada.ca/">Infobase de la santé publique</a></li>
-                        <li>Calculatrice des apports nutritionnels de référence</li>
+                        <li>Fichier Canadien sur les éléments nutritifs (FCÉN)</li>
                     </ol>
             </div>
         </nav>
@@ -118,19 +94,130 @@
         <section class="blue-header well well-sm brdr-0 mrgn-bttm-0 mrgn-tp-0">
             <div class="container mrgn-tp-sm">
                 <h1 class="mrgn-tp-md" property="name" id="wb-cont" dir="ltr"><span
-                        class="stacked"><span>Calculatrice des apports nutritionnels de référence <small style="color:#fff;">de Santé Canada</small></span>: <span></span></span></h1> <!-- <a class="app-name" href="https://health-infobase.canada.ca/">Health Infobase</a> -->
-                <p>Un outil interactif pour calculer les recommandations d'apports en nutriments quotidiens</p>
+                        class="stacked"><span>Fichier canadien sur les éléments nutritifs (FCÉN) <small style="color:#fff;">de Santé Canada</small></span>: <span></span></span></h1> <!-- <a class="app-name" href="https://health-infobase.canada.ca/">Health Infobase</a> -->
+                <p>REMPLACER MOI: DESCRIPTION OF THE APP</p>
                 <ul class="list-inline small mrgn-bttm-sm" style="line-height:1.65em" id="list-inline-desktop-only">
-                    <li class="mrgn-rght-lg"> Dernière mise à jour : 2025-05-27</li>
-                    <!--<li> <a class="pdf" href="https://www.canada.ca/content/dam/hc-sc/documents/services/food-nutrition/healthy-eating/nutrient-value-some-common-foods-2015/nutrient-value-some-common-foods-2015-among-Canadian-adults.pdf"><i class="fas fa-download" aria-hidden="true"></i> <span class="wb-invisible">Download page in </span>PDF<span class="wb-invisible"> format</span></a></li>-->
-                    <!--<li> <a class="pdf" href="#"><i class="fas fa-download" aria-hidden="true"></i> <span class="wb-invisible">Download data in </span>CSV<span class="wb-invisible"> format</span></a></li>-->
+                    <li class="mrgn-rght-lg"> Dernière mise à jour : REMPLACER MOI: (yyyy-mm-dd)</li>
                 </ul>
             </div>
         </section>
 
         <div class="container">
 
-            <h1>This is the main page</h1>
+            <div class="row">
+                <div class="d-flex flex-row mrgn-tp-xl mrgn-bttm-xl justify-content-center">
+                    <h3>REMPLACER MOI: INFORMATION ABOUT APP, USE, DIRECTIONS</h3>
+                </div>
+            </div>
+
+            <details class="mrgn-tp-lg mrgn-bttm-lg" id="about-tool-details">
+                <summary class="wb-toggle" data-toggle='{"print":"on"}'>
+                    <h2 class="h3 mrgn-tp-sm"></h2>
+                </summary>
+                <div class="mrgn-lft-md">
+                    <p></p>
+                </div>
+            </details>
+            <div class="row">
+                <div class="d-flex flex-row mrgn-tp-md mrgn-bttm-md justify-content-center">
+                    <button type="button" class="btn btn-secondary searchTab leftSearchTab" id="searchByFoodTab" value="Search by Food"></button>
+                    <button type="button" class="btn btn-secondary searchTab middleSearchTab" id="searchByNutrientTab" value="Search By Nutrient"></button>
+                    <button type="button" class="btn btn-secondary searchTab rightSearchTab" id="compareNutrientsTab" value="Compare Nutrients"></button>
+                </div>
+            </div>
+
+            <div id="searchPage"></div>
+
+            <div class="pagedetails col-xs-12">
+                <div class="row">
+                    <div class="col-sm-6 col-md-5 col-lg-4">
+                        <details class="brdr-0">
+                            <summary class="btn btn-default text-center">Signaler un problème sur cette page</summary>
+                            <div class="well row">
+                                <div class="gc-rprt-prblm">
+                                    <div class="gc-rprt-prblm-frm gc-rprt-prblm-tggl">
+                                        <form action="#">
+                                            <fieldset>
+                                                <legend><span class="field-name">Veuillez sélectionner toutes les cases qui s'appliquent : </span></legend>
+                                                <div class="checkbox">
+                                                    <label for="problem1"><input type="checkbox" data-reveal="#broken"
+                                                                                 name="problem" value="Something is broken"
+                                                                                 id="problem1">Quelque chose ne fonctionne pas</label>
+                                                </div>
+                                                <div class="form-group hide" id="broken">
+                                                    <label for="problem1-detail">Fournissez plus des détails (optionnel) :</label>
+                                                    <input type="text" class="form-control full-width" id="problem1-detail">
+                                                </div>
+                                                <div class="checkbox">
+                                                    <label for="problem2"><input type="checkbox" data-reveal="#spelling"
+                                                                                 name="problem"
+                                                                                 value="It has spelling or grammar mistakes"
+                                                                                 id="problem2">Il y a des erreurs d’orthographe ou de grammaire</label>
+                                                </div>
+                                                <div class="form-group hide" id="spelling">
+                                                    <label for="problem2-detail">Fournissez plus des détails (optionnel) :</label>
+                                                    <input type="text" class="form-control full-width" id="problem2-detail">
+                                                </div>
+                                                <div class="checkbox">
+                                                    <label for="problem3"><input type="checkbox" data-reveal="#wrong"
+                                                                                 name="problem" value="The information is wrong"
+                                                                                 id="problem3">L'information est erronée</label>
+                                                </div>
+                                                <div class="form-group hide" id="wrong">
+                                                    <label for="problem3-detail">Fournissez plus des détails (optionnel) :</label>
+                                                    <input type="text" class="form-control full-width" id="problem3-detail">
+                                                </div>
+                                                <div class="checkbox">
+                                                    <label for="problem4"><input type="checkbox" data-reveal="#outdated"
+                                                                                 name="problem"
+                                                                                 value="The information is outdated"
+                                                                                 id="problem4">L'information n'est plus à jour</label>
+                                                </div>
+                                                <div class="form-group hide" id="outdated">
+                                                    <label for="problem4-detail">Fournissez plus des détails (optionnel) :</label>
+                                                    <input type="text" class="form-control full-width" id="problem4-detail">
+                                                </div>
+                                                <div class="checkbox">
+                                                    <label for="problem5"><input type="checkbox" data-reveal="#find"
+                                                                                 name="problem"
+                                                                                 value="I can’t find what I’m looking for"
+                                                                                 id="problem5">Je n'arrive pas à trouver ce que je cherche</label>
+                                                </div>
+                                                <div class="form-group hide" id="find">
+                                                    <label for="problem5-detail">Décrivez ce que vous cherchez (optionnel) :</label>
+                                                    <input type="text" class="form-control full-width" id="problem5-detail">
+                                                </div>
+                                                <div class="checkbox">
+                                                    <label for="problem6"><input type="checkbox" data-reveal="#confusing"
+                                                                                 name="problem" value="It’s confusing"
+                                                                                 id="problem6">Autre</label>
+                                                </div>
+                                                <div class="form-group hide" id="confusing">
+                                                    <label for="problem6-detail">Fournissez plus des détails (optionnel) :</label>
+                                                    <input type="text" class="form-control full-width" id="problem6-detail">
+                                                </div>
+                                            </fieldset>
+                                            <button type="submit" class="btn btn-primary wb-toggle"
+                                                    data-toggle='{"stateOff": "hide", "stateOn": "show", "selector": ".gc-rprt-prblm-tggl"}'
+                                                    aria-controls="wb-auto-3 wb-auto-4">
+                                                Soumettre
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="gc-rprt-prblm-thnk gc-rprt-prblm-tggl hide">
+                                        <h3>Merci de votre aide!</h3>
+                                        <p>Vous ne recevrez pas de réponse. Pour toute question, <a
+                                                href="https://www.canada.ca/fr/contact.html" target="_blank"
+                                        >contactez-nous</a>.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="wb-share col-sm-4 col-md-3 col-sm-offset-2 col-md-offset-4 col-lg-offset-5"
+                         data-wb-share='{"lnkClass": "btn btn-default btn-block"}'></div>
+                </div>
+            </div>
 
         </div>
     </main>
@@ -181,7 +268,6 @@
 
     
     </footer>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 
     <!--[if gte IE 9 | !IE ]><!-->
     <script src="./static/wet-boew/js/jquery/2.2.4/jquery.js"></script>
@@ -189,7 +275,8 @@
     
     <!--{# d3 #}-->
     <script src="./static/js/d3.v5.min.js"></script>
-    <!--<script src="https://d3js.org/d3.v5.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/d3-interpolate-path@2.3.0/build/d3-interpolate-path.min.js"></script>
+
     <script src="./static/js/textures.js"></script>
     
     <!--<![endif]-->
@@ -198,11 +285,11 @@
     <![endif]-->
     <script src="./static/GCWeb/js/theme.min.js"></script>
     <script src="./static/js/main.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/23.7.19/i18next.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-browser-languagedetector/7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.min.js"></script>
 
-    <!-- <script type="module" src="./app.js"></script> -->
+    <script type="module" src="./app/app.js"></script>
 
     </body>
     </html>
