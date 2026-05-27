@@ -5,6 +5,8 @@
 //                                                                 //
 /////////////////////////////////////////////////////////////////////
 
+import { DataCols, LangDataCols } from "./constants.js";
+
 
 
 // Translation: Helper class for doing translations
@@ -50,5 +52,16 @@ export class Translation {
         }
 
         return this.translate("Number", translateArgs);
+    }
+
+    // getLangCode(uppercase): Retrieves the language code
+    static getLangCode(uppercase = false) {
+        const result = i18next.language;
+        return (uppercase) ? result.toUpperCase() : result;
+    }
+
+    // getDataCol(col): Retrieves the name of the column in the raw data
+    static getDataCol(col) {
+        return (LangDataCols.has(col)) ? `${col}${this.getLangCode(true)}` : col;
     }
 }
