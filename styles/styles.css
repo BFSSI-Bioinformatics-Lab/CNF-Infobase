@@ -53,31 +53,6 @@
     --defaultTransition: var(--medTransition);
 }
 
-
-/* For small phone screeens */
-@media screen and (max-width: 600px) {
-    body { 
-        font-size: calc(0.8em + 1vw) !important; 
-    }
-
-    main {
-        font-size: calc(0.8em + 1vw) !important;
-    }
-    
-    h1 {
-        font-size: calc(1.7em + 1vw) !important; 
-    }
-    
-    h3 {
-        font-size: calc(1em + 1vw) !important; 
-    }
-
-    .btn {
-        font-size: calc(0.6em + 1vw) !important;
-        margin: 3px 0;
-    }
-}
-
 .searchTab {
     width: 20%;
 }
@@ -114,6 +89,145 @@
 }
 
 /* ==================================================== */
+/* ======== Datatables =============================== */
+
+.tableContainer {
+    background-color: var(--surface);
+    padding: 10px;
+    border-radius: var(--smBorderRadius);
+}
+
+.tableContainer .dataTable, .tableContainer .dt-scroll-headInner {
+    width: 100% !important;
+}
+
+/* ----- sort icons ----- */
+
+/* Previously displayed two separate icons, hide first one */
+.dt-column-order {
+    top: 0.18em !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-size: 1.3em !important;
+}
+ 
+.dt-column-order:before, .dt-column-order:after {
+    content: "" !important;
+}
+
+
+/* font-family and font-weight needed for Font Awesome icons to display by CSS */
+.dt-column-order::before {
+    font-family: 'Font Awesome\ 5 Free';
+    font-weight: 900;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+}
+ 
+/* Only display in after */
+.dt-orderable-asc .dt-column-order::before
+{
+    /*right:    0 !important;*/
+    content: "\f0dc" !important;
+    color: var(--onPrimary) !important;
+    opacity: 1 !important;
+    top: unset !important;
+    bottom: 0.3em !important;
+    line-height: unset !important;
+    padding-left: 5px;
+}
+
+/* sort ascending */
+.dt-ordering-asc span.dt-column-order::before {
+    content: "\f161" !important;
+    color: var(--onPrimary) !important;
+    opacity: 1 !important;
+    top: unset !important;
+    bottom: 0.3em !important;
+    line-height: unset !important; /* DataTable 1.12 set to 9px */
+    padding-left: inherit;
+}
+
+/* sort descending */
+.dt-ordering-desc span.dt-column-order::before {
+    content: "\f160" !important;
+    color: var(--onPrimary) !important;
+    opacity: 1 !important;
+    top: unset !important;
+    bottom: 0.3em !important;
+    line-height: unset !important; /* DataTable 1.12 set to 9px */
+    padding-left: inherit;
+}
+
+/* ---------------------- */
+
+.dataTable th {
+    background-color: var(--primary) !important;
+    color: var(--onPrimary);
+    text-align: center !important;
+}
+
+
+.dataTable th:first-child {
+    border-radius: var(--smBorderRadius) 0 0 0;
+}
+
+.dataTable th:last-child {
+    border-radius: 0 var(--smBorderRadius) 0 0;
+}
+
+.dataTable td {
+    color: var(--fontColour);
+    text-align: center !important;
+}
+
+.dataTable tr:nth-child(even) td {
+    background-color: var(--secondarySurface) !important;
+    opacity: 0.95;
+}
+
+.dataTable tr:nth-child(odd) td {
+    background-color: var(--surface) !important;
+    opacity: 0.95;
+    box-shadow: none !important;
+}
+
+.dt-container .form-select {
+    font-size: 16px;
+}
+
+/* =================================================== */
+/* ======== Pagination =============================== */
+
+.pagination {
+    --bs-pagination-color: var(--primary);
+    --bs-pagination-bg: var(--onPrimary);
+    --bs-pagination-border-color: var(--primaryBorderColour);
+    --bs-pagination-hover-color: var(--onPrimaryHover);
+    --bs-pagination-hover-bg: var(--primary);
+    --bs-pagination-hover-border-color: var(--onPrimaryHover);
+    --bs-pagination-active-bg: var(--primaryHover);
+    --bs-pagination-active-color: var(--onPrimaryHover);
+    --bs-pagination-active-border-color: var(--onPrimaryHover);
+    --bs-pagination-focus-color: var(--primaryHover);
+    --bs-pagination-focus-bg: var(--onPrimaryHover);
+    --bs-pagination-disabled-bg: var(--secondaryBg);
+    --bs-pagination-disabled-border-color: var(--secondaryBorderColour);
+    --bs-pagination-disabled-color: var(--secondary);
+    display: flex;
+}
+
+.dt-paging-button.disabled {
+    display: block !important;
+}
+
+.dt-paging-button .page-link {
+    font-size: 16px !important;
+}
+
+/* =================================================== */
 
 
 .leftSearchTab {
@@ -126,4 +240,37 @@
 
 .rightSearchTab {
     border-radius: 0 var(--borderRadius) var(--borderRadius) 0;
+}
+
+
+/* For small phone screeens */
+@media screen and (max-width: 600px) {
+    body { 
+        font-size: calc(0.8em + 1vw) !important; 
+    }
+
+    main {
+        font-size: calc(0.8em + 1vw) !important;
+    }
+    
+    h1 {
+        font-size: calc(1.7em + 1vw) !important; 
+    }
+    
+    h3 {
+        font-size: calc(1em + 1vw) !important; 
+    }
+
+    .btn {
+        font-size: calc(0.6em + 1vw) !important;
+        margin: 3px 0;
+    }
+
+    .dt-container .form-select {
+        font-size: calc(0.6em + 1vw) !important;
+    }
+
+    .dt-paging-button .page-link {
+        font-size: calc(0.6em + 1vw) !important;
+    }
 }

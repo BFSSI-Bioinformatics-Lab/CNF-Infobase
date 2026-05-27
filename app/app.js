@@ -1,4 +1,4 @@
-import { SearchOpts, PageSrc, TranslationObj } from "./constants.js";
+import { SearchOpts, PageSrc, TranslationObj, FoodSearchTableCols } from "./constants.js";
 import { Translation } from "./tools.js";
 import { Model } from "./backend.js";
 
@@ -75,13 +75,56 @@ class App {
     }
 
     // Loads the selected search page for the app
-    loadSearchPage(page = undefined) {
+    loadSearchPage(searchOpt = undefined) {
         const self = this;
-        if (page === undefined) {
-            page = self.model.searchOpt;
+        if (searchOpt === undefined) {
+            searchOpt = self.model.searchOpt;
         }
 
-        $("#searchPage").load(PageSrc[page], function() {  });
+        $("#searchPage").load(PageSrc[searchOpt], function() { self.updateSearchPage(searchOpt) });
+    }
+
+    updateSearchPage(searchOpt = undefined) {
+        if (searchOpt == SearchOpts.SearchByFood) {
+            this.updateSearchByFoodPage();
+        }
+    }
+
+    // updateTable(data, selector): Updates the data in the table
+    // Note:
+    // - based off Jquery's Datatables: https://datatables.net/
+    updateTable(selector, columnInfo, data) {
+        let dataTable;
+        if (DataTable.isDataTable(selector)) {
+            dataTable = $(selector).DataTable();
+            dataTable.destroy();
+        }
+
+        const dataTableTranslations = Translation.translate("dataTable", { returnObjects: true });
+        dataTable = $(selector).DataTable({
+            language: dataTableTranslations,
+            columns: columnInfo,
+            scrollCollapse: true,
+            scrollX: true,
+            scrollY: '300px'
+        });
+
+        dataTable.clear();
+        dataTable.rows.add(data);
+        dataTable.draw();
+    }
+
+    updateSearchByFoodPage() {
+        const tableData = this.model.getFoodSearchTableData();
+
+        if (tableData !== undefined) {
+            const translations = Translation.translate("SearchTableCols",{ returnObjects: true });
+            const tableColInfo = FoodSearchTableCols.map((tableAtt) => {
+                return {title: translations[tableAtt], data: Translation.getDataCol(tableAtt)};
+            });
+
+            this.updateTable('#foodSearchTable', tableColInfo, tableData);
+        }
     }
 }
 
