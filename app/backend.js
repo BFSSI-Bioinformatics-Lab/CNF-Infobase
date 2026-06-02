@@ -6,6 +6,7 @@ export class Model {
     constructor() {
         this.searchOpt = SearchOpts.SearchByFood;
         this.searchInputs = this.initSearchInputs();
+        this.selectedFoodCodes = [];
 
         this.foodTable;
     }
@@ -86,5 +87,11 @@ export class Model {
     getFoodSearchTableData() {
         const inputs = this.searchInputs[SearchOpts.SearchByFood];
         return this.filterFoodSearchTable(inputs[SearchAtts.FoodName], inputs[SearchAtts.FoodGroup], inputs[SearchAtts.FoodCode]);
+    }
+
+    // getFoodSearchSelectedData(): Retrieves the data for the selected foods
+    getFoodSearchSelectedData() {
+        if (this.selectedFoodCodes.length == 0) return [];
+        return this.filterFoodSearchTable("", "", this.selectedFoodCodes[0]);
     }
 }

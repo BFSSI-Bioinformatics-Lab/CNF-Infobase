@@ -1,4 +1,4 @@
-import { SearchOpts, PageSrc, TranslationObj, FoodSearchTableCols, SearchAtts } from "./constants.js";
+import { SearchOpts, PageSrc, TranslationObj, FoodSearchTableCols, SearchAtts, DataCols } from "./constants.js";
 import { Translation } from "./tools.js";
 import { Model } from "./backend.js";
 
@@ -7,6 +7,14 @@ import { Model } from "./backend.js";
 class App {
     constructor(model) {
         this.model = model;
+
+        this.htmlNames = {
+            foodSelected: "foodSelected"
+        }
+
+        this.htmlSelectors = {
+            foodSearchTable: '#foodSearchTable'
+        }
         this.htmlElements = {
             [SearchOpts.SearchByFood]: {}
         };
@@ -107,7 +115,10 @@ class App {
     setupSearchByFoodListeners() {
         const elements = this.htmlElements[SearchOpts.SearchByFood];
 
-        elements.searchButton.on("click", () => { this.searchByFoodSubmitSearch(); });
+        elements.searchButton.on("click", () => { 
+            this.htmlElements.searchTable.removeClass(this.htmlNames.foodSelected);
+            this.searchByFoodSubmitSearch(); 
+        });
     }
 
     // Loads the selected search page for the app
@@ -117,7 +128,7 @@ class App {
             searchOpt = self.model.searchOpt;
         }
 
-        $("#searchPage").load(PageSrc[searchOpt], function() { 
+        $("#searchPage").load(PageSrc[searchOpt], function() {
             if (searchOpt == SearchOpts.SearchByFood) {
                 self.loadSearchByFoodPage();
             }
@@ -129,7 +140,7 @@ class App {
         this.updateSearchByFoodHtmlElements();
         this.updateSearchByFoodStaticText();
         this.setupSearchByFoodListeners();
-        this.updateSearchByFoodTable();
+        this.setupSearchByFoodTable();
     }
 
     // updateTable(data, selector): Updates the data in the table
@@ -139,25 +150,41 @@ class App {
         let dataTable;
         if (DataTable.isDataTable(selector)) {
             dataTable = $(selector).DataTable();
-            dataTable.destroy();
+        } else {
+            const dataTableTranslations = Translation.translate("dataTable", { returnObjects: true });
+            dataTable = $(selector).DataTable({
+                language: dataTableTranslations,
+                columns: columnInfo,
+                scrollCollapse: true,
+                scrollX: true,
+                scrollY: '300px'
+            });
         }
-
-        const dataTableTranslations = Translation.translate("dataTable", { returnObjects: true });
-        dataTable = $(selector).DataTable({
-            language: dataTableTranslations,
-            columns: columnInfo,
-            scrollCollapse: true,
-            scrollX: true,
-            scrollY: '300px'
-        });
 
         dataTable.clear();
         dataTable.rows.add(data);
         dataTable.draw();
+        return dataTable;
     }
 
-    updateSearchByFoodTable() {
-        const tableData = this.model.getFoodSearchTableData();
+    setupSearchByFoodTable() {
+        const dataTable = this.updateSearchByFoodTable();
+        if (dataTable === undefined) return;
+        
+        this.htmlElements.searchTable = $(this.htmlSelectors.foodSearchTable);
+        const self = this;
+
+        $(`${this.htmlSelectors.foodSearchTable} tbody`).on('click', 'tr', function () {
+            const rowData = dataTable.row(this).data();
+            self.model.selectedFoodCodes = [rowData[DataCols.FoodCode]];
+
+            const foodSelected = self.htmlElements.searchTable.toggleClass(self.htmlNames.foodSelected).hasClass(self.htmlNames.foodSelected);
+            self.updateSearchByFoodTable(foodSelected);
+        });
+    }
+
+    updateSearchByFoodTable(selectFood = false) {
+        const tableData = (selectFood) ? this.model.getFoodSearchSelectedData() : this.model.getFoodSearchTableData();
 
         if (tableData !== undefined) {
             const translations = Translation.translate("SearchTableCols",{ returnObjects: true });
@@ -165,7 +192,8 @@ class App {
                 return {title: translations[tableAtt], data: Translation.getDataCol(tableAtt)};
             });
 
-            this.updateTable('#foodSearchTable', tableColInfo, tableData);
+            const dataTable = this.updateTable(this.htmlSelectors.foodSearchTable, tableColInfo, tableData);
+            return dataTable;
         }
     }
 
