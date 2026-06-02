@@ -135,11 +135,22 @@ class App {
         });
     }
 
+    // loadSearchByFoodInputs(): Initializes the previously remembered search input values
+    loadSearchByFoodInputs() {
+        const elements = this.htmlElements[SearchOpts.SearchByFood];
+        const inputs = this.model.searchInputs[SearchOpts.SearchByFood];
+
+        elements.foodNameInput.property("value", inputs[SearchAtts.FoodName]);
+        elements.foodGroupInput.property("value", inputs[SearchAtts.FoodGroup]);
+        elements.foodCodeInput.property("value", inputs[SearchAtts.FoodCode]);
+    }
+
     // loadSearchByFoodPage(): Loads the page for searching by food
     loadSearchByFoodPage() {
         this.updateSearchByFoodHtmlElements();
         this.updateSearchByFoodStaticText();
         this.setupSearchByFoodListeners();
+        this.loadSearchByFoodInputs();
         this.setupSearchByFoodTable();
     }
 
