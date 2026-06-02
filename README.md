@@ -5,6 +5,7 @@ Canadian Nutrient File
 [![Static Badge](https://img.shields.io/badge/D3-%23ff9933?style=for-the-badge)](https://d3js.org/)
 [![Static Badge](https://img.shields.io/badge/Bootstrap-%237733ff?style=for-the-badge)](https://getbootstrap.com/)
 [![Static Badge](https://img.shields.io/badge/WET-176ca7?style=for-the-badge)](https://wet-boew.github.io/wet-boew/index.html)
+[![GitHub deployments](https://img.shields.io/github/deployments/BFSSI-Bioinformatics-Lab/CNF-Infobase/github-pages?style=for-the-badge&label=Github%20Pages)](https://bfssi-bioinformatics-lab.github.io/CNF-Infobase/)
 
 <br>
 
