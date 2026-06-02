@@ -187,16 +187,28 @@
 .dataTable tr:nth-child(even) td {
     background-color: var(--secondarySurface) !important;
     opacity: 0.95;
+    transition: var(--fastTransition);
 }
 
 .dataTable tr:nth-child(odd) td {
     background-color: var(--surface) !important;
     opacity: 0.95;
     box-shadow: none !important;
+    transition: var(--fastTransition);
 }
 
 .dt-container .form-select {
     font-size: 16px;
+}
+
+.dataTable tr:hover td {
+    filter: brightness(0.8);
+    cursor: pointer;
+}
+
+#foodSearchTable.foodSelected td {
+    background-color: var(--secondary) !important;
+    color: white;
 }
 
 /* =================================================== */
