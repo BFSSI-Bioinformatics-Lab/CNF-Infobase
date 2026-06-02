@@ -65,3 +65,55 @@ export class Translation {
         return (LangDataCols.has(col)) ? `${col}${this.getLangCode(true)}` : col;
     }
 }
+
+
+// DictTools: Helper class for dictionaries
+export class DictTools {
+    // combine(dics): Combines multiple dictionaries toghether
+    static combine(dicts) {
+        return Object.assign({}, ...dicts);
+    }
+}
+
+
+// TableTools: Helper class for doing tabular operations
+export class TableTools {
+
+    // leftJoinById(srcTable, refTable, srcIdCol, refIdCol, joinedRefCols): Performs a left-join where
+    //  the join condition is based on some id
+    static leftJoinById(srcTable, refTable, srcIdCol, refIdCol = undefined, joinedRefCols = undefined) {
+        if (refIdCol === undefined) {
+            refIdCol = srcIdCol;
+        }
+
+        refTable = d3.nest()
+            .key(d => d[refIdCol])
+            .object(refTable);
+
+        return srcTable.map(srcRow => {
+            const idVal = srcRow[srcIdCol];
+            let refRow = refTable[idVal];
+            refRow = (refRow === undefined) ? {} : refRow[0];
+
+            if (joinedRefCols === undefined) {
+                return DictTools.combine([srcRow, refRow]);
+            }
+            
+            for (refCol in joinedRefCols) {
+                const newRefCol = joinedRefCols[refCol];
+                srcRow[newRefCol] = refRow[refCol];
+            }
+
+            return srcRow;
+        });
+    }
+
+    // dataLeftJoinById(srcTable, refTable, srcIdCol, refIdCol, joinedRefCols): Performs a left-join where
+    //  the join condition is based on some id for an object containing both table columns and table data
+    static dataLeftJoinById(srcTable, refTable, srcIdCol, refIdCol = undefined, joinedRefCols = undefined) {
+        const data = this.leftJoinById(srcTable.data, refTable.data, srcIdCol, refIdCol, joinedRefCols);
+        let columns = new Set([...srcTable.columns, ...refTable.columns]);
+        columns = Array.from(columns);
+        return {data, columns};
+    }
+}

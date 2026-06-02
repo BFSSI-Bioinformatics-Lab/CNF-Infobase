@@ -1,4 +1,4 @@
-import { SearchOpts, PageSrc, TranslationObj, FoodSearchTableCols } from "./constants.js";
+import { SearchOpts, PageSrc, TranslationObj, FoodSearchTableCols, SearchAtts } from "./constants.js";
 import { Translation } from "./tools.js";
 import { Model } from "./backend.js";
 
@@ -7,6 +7,9 @@ import { Model } from "./backend.js";
 class App {
     constructor(model) {
         this.model = model;
+        this.htmlElements = {
+            [SearchOpts.SearchByFood]: {}
+        };
     }
 
     // init(page): Initializes the entire app
@@ -16,7 +19,23 @@ class App {
         this.loadSearchPage(page);
     }
 
-    // UpdateStaticText: Updates text for static elements when the page loads
+    // updateSearchByFoodHtmlElements(): Updates the common HTML elements for the "Search By Food" page
+    updateSearchByFoodHtmlElements() {
+        const elements = {
+            foodNameInputContainer: d3.select("#foodNameInputContainer"),
+            foodGroupInputContainer: d3.select("#foodGroupInputContainer"),
+            foodCodeInputContainer: d3.select("#foodCodeInputContainer"),
+            searchButton: d3.select("#searchButton")
+        }
+
+        elements.foodNameInput = elements.foodNameInputContainer.select("input");
+        elements.foodGroupInput = elements.foodGroupInputContainer.select("input");
+        elements.foodCodeInput = elements.foodCodeInputContainer.select("input");
+
+        this.htmlElements[SearchOpts.SearchByFood] = elements;
+    }
+
+    // updateStaticText: Updates text for static elements when the main page loads
     updateStaticText() {
         d3.select("#searchByFoodTab").html(Translation.translate("SearchByFood"));
         d3.select("#searchByNutrientTab").html(Translation.translate("SearchByNutrient"));
@@ -24,6 +43,17 @@ class App {
 
         d3.select("#about-tool-details summary h2").html(Translation.translate("InstructionsTitle"));
         d3.select("#about-tool-details div p").html(Translation.translate("InstructionsText"));
+    }
+
+    // updateSearchByFoodStaticText: Updates text for the "Search by Food" page
+    updateSearchByFoodStaticText() {
+        const elements = this.htmlElements[SearchOpts.SearchByFood];
+
+        d3.select("#searchTitle").html(Translation.translate("SearchCriteriaTitle"));
+        elements.foodNameInputContainer.select("label").html(Translation.translate("FoodNameInputTitle"));
+        elements.foodGroupInputContainer.select("label").html(Translation.translate("FoodGroupInputTitle"));
+        elements.foodCodeInputContainer.select("label").html(Translation.translate("FoodCodeInputTitle"));
+        elements.searchButton.attr("value", Translation.translate("FoodSearchButton"));
     }
 
     setupListeners() {
@@ -74,6 +104,12 @@ class App {
         onSelected(selectedOpt, data);
     }
 
+    setupSearchByFoodListeners() {
+        const elements = this.htmlElements[SearchOpts.SearchByFood];
+
+        elements.searchButton.on("click", () => { this.searchByFoodSubmitSearch(); });
+    }
+
     // Loads the selected search page for the app
     loadSearchPage(searchOpt = undefined) {
         const self = this;
@@ -81,13 +117,19 @@ class App {
             searchOpt = self.model.searchOpt;
         }
 
-        $("#searchPage").load(PageSrc[searchOpt], function() { self.updateSearchPage(searchOpt) });
+        $("#searchPage").load(PageSrc[searchOpt], function() { 
+            if (searchOpt == SearchOpts.SearchByFood) {
+                self.loadSearchByFoodPage();
+            }
+        });
     }
 
-    updateSearchPage(searchOpt = undefined) {
-        if (searchOpt == SearchOpts.SearchByFood) {
-            this.updateSearchByFoodPage();
-        }
+    // loadSearchByFoodPage(): Loads the page for searching by food
+    loadSearchByFoodPage() {
+        this.updateSearchByFoodHtmlElements();
+        this.updateSearchByFoodStaticText();
+        this.setupSearchByFoodListeners();
+        this.updateSearchByFoodTable();
     }
 
     // updateTable(data, selector): Updates the data in the table
@@ -114,7 +156,7 @@ class App {
         dataTable.draw();
     }
 
-    updateSearchByFoodPage() {
+    updateSearchByFoodTable() {
         const tableData = this.model.getFoodSearchTableData();
 
         if (tableData !== undefined) {
@@ -125,6 +167,17 @@ class App {
 
             this.updateTable('#foodSearchTable', tableColInfo, tableData);
         }
+    }
+
+    searchByFoodSubmitSearch() {
+        const elements = this.htmlElements[SearchOpts.SearchByFood];
+        const inputs = this.model.searchInputs[SearchOpts.SearchByFood]; 
+
+        inputs[SearchAtts.FoodName] = elements.foodNameInput.property("value");
+        inputs[SearchAtts.FoodGroup] = elements.foodGroupInput.property("value");
+        inputs[SearchAtts.FoodCode] = elements.foodCodeInput.property("value");
+
+        this.updateSearchByFoodTable();
     }
 }
 

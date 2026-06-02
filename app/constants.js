@@ -16,17 +16,27 @@ export const PageSrc = {
 // Note: Copy the exact column name from the CSV files without the language code
 export const DataCols = {
     FoodCode: "Food_Code",
-    FoodDescription: "Food_Description_"
+    FoodDescription: "Food_Description_",
+    FoodGroupCode: "CNF_Food_Group_Code",
+    FoodGroupDescription: "CNF_Food_Group_Description_"
 }
 
 // Columns with translations
-export const LangDataCols= new Set([DataCols.FoodDescription]);
+export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription]);
 
 // The columns to display in the Search By Food table
 export const FoodSearchTableCols = [
     DataCols.FoodCode,
-    DataCols.FoodDescription
+    DataCols.FoodGroupDescription,
+    DataCols.FoodDescription,
 ];
+
+// Different attributes used to search some food/nutrient
+export const SearchAtts = {
+    FoodName: "food name",
+    FoodGroup: "food group",
+    FoodCode: "food code"
+}
 
 
 // ================= ENGLISH TRANSLATIONS =======================
@@ -48,8 +58,16 @@ const LangEN = {
 
         Alternatively, you can search by the unique four digit Canadian Nutrient File (CNF) food code.`,
 
+        SearchCriteriaTitle: "Search Criteria",
+        FoodNameInputTitle: "Food Name",
+        FoodGroupInputTitle: "Food Group",
+        FoodCodeInputTitle: "Food Code",
+
+        FoodSearchButton: "Food Search",
+
         SearchTableCols: {
             [DataCols.FoodCode]: "Food Code",
+            [DataCols.FoodGroupDescription]: "Food Group",
             [DataCols.FoodDescription]: "Food Name",
         },
 
@@ -320,9 +338,17 @@ const LangFR = {
         InstructionsTitle: "Instructions",
         InstructionsText: REMPLACER_MOI,
 
+        SearchCriteriaTitle: "Critères de Recherche",
+        FoodNameInputTitle: "Nom de l'Aliment",
+        FoodGroupInputTitle: "Groupe de l'Aliment",
+        FoodCodeInputTitle: "Code de l'Aliment",
+
+        FoodSearchButton: "Recherche de l'Aliment",
+
         SearchTableCols: {
-            [DataCols.FoodCode]: REMPLACER_MOI,
-            [DataCols.FoodDescription]: REMPLACER_MOI,
+            [DataCols.FoodCode]: "Code de l'Aliment",
+            [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
+            [DataCols.FoodDescription]: "Nom de l'Aliment",
         },
 
         // references: https://datatables.net/plug-ins/i18n/French.html

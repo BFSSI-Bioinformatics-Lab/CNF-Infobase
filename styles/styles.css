@@ -167,6 +167,7 @@
     background-color: var(--primary) !important;
     color: var(--onPrimary);
     text-align: center !important;
+    padding: 10px 2px;
 }
 
 
