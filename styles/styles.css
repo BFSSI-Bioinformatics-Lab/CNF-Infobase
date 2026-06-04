@@ -241,6 +241,30 @@
 }
 
 /* =================================================== */
+/* =============== Cards ============================= */
+
+.card {
+    border-left-width: 8px;
+}
+
+.border-primary {
+    border-color: var(--primary) !important;
+}
+
+/* =================================================== */
+/* =============== Checkbox ========================== */
+
+.checkbox input[type="checkbox"] {
+    position: initial !important;
+    margin-left: 0 !important;
+    transition: var(--fastTransition);
+}
+
+.checkbox input[type="checkbox"]:hover {
+    cursor: pointer;
+}
+
+/* =================================================== */
 
 
 .leftSearchTab {
@@ -253,6 +277,14 @@
 
 .rightSearchTab {
     border-radius: 0 var(--borderRadius) var(--borderRadius) 0;
+}
+
+#foodResultCard .servingSizeContainer label  {
+    font-size: 20px;
+}
+
+#foodResultCard .card-body {
+    padding-left: 20px;
 }
 
 
@@ -281,6 +313,10 @@
 
     .dt-container .form-select {
         font-size: calc(0.6em + 1vw) !important;
+    }
+
+    #foodResultCard .servingSizeContainer label  {
+        font-size: calc(0.8em + 1vw) !important;
     }
 
     .dt-paging-button .page-link {

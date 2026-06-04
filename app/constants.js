@@ -18,11 +18,15 @@ export const DataCols = {
     FoodCode: "Food_Code",
     FoodDescription: "Food_Description_",
     FoodGroupCode: "CNF_Food_Group_Code",
-    FoodGroupDescription: "CNF_Food_Group_Description_"
+    FoodGroupDescription: "CNF_Food_Group_Description_",
+    MeasureTypeCode: "Measure_Type_Code",
+    MeasureCode: "Measure_Code",
+    MeasureDescription: "Measure_Description_and_Unit_",
+    MeasureWeight: "Measure_Weight_Conversion"
 }
 
 // Columns with translations
-export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription]);
+export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription, DataCols.MeasureDescription]);
 
 // The columns to display in the Search By Food table
 export const FoodSearchTableCols = [
@@ -43,6 +47,8 @@ export const SearchAtts = {
 
 const LangEN = {
     translation: {
+        Number: "{{num, number}}",
+
         SearchByFood: "Search by Food",
         SearchByNutrient: "Search by Nutrient",
         CompareByNutrient:"Compare by Nutrient",
@@ -69,6 +75,12 @@ const LangEN = {
             [DataCols.FoodCode]: "Food Code",
             [DataCols.FoodGroupDescription]: "Food Group",
             [DataCols.FoodDescription]: "Food Name",
+        },
+
+        FoodNutrientStats: {
+            SubTitle: `Food Code: {{ foodCode }}`,
+            ServingTitle: `Available Serving Size(s)`,
+            ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`
         },
 
         // reference: https://datatables.net/plug-ins/i18n/English.html
@@ -331,6 +343,8 @@ const REMPLACER_MOI_AVEC_ARGUMENTS = `${REMPLACER_MOI} - les arguments du texte:
 
 const LangFR = {
     translation: {
+        Number: "{{num, number}}",
+
         SearchByFood: "Recherche par Aliment",
         SearchByNutrient: "Recherche par Éléments Nutritifs",
         CompareByNutrient: REMPLACER_MOI,
@@ -349,6 +363,12 @@ const LangFR = {
             [DataCols.FoodCode]: "Code de l'Aliment",
             [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
             [DataCols.FoodDescription]: "Nom de l'Aliment",
+        },
+
+        FoodNutrientStats: {
+            SubTitle: `Code de l'Aliment: {{ foodCode }}`,
+            ServingTitle: `Taille(s) de Portion Disponible(s)`,
+            ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`
         },
 
         // references: https://datatables.net/plug-ins/i18n/French.html
