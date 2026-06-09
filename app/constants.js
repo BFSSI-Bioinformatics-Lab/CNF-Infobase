@@ -22,11 +22,30 @@ export const DataCols = {
     MeasureTypeCode: "Measure_Type_Code",
     MeasureCode: "Measure_Code",
     MeasureDescription: "Measure_Description_and_Unit_",
-    MeasureWeight: "Measure_Weight_Conversion"
+    MeasureWeight: "Measure_Weight_Conversion",
+    NutrientCode: "Nutrient_Code",
+    NutrientSrcCode: "Nutrient_Source_Code",
+    NutrientName: "Nutrient_Name_",
+    NutrientUnit: "Nutrient_Unit",
+    NutrientAmount: "Nutrient_Amount",
+    NutrientNoOfObservations: "Observations",
+    NutrientStdErr: "STD_Error",
+    NutrientDataSrc: "Nutrient_Source_Description_",
+    NutrientDecimalPlace: "Nutrient_Decimals"
 }
 
 // Columns with translations
-export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription, DataCols.MeasureDescription]);
+export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription, DataCols.MeasureDescription,
+    DataCols.NutrientName, DataCols.NutrientDataSrc
+]);
+
+// columns used in the table in the app
+export const TableCols = {...DataCols,
+    ConvertedNutrientAmount: "Nutrient_Converted_",
+    MeasureWeightConvId: "Meausre_Weight_Conversion_Id",
+    NutrientGroup: "Nutrient_Group"
+};
+
 
 // The columns to display in the Search By Food table
 export const FoodSearchTableCols = [
@@ -34,6 +53,16 @@ export const FoodSearchTableCols = [
     DataCols.FoodGroupDescription,
     DataCols.FoodDescription,
 ];
+
+// The columns to display in the Nutrient table
+export const NutrientTableCols = [
+    DataCols.NutrientName,
+    DataCols.NutrientUnit,
+    DataCols.NutrientAmount,
+    DataCols.NutrientNoOfObservations,
+    DataCols.NutrientStdErr,
+    DataCols.NutrientDataSrc
+]
 
 // Different attributes used to search some food/nutrient
 export const SearchAtts = {
@@ -80,7 +109,19 @@ const LangEN = {
         FoodNutrientStats: {
             SubTitle: `Food Code: {{ foodCode }}`,
             ServingTitle: `Available Serving Size(s)`,
-            ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`
+            ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
+            NutrientTableTitle: `List of nutrient data`,
+
+            TableCols: {
+                [DataCols.NutrientName]: `Nutrient Name`,
+                [DataCols.NutrientUnit]: `Unit`,
+                [DataCols.NutrientAmount]: `Value per 100 g of edible portion`,
+                [DataCols.NutrientNoOfObservations]: `Number of obser­vations`,
+                [DataCols.NutrientStdErr]: `Standard error`,
+                [DataCols.NutrientDataSrc]: `Data source`
+            },
+
+            ConvertedMeasureCol: `{{ measureName }} / {{ convertedMeasure }} g`
         },
 
         // reference: https://datatables.net/plug-ins/i18n/English.html
@@ -368,7 +409,17 @@ const LangFR = {
         FoodNutrientStats: {
             SubTitle: `Code de l'Aliment: {{ foodCode }}`,
             ServingTitle: `Taille(s) de Portion Disponible(s)`,
-            ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`
+            ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
+            NutrientTableTitle: `Liste des valeurs nutritives`,
+
+            TableCols: {
+                [DataCols.NutrientName]: `Nom de l'élément nutritif`,
+                [DataCols.NutrientUnit]: `Unité`,
+                [DataCols.NutrientAmount]: `Valeur pour 100 g de portion comestible`,
+                [DataCols.NutrientNoOfObservations]: `Nombre d'obser­vations`,
+                [DataCols.NutrientStdErr]: `Écart-type`,
+                [DataCols.NutrientDataSrc]: `Source des données`
+            }
         },
 
         // references: https://datatables.net/plug-ins/i18n/French.html
