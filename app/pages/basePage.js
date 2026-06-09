@@ -180,10 +180,13 @@ export class BaseSearchPage extends BasePage {
 
         const dataTable = this.updateTable(this.htmlSelectors.nutrientTable, tableColInfo, this.model.webSearchedNutrientTable, 
             {scrollY: false, paging: false, scrollX: false,
-            order: [[0, 'asc']],
-            // rowGroup: {
-            //     dataSrc: TableCols.NutrientGroup
-            // }
+            order: [[1, 'asc']],
+            orderFixed: {
+                pre: [0, 'asc'] // Fix the nutrient group column so when soring, the nutrients only get sorted in their corresponding sections
+            },
+            rowGroup: {
+                dataSrc: TableCols.NutrientGroup
+            }
         });
         return dataTable;
     }
