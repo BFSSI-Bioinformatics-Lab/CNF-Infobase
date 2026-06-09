@@ -104,7 +104,7 @@ export class Model {
         
         for (let i = 0; i < nutrientTableDataLen; ++i) {
             const row = nutrientTableData[i];
-            row[TableCols.NutrientGroup] = `aaa ${i % 3}`;
+            row[TableCols.NutrientGroup] = `Group ${i % 3}`;
 
             const foodIndexVal = row[DataCols.FoodCode];
             const currentFoodCodeInd = foodCodeIndex[foodIndexVal];
