@@ -1,5 +1,6 @@
-import { SearchOpts, SearchAtts, FoodSearchTableCols, DataCols } from "../constants.js";
-import { Translation } from "../tools.js";
+import { Model } from "../backend.js";
+import { SearchOpts, SearchAtts, FoodSearchTableCols, NutrientTableCols, TableCols } from "../constants.js";
+import { DictTools, Translation } from "../tools.js";
 
 
 // BasePage: Base Class for a particular page in the app
@@ -17,19 +18,21 @@ export class BasePage {
     // updateTable(data, selector): Updates the data in the table
     // Note:
     // - based off Jquery's Datatables: https://datatables.net/
-    updateTable(selector, columnInfo, data) {
+    updateTable(selector, columnInfo, data, dataTableAtts = {}) {
         let dataTable;
         if (DataTable.isDataTable(selector)) {
             dataTable = $(selector).DataTable();
         } else {
             const dataTableTranslations = Translation.translate("dataTable", { returnObjects: true });
-            dataTable = $(selector).DataTable({
+            dataTableAtts = DictTools.combine([{
                 language: dataTableTranslations,
                 columns: columnInfo,
                 scrollCollapse: true,
                 scrollX: true,
                 scrollY: '400px'
-            });
+            }, dataTableAtts]);
+
+            dataTable = $(selector).DataTable(dataTableAtts);
         }
 
         dataTable.clear();
@@ -65,7 +68,8 @@ export class BaseSearchPage extends BasePage {
         }
 
         this.htmlSelectors = {
-            foodSearchTable: '#foodSearchTable'
+            foodSearchTable: '#foodSearchTable',
+            nutrientTable: '#nutrientTable'
         }
 
         this.htmlElements = {};
@@ -76,6 +80,7 @@ export class BaseSearchPage extends BasePage {
     updateHTMLElements() {
         const elements = {
             searchButton: d3.select("#searchButton"),
+            foodResultContainer: d3.select(".foodResultContainer"),
             foodResultCard: d3.select("#foodResultCard"),
             servingSizeCheckList: d3.select(".servingSizeContainer")
         };
@@ -85,7 +90,7 @@ export class BaseSearchPage extends BasePage {
 
     // updateStaticText: Updates text for the search page
     updateStaticText() {
-
+        d3.select("#nutrientTableTitle").html(Translation.translate("FoodNutrientStats.NutrientTableTitle"));
     }
 
     // setupListeners(): Setups all the initial listeners
@@ -107,7 +112,7 @@ export class BaseSearchPage extends BasePage {
             const rowData = dataTable.row(this).data();
             if (rowData === undefined) return;
 
-            const foodCode = rowData[DataCols.FoodCode];
+            const foodCode = rowData[TableCols.FoodCode];
             self.model.selectedFoodCodes[self.searchOpt] = [foodCode];
 
             const foodSelected = !self.model.foodSelected[self.searchOpt];
@@ -151,32 +156,83 @@ export class BaseSearchPage extends BasePage {
         this.updateSearchTable();
     }
 
-    // showFoodNutrientStats(foodCode): Shows the stats of a particular foods' nutrients
-    showFoodNutrientStats(foodCode) {
-        const foodResultCard = this.htmlElements.foodResultCard;
-        const stats = this.model.getFoodNutrientStats(foodCode);
+    updateNutrientTable() {
+        const translations = Translation.translate("FoodNutrientStats.TableCols", { returnObjects: true });
 
-        if (stats == undefined) {
-            foodResultCard.classed("d-none", true);
-            return;
+        let tableColInfo = [{data: TableCols.NutrientGroup, visible: false}];
+        tableColInfo.push(...NutrientTableCols.map((tableAtt) => {
+            return {title: translations[tableAtt], data: Translation.getDataCol(tableAtt)};
+        }));
+
+        const measureWeightConv = this.model.searchedNutrientData.measureWeightConv;
+        const measureConvLen = measureWeightConv.length;
+
+        for (let i = 0; i < measureConvLen; ++i) {
+            const measureConv = measureWeightConv[i];
+            const measureColTitle = Translation.translate("FoodNutrientStats.ConvertedMeasureCol", {
+                measureName: Translation.translateNum(measureConv[Translation.getDataCol(TableCols.MeasureDescription)]), 
+                convertedMeasure: Translation.translateNum(measureConv[TableCols.MeasureWeight], undefined)
+            });
+
+            const dataCol = Model.getConvertedNutrientColName(i);
+            tableColInfo.push({title: measureColTitle, data: dataCol, name: dataCol, visible: false});
         }
 
-        foodResultCard.classed("d-none", false);
-        foodResultCard.select(".cardHeader .card-title").html(stats.food[Translation.getDataCol(DataCols.FoodDescription)]);
+        const dataTable = this.updateTable(this.htmlSelectors.nutrientTable, tableColInfo, this.model.webSearchedNutrientTable, 
+            {scrollY: false, paging: false, scrollX: false,
+            order: [[0, 'asc']],
+            // rowGroup: {
+            //     dataSrc: TableCols.NutrientGroup
+            // }
+        });
+        return dataTable;
+    }
+
+    updateNutrientTableConvCols(dataTable, ind, show) {
+        const colName = Model.getConvertedNutrientColName(ind);
+        dataTable.column(`${colName}:name`).visible(show); 
+        dataTable.columns.adjust().draw(false); 
+    }
+
+    // showFoodNutrientStats(foodCode): Shows the stats of a particular foods' nutrients
+    showFoodNutrientStats(foodCode) {
+        const self = this;
+
+        const foodResultContainer = this.htmlElements.foodResultContainer;
+        const stats = this.model.getFoodNutrientStats(foodCode);
+        const statsEmpty = stats === undefined;
+
+        foodResultContainer.classed("d-none", statsEmpty);
+        if (statsEmpty) return;
+
+        const foodResultCard = this.htmlElements.foodResultCard;
+        foodResultCard.select(".cardHeader .card-title").html(stats.food[Translation.getDataCol(TableCols.FoodDescription)]);
         foodResultCard.select(".cardHeader .card-subtitle").html(Translation.translate("FoodNutrientStats.SubTitle", { foodCode: foodCode }));
         foodResultCard.select(".cardDetails .card-title").html(Translation.translate("FoodNutrientStats.ServingTitle"));
 
         const servingSizeCheckList = this.htmlElements.servingSizeCheckList;
         servingSizeCheckList.selectAll("*").remove();
 
-        for (const measureConv of stats.measureWeightConv) {
-            const checkboxId = `${this.htmlNames.servingSizeOpt}_${measureConv[DataCols.FoodCode]}_${measureConv[DataCols.MeasureTypeCode]}_${measureConv[DataCols.MeasureCode]}`;
-            const checkboxText = Translation.translate("FoodNutrientStats.ServingSizeOption", 
-                                                       {measureName: Translation.translateNum(measureConv[Translation.getDataCol(DataCols.MeasureDescription)]), 
-                                                        convertedMeasure: Translation.translateNum(measureConv[DataCols.MeasureWeight], undefined)});
+        const measureWeightConv = stats.measureWeightConv;
+        const measureConvLen = measureWeightConv.length;
 
-            this.addCheckbox(servingSizeCheckList, this.htmlNames.servingSizeInput, measureConv, checkboxId, checkboxText);
+        for (let i = 0; i < measureConvLen; ++i) {
+            const measureConv = measureWeightConv[i];
+            const checkboxId = `${this.htmlNames.servingSizeOpt}_${measureConv[TableCols.FoodCode]}_${measureConv[TableCols.MeasureTypeCode]}_${measureConv[TableCols.MeasureCode]}`;
+            const checkboxText = Translation.translate("FoodNutrientStats.ServingSizeOption", 
+                                                       {measureName: Translation.translateNum(measureConv[Translation.getDataCol(TableCols.MeasureDescription)]), 
+                                                        convertedMeasure: Translation.translateNum(measureConv[TableCols.MeasureWeight], undefined)});
+
+            this.addCheckbox(servingSizeCheckList, this.htmlNames.servingSizeInput, [i], checkboxId, checkboxText);
         }
+
+        const dataTable = this.updateNutrientTable(stats);
+
+        this.htmlElements.servingSizeCheckList.selectAll("input[type=checkbox]").on("change", function(measureConvInd) {
+            self.updateNutrientTableConvCols(dataTable, measureConvInd, this.checked);
+        })
+
+        return dataTable;
     }
 
     loadPage() {

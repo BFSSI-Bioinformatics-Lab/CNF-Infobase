@@ -22,6 +22,7 @@ export class SearchByFoodPage extends BaseSearchPage {
     }
 
     updateStaticText() {
+        super.updateStaticText();
         const elements = this.htmlElements;
 
         d3.select("#searchTitle").html(Translation.translate("SearchCriteriaTitle"));

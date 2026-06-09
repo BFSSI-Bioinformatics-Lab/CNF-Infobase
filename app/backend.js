@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols } from "./constants.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols } from "./constants.js";
 import { Translation, TableTools } from "./tools.js";
 
 
@@ -14,6 +14,11 @@ export class Model {
 
         this.foodTable;
         this.measureConvTable;
+        this.nutrientTable;
+
+        this.searchedNutrientData;
+        this.webSearchedNutrientTable;
+        this.pdfSearchedNutrientTable;
     }
 
     initSearchInputs() {
@@ -39,7 +44,7 @@ export class Model {
         }
     }
 
-    loadFoodTable(foodNameTable, foodGroupTable) {
+    async loadFoodTable(foodNameTable, foodGroupTable) {
         this.foodTable = TableTools.dataLeftJoinById(foodNameTable, foodGroupTable, DataCols.FoodGroupCode, DataCols.FoodGroupCode);
         const foodTableData = this.foodTable.data;
         
@@ -56,7 +61,11 @@ export class Model {
         }
     }
 
-    loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable) {
+    static getMeasureWeightConvId(measureWeightConvRow) {
+        return `${measureWeightConvRow[DataCols.FoodCode]}_${measureWeightConvRow[DataCols.MeasureTypeCode]}_${measureWeightConvRow[DataCols.MeasureCode]}`;
+    }
+
+    async loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable) {
         this.measureConvTable = TableTools.dataLeftJoinById(measureWeightConvTable, measureTypeTable, DataCols.MeasureTypeCode, DataCols.MeasureTypeCode);
         this.measureConvTable = TableTools.dataLeftJoinById(this.measureConvTable, measureNameTable, DataCols.MeasureCode, DataCols.MeasureCode);
         const measureConvTableData = this.measureConvTable.data;
@@ -69,6 +78,8 @@ export class Model {
 
         for (let i = 0; i < measureWeightConvTableLen; ++i) {
             const row = measureConvTableData[i];
+            row[TableCols.MeasureWeightConvId] = Model.getMeasureWeightConvId(row);
+
             const foodIndexVal = row[DataCols.FoodCode];
             const currentFoodCodeInd = foodCodeIndex[foodIndexVal];
             
@@ -80,17 +91,53 @@ export class Model {
         }
     }
 
+    async loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable) {
+        this.nutrientTable = TableTools.dataLeftJoinById(nutrientAmtTable, nutrientNameTable, DataCols.NutrientCode, DataCols.NutrientCode);
+        this.nutrientTable = TableTools.dataLeftJoinById(this.nutrientTable, nutrientSrcTable, DataCols.NutrientSrcCode, DataCols.NutrientSrcCode);
+        const nutrientTableData = this.nutrientTable.data;
+
+        const foodCodeIndex = {};
+        const indices = {[DataCols.FoodCode]: foodCodeIndex};
+        this.nutrientTable.indices = indices;
+
+        const nutrientTableDataLen = nutrientTableData.length;
+        
+        for (let i = 0; i < nutrientTableDataLen; ++i) {
+            const row = nutrientTableData[i];
+            row[TableCols.NutrientGroup] = `aaa ${i % 3}`;
+
+            const foodIndexVal = row[DataCols.FoodCode];
+            const currentFoodCodeInd = foodCodeIndex[foodIndexVal];
+
+            if (currentFoodCodeInd == undefined) {
+                foodCodeIndex[foodIndexVal] = [i];
+            } else {
+                foodCodeIndex[foodIndexVal].push(i);
+            }
+        }
+    }
+
     // load(): Initial load of all the required data
     async load() {
-        await Promise.all([this.loadCSV(`data/Food_Name.csv`), 
+        const [foodNameTable, 
+               foodGroupTable, 
+               measureTypeTable, 
+               measureNameTable, 
+               measureWeightConvTable, 
+               nutrientAmtTable, 
+               nutrientNameTable, 
+               nutrientSrcTable] = await Promise.all([this.loadCSV(`data/Food_Name.csv`), 
                            this.loadCSV(`data/CNF_Food_Group.csv`), 
                            this.loadCSV(`data/Measure_Type.csv`),
                            this.loadCSV(`data/Measure_Name.csv`),
-                           this.loadCSV(`data/Measure_Weight_Conversion.csv`)])
-            .then(([foodNameTable, foodGroupTable, measureTypeTable, measureNameTable, measureWeightConvTable]) => {
-                this.loadFoodTable(foodNameTable, foodGroupTable);
-                this.loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable);
-        });
+                           this.loadCSV(`data/Measure_Weight_Conversion.csv`),
+                           this.loadCSV(`data/Nutrient_Amount.csv`),
+                           this.loadCSV(`data/Nutrient_Name.csv`),
+                           this.loadCSV(`data/Nutrient_Source.csv`)]);
+
+        await Promise.all([this.loadFoodTable(foodNameTable, foodGroupTable),
+                           this.loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable),
+                           this.loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable)]);
     }
 
     getRowById(table, indexName, id) {
@@ -143,6 +190,51 @@ export class Model {
         return this.filterFoodSearchTable("", "", selectedFoods[0]);
     }
 
+    static getConvertedNutrientColName(ind) {
+        return `${TableCols.ConvertedNutrientAmount}${ind}`
+    }
+
+    convertNutrientAmounts(nutrientTable, measureWeightConv) {
+        const tableColNames = {};
+        const measureWeightConvLen = measureWeightConv.length;
+        for (let i = 0; i < measureWeightConvLen; ++i) {
+            const row = measureWeightConv[i];
+            tableColNames[row[TableCols.MeasureWeightConvId]] = Model.getConvertedNutrientColName(i);
+        }
+
+        for (const row of nutrientTable) {
+            for (const measureConv of measureWeightConv) {
+                const measureConvId = measureConv[TableCols.MeasureWeightConvId];
+                const colName = tableColNames[measureConvId];
+                const conversionRate = measureConv[DataCols.MeasureWeight];
+                row[colName] = row[DataCols.NutrientAmount] * conversionRate / 100;
+            }
+        }
+
+        return nutrientTable;
+    }
+
+    formatNutrientTable(nutrientTable, measureWeightConvLen) {
+        const convColNames = [];
+        for (let i = 0; i < measureWeightConvLen; ++i) {
+            convColNames.push(Model.getConvertedNutrientColName(i));
+        }
+
+        for (const row of nutrientTable) {
+            const nutrientDecimalPlace = row[DataCols.NutrientDecimalPlace];
+
+            row[DataCols.NutrientAmount] = Translation.translateNum(row[DataCols.NutrientAmount], nutrientDecimalPlace);
+            row[DataCols.NutrientNoOfObservations] = Translation.translateNum(row[DataCols.NutrientNoOfObservations], 0);
+            row[DataCols.NutrientStdErr] = Translation.translateNum(row[DataCols.NutrientStdErr], nutrientDecimalPlace);
+
+            for (const convCol of convColNames) {
+                row[convCol] = Translation.translateNum(row[convCol], nutrientDecimalPlace);
+            }
+        }
+
+        return nutrientTable;
+    }
+
     // getFoodNutrientStats(): Retrives the nutrient data for the selected foods
     getFoodNutrientStats(foodCode) {
         let food = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
@@ -151,6 +243,13 @@ export class Model {
         const measureWeightConv = this.getRowsById(this.measureConvTable, DataCols.FoodCode, foodCode);
         if (measureWeightConv == undefined) return;
 
-        return {measureWeightConv, food};
+        const nutrients = this.getRowsById(this.nutrientTable, DataCols.FoodCode, foodCode);
+        if (nutrients == undefined) return;
+
+        this.webSearchedNutrientTable = this.convertNutrientAmounts(nutrients, measureWeightConv);
+        this.webSearchedNutrientTable = this.formatNutrientTable(this.webSearchedNutrientTable, measureWeightConv.length);
+
+        this.searchedNutrientData = {measureWeightConv, food, nutrients};
+        return this.searchedNutrientData;
     }
 }

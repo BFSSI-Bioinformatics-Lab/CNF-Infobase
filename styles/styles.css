@@ -170,13 +170,24 @@
     padding: 10px 2px;
 }
 
-
 .dataTable th:first-child {
     border-radius: var(--smBorderRadius) 0 0 0;
 }
 
 .dataTable th:last-child {
     border-radius: 0 var(--smBorderRadius) 0 0;
+}
+
+.dtrg-group th {
+    background-color: var(--primaryVariant) !important;
+}
+
+.dtrg-group th:first-child {
+    border-radius: 0;
+}
+
+.dtrg-group th:last-child {
+    border-radius: 0;
 }
 
 .dataTable td {
