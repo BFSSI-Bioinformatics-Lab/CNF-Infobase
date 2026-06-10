@@ -298,6 +298,10 @@
     padding-left: 20px;
 }
 
+.foodResultContainer {
+    padding-top: 80px;
+}
+
 
 /* For small phone screeens */
 @media screen and (max-width: 600px) {
