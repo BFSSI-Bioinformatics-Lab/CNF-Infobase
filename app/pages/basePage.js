@@ -29,7 +29,9 @@ export class BasePage {
                 columns: columnInfo,
                 scrollCollapse: true,
                 scrollX: true,
-                scrollY: '400px'
+                scrollY: '400px',
+                pageLength: 100,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
             }, dataTableAtts]);
 
             dataTable = $(selector).DataTable(dataTableAtts);
@@ -179,9 +181,10 @@ export class BaseSearchPage extends BasePage {
         }
 
         const dataTable = this.updateTable(this.htmlSelectors.nutrientTable, tableColInfo, this.model.webSearchedNutrientTable, 
-            {scrollY: false, paging: false, scrollX: false,
-            order: [[1, 'asc']],
-            orderFixed: {
+            {scrollY: '1500px',
+             pageLength: -1,
+             order: [[1, 'asc']],
+             orderFixed: {
                 pre: [0, 'asc'] // Fix the nutrient group column so when soring, the nutrients only get sorted in their corresponding sections
             },
             rowGroup: {
