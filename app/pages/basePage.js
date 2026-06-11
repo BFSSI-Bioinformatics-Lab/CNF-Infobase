@@ -93,6 +93,7 @@ export class BaseSearchPage extends BasePage {
     // updateStaticText: Updates text for the search page
     updateStaticText() {
         d3.select("#nutrientTableTitle").html(Translation.translate("FoodNutrientStats.NutrientTableTitle"));
+        d3.select("#foodSearchInstructions").html(Translation.translate("SearchTableInstructions"));
     }
 
     // setupListeners(): Setups all the initial listeners
