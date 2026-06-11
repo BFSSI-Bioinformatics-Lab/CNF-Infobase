@@ -100,6 +100,7 @@ const LangEN = {
 
         FoodSearchButton: "Food Search",
 
+        SearchTableInstructions: "Please select (click) on the food item you are interested",
         SearchTableCols: {
             [DataCols.FoodCode]: "Food Code",
             [DataCols.FoodGroupDescription]: "Food Group",
@@ -399,6 +400,8 @@ const LangFR = {
         FoodCodeInputTitle: "Code de l'Aliment",
 
         FoodSearchButton: "Recherche de l'Aliment",
+
+        SearchTableInstructions: REMPLACER_MOI,
 
         SearchTableCols: {
             [DataCols.FoodCode]: "Code de l'Aliment",
