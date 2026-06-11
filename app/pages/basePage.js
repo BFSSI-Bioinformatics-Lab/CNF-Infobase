@@ -181,7 +181,7 @@ export class BaseSearchPage extends BasePage {
         }
 
         const dataTable = this.updateTable(this.htmlSelectors.nutrientTable, tableColInfo, this.model.webSearchedNutrientTable, 
-            {scrollY: '1500px',
+            {scrollY: '1000px',
              pageLength: -1,
              order: [[1, 'asc']],
              orderFixed: {

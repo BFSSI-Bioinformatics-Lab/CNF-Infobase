@@ -217,6 +217,18 @@
     cursor: pointer;
 }
 
+/* Flip the scroll container upside down */
+.dataTables_scroll {
+    transform: rotateX(180deg);
+}
+
+/* Flip the inner elements back so the text reads normally */
+.dataTables_scrollHead, 
+.dataTables_scrollBody, 
+.dataTables_scrollFoot {
+    transform: rotateX(180deg);
+}
+
 #foodSearchTable.foodSelected td {
     background-color: var(--secondary) !important;
     color: white;
@@ -299,7 +311,20 @@
 }
 
 .foodResultContainer {
-    padding-top: 80px;
+    padding: 80px 10% 0 10%;
+    border-radius: var(--borderRadius);
+}
+
+#nutrientTable_wrapper .dataTables_scrollHeadInner,
+#nutrientTable_wrapper .dataTables_scrollHeadInner table,
+#nutrientTable {
+    width: auto !important;
+}
+
+#nutrientTable th, 
+#nutrientTable td,
+#nutrientTable_wrapper th {
+    min-width: 160px !important;
 }
 
 
