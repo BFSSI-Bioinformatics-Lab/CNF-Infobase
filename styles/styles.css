@@ -55,6 +55,8 @@
 
 .searchTab {
     width: 20%;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 
@@ -349,6 +351,11 @@
     .btn {
         font-size: calc(0.6em + 1vw) !important;
         margin: 3px 0;
+    }
+
+    .searchTab {
+        width: 30%;
+        font-size: calc(0.8em + 1vw) !important;
     }
 
     .dt-container .form-select {
