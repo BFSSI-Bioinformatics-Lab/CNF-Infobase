@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, TableCols } from "./constants.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode } from "./constants.js";
 import { Translation, TableTools } from "./tools.js";
 
 
@@ -235,12 +235,25 @@ export class Model {
         return nutrientTable;
     }
 
+    getFoodMeasureWeightConv(foodCode) {
+        let measureWeightConv = this.getRowsById(this.measureConvTable, DataCols.FoodCode, foodCode);
+        if (measureWeightConv == undefined) return;
+
+        // add in a dummy measure for the default 100g of edible portions
+        measureWeightConv.unshift({
+            [DataCols.MeasureCode]: DefaultMeasureCode,
+            [Translation.getDataCol(DataCols.MeasureDescription)]: Translation.translate("FoodNutrientStats.DefaultNutrientMeasure")
+        });
+
+        return measureWeightConv;
+    }
+
     // getFoodNutrientStats(): Retrives the nutrient data for the selected foods
     getFoodNutrientStats(foodCode) {
         let food = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
         if (food == undefined) return;
 
-        const measureWeightConv = this.getRowsById(this.measureConvTable, DataCols.FoodCode, foodCode);
+        let measureWeightConv = this.getFoodMeasureWeightConv(foodCode);
         if (measureWeightConv == undefined) return;
 
         const nutrients = this.getRowsById(this.nutrientTable, DataCols.FoodCode, foodCode);

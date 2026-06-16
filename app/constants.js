@@ -46,6 +46,13 @@ export const TableCols = {...DataCols,
     NutrientGroup: "Nutrient_Group"
 };
 
+// Measure codes to filter out in the app
+export const HiddenMeasureCodes = new Set([
+    "750" // Total Refuse
+]);
+
+// Special Measure Code for 100g of Edible portions (the default measurement)
+export const DefaultMeasureCode = 0;
 
 // The columns to display in the Search By Food table
 export const FoodSearchTableCols = [
@@ -112,11 +119,11 @@ const LangEN = {
             ServingTitle: `Available Serving Size(s)`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
             NutrientTableTitle: `List of nutrient data`,
+            DefaultNutrientMeasure: `Value per 100 g of edible portion`,
 
             TableCols: {
                 [DataCols.NutrientName]: `Nutrient Name`,
                 [DataCols.NutrientUnit]: `Unit`,
-                [DataCols.NutrientAmount]: `Value per 100 g of edible portion`,
                 [DataCols.NutrientNoOfObservations]: `Number of obser­vations`,
                 [DataCols.NutrientStdErr]: `Standard error`,
                 [DataCols.NutrientDataSrc]: `Data source`
@@ -414,11 +421,11 @@ const LangFR = {
             ServingTitle: `Taille(s) de Portion Disponible(s)`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
             NutrientTableTitle: `Liste des valeurs nutritives`,
+            DefaultNutrientMeasure: `Valeur pour 100 g de portion comestible`,
 
             TableCols: {
                 [DataCols.NutrientName]: `Nom de l'élément nutritif`,
                 [DataCols.NutrientUnit]: `Unité`,
-                [DataCols.NutrientAmount]: `Valeur pour 100 g de portion comestible`,
                 [DataCols.NutrientNoOfObservations]: `Nombre d'obser­vations`,
                 [DataCols.NutrientStdErr]: `Écart-type`,
                 [DataCols.NutrientDataSrc]: `Source des données`
