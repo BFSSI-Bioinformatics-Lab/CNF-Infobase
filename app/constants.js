@@ -82,6 +82,7 @@ export const NutrientTableCols = [
 // Different attributes used to search some food/nutrient
 export const SearchAtts = {
     FoodName: "food name",
+    FoodAltName: "food alternative name",
     FoodGroup: "food group",
     FoodCode: "food code"
 }
@@ -110,6 +111,7 @@ const LangEN = {
 
         SearchCriteriaTitle: "Search Criteria",
         FoodNameInputTitle: "Food Name",
+        FoodAltNameInputTitle: "Food Common Name",
         FoodGroupInputTitle: "Food Group",
         FoodCodeInputTitle: "Food Code",
 
@@ -414,6 +416,7 @@ const LangFR = {
 
         SearchCriteriaTitle: "Critères de Recherche",
         FoodNameInputTitle: "Nom de l'Aliment",
+        FoodAltNameInputTitle: REMPLACER_MOI,
         FoodGroupInputTitle: "Groupe de l'Aliment",
         FoodCodeInputTitle: "Code de l'Aliment",
 

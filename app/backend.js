@@ -25,6 +25,7 @@ export class Model {
         return {
             [SearchOpts.SearchByFood]: {
                 [SearchAtts.FoodName]: "",
+                [SearchAtts.FoodAltName]: "",
                 [SearchAtts.FoodGroup]: "",
                 [SearchAtts.FoodCode]: ""
             }
@@ -156,7 +157,7 @@ export class Model {
         return rowInds.map((ind) => table.data[ind]);
     }
 
-    filterFoodSearchTable(foodName, foodGroup, foodCode) {
+    filterFoodSearchTable(foodName, foodAltName, foodGroup, foodCode) {
         let result = this.foodTable.data;
 
         if (foodCode != "") {
@@ -165,10 +166,14 @@ export class Model {
             result = [row];
         }
 
-        if (foodName == "" && foodGroup == "") return result;
+        if (foodName == "" && foodGroup == "" && foodAltName == "") return result;
         
         return result.filter((row) => {
             if (foodName != "" && !row[Translation.getDataCol(DataCols.FoodDescription)].includes(foodName)) {
+                return false;
+            }
+
+            if (foodAltName != "" && !row[Translation.getDataCol(DataCols.FoodAltDescription)].includes(foodAltName)) {
                 return false;
             }
 
@@ -183,7 +188,7 @@ export class Model {
     // getFoodSearchTableData(searchOpt): Retrieves the data for the searched foods 
     getFoodSearchTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
-        return this.filterFoodSearchTable(inputs[SearchAtts.FoodName], inputs[SearchAtts.FoodGroup], inputs[SearchAtts.FoodCode]);
+        return this.filterFoodSearchTable(inputs[SearchAtts.FoodName], inputs[SearchAtts.FoodAltName], inputs[SearchAtts.FoodGroup], inputs[SearchAtts.FoodCode]);
     }
 
     // getFoodSearchSelectedData(searchOpt): Retrieves the data for the selected foods
@@ -191,7 +196,7 @@ export class Model {
         const selectedFoods = this.selectedFoodCodes[searchOpt];
         if (selectedFoods === undefined || selectedFoods.length == 0) return [];
 
-        return this.filterFoodSearchTable("", "", selectedFoods[0]);
+        return this.filterFoodSearchTable("", "", "", selectedFoods[0]);
     }
 
     static getConvertedNutrientColName(ind) {
