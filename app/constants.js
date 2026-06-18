@@ -45,7 +45,10 @@ export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroup
 export const TableCols = {...DataCols,
     ConvertedNutrientAmount: "Nutrient_Converted_",
     MeasureWeightConvId: "Meausre_Weight_Conversion_Id",
-    NutrientGroupOrder: "Nutrient_Group_Order"
+    NutrientGroupOrder: "Nutrient_Group_Order",
+    FoodNameOrder: "Food Name Order",
+    FoodAltNameOrder: "Food Alt Name Order",
+    FoodGroupOrder: "Food Group Order"
 };
 
 // Measure codes to filter out in the app
