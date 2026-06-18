@@ -117,6 +117,7 @@ const LangEN = {
         FoodCodeInputTitle: "Food Code",
 
         FoodSearchButton: "Food Search",
+        FoodSearchResetButton: "Reset",
 
         SearchTableInstructions: "Please select (click) on the food item you are interested",
         SearchTableCols: {
@@ -422,6 +423,7 @@ const LangFR = {
         FoodCodeInputTitle: "Code de l'Aliment",
 
         FoodSearchButton: "Recherche de l'Aliment",
+        FoodSearchResetButton: "Réinitialiser",
 
         SearchTableInstructions: REMPLACER_MOI,
 

@@ -21,6 +21,17 @@ export class Model {
         this.pdfSearchedNutrientTable;
     }
 
+    clearSearchInputs(searchOpt) {
+        if (searchOpt == SearchOpts.SearchByFood) {
+            this.searchInputs[searchOpt] = {
+                [SearchAtts.FoodName]: "",
+                [SearchAtts.FoodAltName]: "",
+                [SearchAtts.FoodGroup]: "",
+                [SearchAtts.FoodCode]: ""
+            }
+        }
+    }
+
     initSearchInputs() {
         return {
             [SearchOpts.SearchByFood]: {
@@ -136,8 +147,6 @@ export class Model {
                 foodCodeIndex[foodIndexVal].push(i);
             }
         }
-
-        console.log(nutrientTableData);
     }
 
     // load(): Initial load of all the required data
