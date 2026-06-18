@@ -17,6 +17,7 @@ export const PageSrc = {
 export const DataCols = {
     FoodCode: "Food_Code",
     FoodDescription: "Food_Description_",
+    FoodAltDescription: "Alternate_Description_",
     FoodGroupCode: "CNF_Food_Group_Code",
     FoodGroupDescription: "CNF_Food_Group_Description_",
     MeasureTypeCode: "Measure_Type_Code",
@@ -36,7 +37,7 @@ export const DataCols = {
 
 // Columns with translations
 export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription, DataCols.MeasureDescription,
-    DataCols.NutrientName, DataCols.NutrientDataSrc
+    DataCols.NutrientName, DataCols.NutrientDataSrc, DataCols.FoodAltDescription
 ]);
 
 // columns used in the table in the app
@@ -59,6 +60,7 @@ export const FoodSearchTableCols = [
     DataCols.FoodCode,
     DataCols.FoodGroupDescription,
     DataCols.FoodDescription,
+    DataCols.FoodAltDescription
 ];
 
 // The columns to display in the Nutrient table
@@ -112,6 +114,7 @@ const LangEN = {
             [DataCols.FoodCode]: "Food Code",
             [DataCols.FoodGroupDescription]: "Food Group",
             [DataCols.FoodDescription]: "Food Name",
+            [DataCols.FoodAltDescription]: "Food Alternative Name"
         },
 
         FoodNutrientStats: {
@@ -414,6 +417,7 @@ const LangFR = {
             [DataCols.FoodCode]: "Code de l'Aliment",
             [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
             [DataCols.FoodDescription]: "Nom de l'Aliment",
+            [DataCols.FoodAltDescription]: "Nom Alternatif de l'Aliment"
         },
 
         FoodNutrientStats: {
