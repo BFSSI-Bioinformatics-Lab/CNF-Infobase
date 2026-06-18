@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode } from "./constants.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes } from "./constants.js";
 import { Translation, TableTools } from "./tools.js";
 
 
@@ -61,8 +61,12 @@ export class Model {
         }
     }
 
-    static getMeasureWeightConvId(measureWeightConvRow) {
-        return `${measureWeightConvRow[DataCols.FoodCode]}_${measureWeightConvRow[DataCols.MeasureTypeCode]}_${measureWeightConvRow[DataCols.MeasureCode]}`;
+    static getMeasureWeigthConvId(foodCode, measureTypeCode, measureCode) {
+        return `${foodCode}_${measureTypeCode}_${measureCode}`;
+    }
+
+    static getMeasureWeightConvIdFromRow(measureWeightConvRow) {
+        return Model.getMeasureWeigthConvId(measureWeightConvRow[DataCols.FoodCode], measureWeightConvRow[DataCols.MeasureTypeCode], measureWeightConvRow[DataCols.MeasureCode]);
     }
 
     async loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable) {
@@ -78,7 +82,7 @@ export class Model {
 
         for (let i = 0; i < measureWeightConvTableLen; ++i) {
             const row = measureConvTableData[i];
-            row[TableCols.MeasureWeightConvId] = Model.getMeasureWeightConvId(row);
+            row[TableCols.MeasureWeightConvId] = Model.getMeasureWeightConvIdFromRow(row);
 
             const foodIndexVal = row[DataCols.FoodCode];
             const currentFoodCodeInd = foodCodeIndex[foodIndexVal];
@@ -242,7 +246,9 @@ export class Model {
         // add in a dummy measure for the default 100g of edible portions
         measureWeightConv.unshift({
             [DataCols.MeasureCode]: DefaultMeasureCode,
-            [Translation.getDataCol(DataCols.MeasureDescription)]: Translation.translate("FoodNutrientStats.DefaultNutrientMeasure")
+            [Translation.getDataCol(DataCols.MeasureDescription)]: Translation.translate("FoodNutrientStats.DefaultNutrientMeasure"),
+            [TableCols.MeasureWeightConvId]: Model.getMeasureWeigthConvId(DataCols.FoodCode, MeasureTypeCodes.Default, DefaultMeasureCode),
+            [DataCols.MeasureWeight]: 100
         });
 
         return measureWeightConv;

@@ -55,6 +55,12 @@ export const HiddenMeasureCodes = new Set([
 // Special Measure Code for 100g of Edible portions (the default measurement)
 export const DefaultMeasureCode = 0;
 
+// Some specific needed Measure Type Codes
+export const MeasureTypeCodes = {
+    Default: 0,
+    Refuse: 3
+};
+
 // The columns to display in the Search By Food table
 export const FoodSearchTableCols = [
     DataCols.FoodCode,
@@ -120,7 +126,9 @@ const LangEN = {
         FoodNutrientStats: {
             SubTitle: `Food Code: {{ foodCode }}`,
             ServingTitle: `Available Serving Size(s)`,
+            ServingRefuseTitle: `Refuse`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
+            ServingRefuseListItem: `{{ measureName }} {{ convertedMeasure }} %`,
             NutrientTableTitle: `List of nutrient data`,
             DefaultNutrientMeasure: `Value per 100 g of edible portion`,
 
@@ -423,7 +431,9 @@ const LangFR = {
         FoodNutrientStats: {
             SubTitle: `Code de l'Aliment: {{ foodCode }}`,
             ServingTitle: `Taille(s) de Portion Disponible(s)`,
+            ServingRefuseTitle: `Portion Non Comestible`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
+            ServingRefuseListItem: `{{ measureName }} {{ convertedMeasure }} %`,
             NutrientTableTitle: `Liste des valeurs nutritives`,
             DefaultNutrientMeasure: `Valeur pour 100 g de portion comestible`,
 
