@@ -96,7 +96,24 @@ export class Model {
         }
     }
 
-    async loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable) {
+    async loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable, nutrientGroupTable) {
+        // add the order nutrient group ordering
+        const nutrientGroupData = nutrientGroupTable.data;
+        let currentNutrientGroupInd = 0;
+        const nutrientGroupOrder = {};
+
+        for (const row of nutrientGroupData) {
+            const nutrientGroup = row[DataCols.NutrientGroup];
+            if (nutrientGroupOrder[nutrientGroup] === undefined) {
+                nutrientGroupOrder[nutrientGroup] = currentNutrientGroupInd;
+                currentNutrientGroupInd++;
+            }
+
+            row[TableCols.NutrientGroupOrder] = nutrientGroupOrder[nutrientGroup];
+        }
+
+        // join the different parts of the nutrients
+        nutrientNameTable = TableTools.dataLeftJoinById(nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
         this.nutrientTable = TableTools.dataLeftJoinById(nutrientAmtTable, nutrientNameTable, DataCols.NutrientCode, DataCols.NutrientCode);
         this.nutrientTable = TableTools.dataLeftJoinById(this.nutrientTable, nutrientSrcTable, DataCols.NutrientSrcCode, DataCols.NutrientSrcCode);
         const nutrientTableData = this.nutrientTable.data;
@@ -109,7 +126,6 @@ export class Model {
         
         for (let i = 0; i < nutrientTableDataLen; ++i) {
             const row = nutrientTableData[i];
-            row[TableCols.NutrientGroup] = `Group ${i % 3}`;
 
             const foodIndexVal = row[DataCols.FoodCode];
             const currentFoodCodeInd = foodCodeIndex[foodIndexVal];
@@ -120,6 +136,8 @@ export class Model {
                 foodCodeIndex[foodIndexVal].push(i);
             }
         }
+
+        console.log(nutrientTableData);
     }
 
     // load(): Initial load of all the required data
@@ -131,18 +149,20 @@ export class Model {
                measureWeightConvTable, 
                nutrientAmtTable, 
                nutrientNameTable, 
-               nutrientSrcTable] = await Promise.all([this.loadCSV(`data/Food_Name.csv`), 
+               nutrientSrcTable,
+               nutrientGroupTable] = await Promise.all([this.loadCSV(`data/Food_Name.csv`), 
                            this.loadCSV(`data/CNF_Food_Group.csv`), 
                            this.loadCSV(`data/Measure_Type.csv`),
                            this.loadCSV(`data/Measure_Name.csv`),
                            this.loadCSV(`data/Measure_Weight_Conversion.csv`),
                            this.loadCSV(`data/Nutrient_Amount.csv`),
                            this.loadCSV(`data/Nutrient_Name.csv`),
-                           this.loadCSV(`data/Nutrient_Source.csv`)]);
+                           this.loadCSV(`data/Nutrient_Source.csv`),
+                           this.loadCSV(`data/Nutrients and grouping_CNF_2026.csv`)]);
 
         await Promise.all([this.loadFoodTable(foodNameTable, foodGroupTable),
                            this.loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable),
-                           this.loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable)]);
+                           this.loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable, nutrientGroupTable)]);
     }
 
     getRowById(table, indexName, id) {
