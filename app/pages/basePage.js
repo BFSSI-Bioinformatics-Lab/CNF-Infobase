@@ -146,11 +146,24 @@ export class BaseSearchPage extends BasePage {
 
         if (tableData !== undefined) {
             const translations = Translation.translate("SearchTableCols",{ returnObjects: true });
-            const tableColInfo = FoodSearchTableCols.map((tableAtt) => {
-                return {title: translations[tableAtt], data: Translation.getDataCol(tableAtt)};
-            });
+            
+            let tableColInfo = [{data: TableCols.FoodGroupOrder, visible: false},
+                                {data: TableCols.FoodNameOrder, visible: false},
+                                {data: TableCols.FoodAltNameOrder, visible: false}
+            ];
 
-            const dataTable = this.updateTable(this.htmlSelectors.foodSearchTable, tableColInfo, tableData);
+            for (const tableAtt of FoodSearchTableCols) {
+                tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
+            }
+
+            const dataTable = this.updateTable(this.htmlSelectors.foodSearchTable, tableColInfo, tableData,  
+                {orderFixed: {
+                    pre: [
+                        [0, "asc"],
+                        [1, "asc"],
+                        [2, "asc"]
+                    ]
+                }});
             return dataTable;
         }
     }

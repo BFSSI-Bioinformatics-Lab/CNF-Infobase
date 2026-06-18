@@ -70,6 +70,10 @@ export class Model {
             const indexVal = row[DataCols.FoodCode]
             this.assertFoodCodeIndUnique(foodCodeIndex, indexVal);
             foodCodeIndex[indexVal] = [i];
+
+            row[TableCols.FoodNameOrder] = Infinity;
+            row[TableCols.FoodGroupOrder] = Infinity;
+            row[TableCols.FoodAltNameOrder] = Infinity;
         }
     }
 
@@ -196,22 +200,39 @@ export class Model {
         }
 
         if (foodName == "" && foodGroup == "" && foodAltName == "") return result;
+
+        const foodNamePattern = (foodName != "") ? new RegExp(foodName, "i") : undefined;
+        const foodAltNamePattern = (foodAltName != "") ? new RegExp(foodAltName, "i") : undefined;
+        const foodGroupPattern = (foodGroup != "") ? new RegExp(foodGroup, "i") : undefined;
         
-        return result.filter((row) => {
-            if (foodName != "" && !row[Translation.getDataCol(DataCols.FoodDescription)].includes(foodName)) {
-                return false;
+        result = result.filter((row) => {
+            let foodNameIndex = Infinity;
+            let foodAltNameIndex = Infinity;
+            let foodGroupIndex = Infinity;
+
+            if (foodName != "") {
+                foodNameIndex = row[Translation.getDataCol(DataCols.FoodDescription)].search(foodNamePattern);
+                if (foodNameIndex == -1) return false;
             }
 
-            if (foodAltName != "" && !row[Translation.getDataCol(DataCols.FoodAltDescription)].includes(foodAltName)) {
-                return false;
+            if (foodAltName != "") {
+                foodAltNameIndex = row[Translation.getDataCol(DataCols.FoodAltDescription)].search(foodAltNamePattern);
+                if (foodAltNameIndex == -1) return false;
             }
 
-            if (foodGroup != "" && !row[Translation.getDataCol(DataCols.FoodGroupDescription)].includes(foodGroup)) {
-                return false;
+            if (foodGroup != "") {
+                foodGroupIndex = row[Translation.getDataCol(DataCols.FoodGroupDescription)].search(foodGroupPattern);
+                if (foodGroupIndex == -1) return false;
             }
+
+            row[TableCols.FoodNameOrder] = foodNameIndex;
+            row[TableCols.FoodAltNameOrder] = foodAltNameIndex;
+            row[TableCols.FoodGroupOrder] = foodGroupIndex;
 
             return true;
         });
+
+        return result;
     }
 
     // getFoodSearchTableData(searchOpt): Retrieves the data for the searched foods 
