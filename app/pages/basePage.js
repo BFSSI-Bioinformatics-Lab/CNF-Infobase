@@ -155,13 +155,6 @@ export class BaseSearchPage extends BasePage {
     }
 
     submitSearch() {
-        const elements = this.htmlElements;
-        const inputs = this.model.searchInputs[this.searchOpt]; 
-
-        inputs[SearchAtts.FoodName] = elements.foodNameInput.property("value");
-        inputs[SearchAtts.FoodGroup] = elements.foodGroupInput.property("value");
-        inputs[SearchAtts.FoodCode] = elements.foodCodeInput.property("value");
-
         this.updateSearchTable();
     }
 
