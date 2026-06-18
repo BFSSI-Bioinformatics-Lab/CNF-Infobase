@@ -82,6 +82,7 @@ export class BaseSearchPage extends BasePage {
     updateHTMLElements() {
         const elements = {
             searchButton: d3.select("#searchButton"),
+            resetSearchButton: d3.select("#resetButton"),
             foodResultContainer: d3.select(".foodResultContainer"),
             foodResultCard: d3.select("#foodResultCard"),
             servingSizeCheckList: d3.select(".servingSizeContainer"),
@@ -152,6 +153,14 @@ export class BaseSearchPage extends BasePage {
             const dataTable = this.updateTable(this.htmlSelectors.foodSearchTable, tableColInfo, tableData);
             return dataTable;
         }
+    }
+
+    clearSearch() {
+        this.updateSearchTable();
+    }
+
+    syncInputs() {
+
     }
 
     submitSearch() {

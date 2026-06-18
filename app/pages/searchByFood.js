@@ -35,6 +35,7 @@ export class SearchByFoodPage extends BaseSearchPage {
         elements.foodGroupInputContainer.select("label").html(Translation.translate("FoodGroupInputTitle"));
         elements.foodCodeInputContainer.select("label").html(Translation.translate("FoodCodeInputTitle"));
         elements.searchButton.attr("value", Translation.translate("FoodSearchButton"));
+        elements.resetSearchButton.html(Translation.translate("FoodSearchResetButton"));
     }
 
     setupListeners() {
@@ -44,6 +45,16 @@ export class SearchByFoodPage extends BaseSearchPage {
             this.htmlElements.searchTable.removeClass(this.htmlNames.foodSelected);
             this.submitSearch(); 
         });
+
+        elements.resetSearchButton.on("click", () => {
+            this.clearSearch();
+        })
+    }
+
+    clearSearch() {
+        this.model.clearSearchInputs(this.searchOpt);
+        this.syncInputs();
+        super.clearSearch();
     }
 
     submitSearch() {
@@ -58,7 +69,7 @@ export class SearchByFoodPage extends BaseSearchPage {
         super.submitSearch();
     }
 
-    loadPageInputs() {
+    syncInputs() {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[SearchOpts.SearchByFood];
 
@@ -66,7 +77,10 @@ export class SearchByFoodPage extends BaseSearchPage {
         elements.foodAltNameInput.property("value", inputs[SearchAtts.FoodAltName]);
         elements.foodGroupInput.property("value", inputs[SearchAtts.FoodGroup]);
         elements.foodCodeInput.property("value", inputs[SearchAtts.FoodCode]);
+    }
 
+    loadPageInputs() {
+        this.syncInputs();
 
         const selectedFoodCodes = this.model.selectedFoodCodes[this.searchOpt];
         if (selectedFoodCodes === undefined || selectedFoodCodes.length == 0) return;
