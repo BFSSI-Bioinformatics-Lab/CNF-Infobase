@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, TableCols } from "./constants.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes } from "./constants.js";
 import { Translation, TableTools } from "./tools.js";
 
 
@@ -61,8 +61,12 @@ export class Model {
         }
     }
 
-    static getMeasureWeightConvId(measureWeightConvRow) {
-        return `${measureWeightConvRow[DataCols.FoodCode]}_${measureWeightConvRow[DataCols.MeasureTypeCode]}_${measureWeightConvRow[DataCols.MeasureCode]}`;
+    static getMeasureWeigthConvId(foodCode, measureTypeCode, measureCode) {
+        return `${foodCode}_${measureTypeCode}_${measureCode}`;
+    }
+
+    static getMeasureWeightConvIdFromRow(measureWeightConvRow) {
+        return Model.getMeasureWeigthConvId(measureWeightConvRow[DataCols.FoodCode], measureWeightConvRow[DataCols.MeasureTypeCode], measureWeightConvRow[DataCols.MeasureCode]);
     }
 
     async loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable) {
@@ -78,7 +82,7 @@ export class Model {
 
         for (let i = 0; i < measureWeightConvTableLen; ++i) {
             const row = measureConvTableData[i];
-            row[TableCols.MeasureWeightConvId] = Model.getMeasureWeightConvId(row);
+            row[TableCols.MeasureWeightConvId] = Model.getMeasureWeightConvIdFromRow(row);
 
             const foodIndexVal = row[DataCols.FoodCode];
             const currentFoodCodeInd = foodCodeIndex[foodIndexVal];
@@ -235,12 +239,27 @@ export class Model {
         return nutrientTable;
     }
 
+    getFoodMeasureWeightConv(foodCode) {
+        let measureWeightConv = this.getRowsById(this.measureConvTable, DataCols.FoodCode, foodCode);
+        if (measureWeightConv == undefined) return;
+
+        // add in a dummy measure for the default 100g of edible portions
+        measureWeightConv.unshift({
+            [DataCols.MeasureCode]: DefaultMeasureCode,
+            [Translation.getDataCol(DataCols.MeasureDescription)]: Translation.translate("FoodNutrientStats.DefaultNutrientMeasure"),
+            [TableCols.MeasureWeightConvId]: Model.getMeasureWeigthConvId(DataCols.FoodCode, MeasureTypeCodes.Default, DefaultMeasureCode),
+            [DataCols.MeasureWeight]: 100
+        });
+
+        return measureWeightConv;
+    }
+
     // getFoodNutrientStats(): Retrives the nutrient data for the selected foods
     getFoodNutrientStats(foodCode) {
         let food = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
         if (food == undefined) return;
 
-        const measureWeightConv = this.getRowsById(this.measureConvTable, DataCols.FoodCode, foodCode);
+        let measureWeightConv = this.getFoodMeasureWeightConv(foodCode);
         if (measureWeightConv == undefined) return;
 
         const nutrients = this.getRowsById(this.nutrientTable, DataCols.FoodCode, foodCode);
