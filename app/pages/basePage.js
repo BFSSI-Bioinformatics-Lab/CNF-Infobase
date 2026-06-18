@@ -161,7 +161,7 @@ export class BaseSearchPage extends BasePage {
     updateNutrientTable() {
         const translations = Translation.translate("FoodNutrientStats.TableCols", { returnObjects: true });
 
-        let tableColInfo = [{data: TableCols.NutrientGroup, visible: false}];
+        let tableColInfo = [{data: TableCols.NutrientGroupOrder, visible: false}];
         tableColInfo.push(...NutrientTableCols.map((tableAtt) => {
             return {title: translations[tableAtt], data: Translation.getDataCol(tableAtt)};
         }));
@@ -187,7 +187,7 @@ export class BaseSearchPage extends BasePage {
              pageLength: -1,
              order: [[1, 'asc']],
              orderFixed: {
-                pre: [0, 'asc'] // Fix the nutrient group column so when soring, the nutrients only get sorted in their corresponding sections
+                pre: [0, 'asc'] // Fix the nutrient group column so when sorting, the nutrients only get sorted in their corresponding sections
             },
             rowGroup: {
                 dataSrc: TableCols.NutrientGroup
