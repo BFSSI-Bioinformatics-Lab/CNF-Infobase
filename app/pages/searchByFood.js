@@ -7,6 +7,7 @@ import { BaseSearchPage } from "./basePage.js";
 export class SearchByFoodPage extends BaseSearchPage {
     constructor(model, app) {
         super(model, app, SearchOpts.SearchByFood);
+        this.htmlSelectors.foodGroupInput = "#foodGroupInput";
     }
 
     updateHTMLElements() {
@@ -20,7 +21,6 @@ export class SearchByFoodPage extends BaseSearchPage {
 
         elements.foodNameInput = elements.foodNameInputContainer.select("input");
         elements.foodAltNameInput = elements.foodAltNameInputContainer.select("input");
-        elements.foodGroupInput = elements.foodGroupInputContainer.select("input");
         elements.foodCodeInput = elements.foodCodeInputContainer.select("input");
     }
 
@@ -63,23 +63,36 @@ export class SearchByFoodPage extends BaseSearchPage {
 
         inputs[SearchAtts.FoodName] = elements.foodNameInput.property("value");
         inputs[SearchAtts.FoodAltName] = elements.foodAltNameInput.property("value");
-        inputs[SearchAtts.FoodGroup] = elements.foodGroupInput.property("value");
         inputs[SearchAtts.FoodCode] = elements.foodCodeInput.property("value");
+
+        const foodGroups = $(this.htmlSelectors.foodGroupInput).selectpicker('val');
+        inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
+
+        console.log(inputs[SearchAtts.FoodGroup]," AND ", foodGroups);
 
         super.submitSearch();
     }
 
     syncInputs() {
         const elements = this.htmlElements;
-        const inputs = this.model.searchInputs[SearchOpts.SearchByFood];
+        const inputs = this.model.searchInputs[this.searchOpt];
 
         elements.foodNameInput.property("value", inputs[SearchAtts.FoodName]);
         elements.foodAltNameInput.property("value", inputs[SearchAtts.FoodAltName]);
-        elements.foodGroupInput.property("value", inputs[SearchAtts.FoodGroup]);
+        $(this.htmlSelectors.foodGroupInput).selectpicker('val', [inputs[SearchAtts.FoodGroup]]);
         elements.foodCodeInput.property("value", inputs[SearchAtts.FoodCode]);
     }
 
     loadPageInputs() {
+        const inputs = this.model.searchInputs[this.searchOpt];
+        const selections = this.model.searchSelections[this.searchOpt];
+
+        // add in the food groups
+        this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
+                                   selections: selections[SearchAtts.FoodGroup], 
+                                   inputs: new Set([inputs[SearchAtts.FoodGroup]]),
+                                   noneSelectedText: Translation.translate("NoneSelected")});
+
         this.syncInputs();
 
         const selectedFoodCodes = this.model.selectedFoodCodes[this.searchOpt];

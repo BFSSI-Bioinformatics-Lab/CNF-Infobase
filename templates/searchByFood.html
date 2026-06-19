@@ -9,7 +9,7 @@ Purpose: Defines the page for searching by food
         <h3 id="searchTitle"></h3>
 
         <fieldset class="pb-5 border-bottom">
-            <div class="searchInputContainer d-flex flex-column flex-md-row justify-content-around mrgn-bttm-lg">
+            <div class="searchInputContainer d-flex flex-wrap gap-5 justify-content-around mrgn-bttm-lg">
                 <div class="form-group" id="foodNameInputContainer">
                     <label for="foodNameInput"></label>
                     <input type="text" class="form-control" id="foodNameInput">
@@ -22,7 +22,8 @@ Purpose: Defines the page for searching by food
 
                 <div class="form-group" id="foodGroupInputContainer">
                     <label for="foodGroupInput"></label>
-                    <input type="text" class="form-control" id="foodGroupInput">
+                    <select class="singleOptSelect" multiple data-actions-box="true" data-max-options="1" data-container="body" id="foodGroupInput">
+                    </select>
                 </div>
 
                 <div class="form-group" id="foodCodeInputContainer">

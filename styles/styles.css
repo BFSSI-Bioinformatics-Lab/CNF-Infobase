@@ -290,6 +290,49 @@
 }
 
 /* =================================================== */
+/* =============== MultiSelect ======================= */
+
+/* Force the inner list container to take up full horizontal space */
+.bootstrap-select .dropdown-menu .inner[id^="bs-select-"] {
+    width: 100% !important;
+    min-width: 100% !important;
+}
+
+.singleOptSelect .bs-select-all {
+    display: none;
+}
+
+.singleOptSelect .bs-deselect-all {
+    width: 100% !important;
+    border-radius: var(--smBorderRadius) !important;
+}
+
+.bootstrap-select > .dropdown-toggle.bs-placeholder {
+    color: var(--secondary);
+    background-color: var(--surface);
+    transition: var(--defaultTransition);
+}
+
+.bootstrap-select > .dropdown-toggle.bs-placeholder:hover {
+    color: var(--secondaryHover);
+}
+
+.bs-deselect-all {
+    --bs-btn-bg: var(--primary);
+    --bs-btn-color: var(--onPrimary);
+    --bs-btn-border-color: var(--primary);
+    --bs-btn-active-bg: var(--surface);
+}
+
+.dropdown-toggle {
+    --bs-btn-color: var(--fontColour);
+}
+
+.bootstrap-select .form-control {
+    margin-bottom: 15px;
+}
+
+/* =================================================== */
 
 
 .leftSearchTab {
@@ -302,6 +345,11 @@
 
 .rightSearchTab {
     border-radius: 0 var(--borderRadius) var(--borderRadius) 0;
+}
+
+#foodGroupInputContainer {
+    display: flex;
+    flex-direction: column;
 }
 
 #foodResultCard .servingSizeContainer label  {

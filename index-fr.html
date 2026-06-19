@@ -11,6 +11,13 @@
         <meta name="description"
               content="REMPLACER MOI: Description">
 
+        <!-- JQuery -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+        <!-- Popper.js: Needed for the multiselect widgets -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+
+        <!-- Bootstrap -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" crossorigin="anonymous">
 
@@ -20,10 +27,13 @@
         <link rel="stylesheet" href="./static/GCWeb2/css/theme.min.css">
         <link rel="stylesheet" href="./static/css/global.css">
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+        <!-- Jquery Datatables: https://datatables.net -->
         <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.1.8/rg-1.6.0/datatables.min.css" type="text/css" crossorigin="anonymous">
         <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.1.8/rg-1.6.0/datatables.min.js"></script>
+
+        <!-- Multiselect widget: https://developer.snapappointments.com/bootstrap-select/ -->
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/2.0.0-beta1/css/bootstrap-select.min.css" crossorigin="anonymous">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/2.0.0-beta1/js/bootstrap-select.min.js"></script>
 
         <noscript>
             <link rel="stylesheet" href=".static/wet-boew/css/noscript.min.css"/>
@@ -68,7 +78,7 @@
                         <div class="form-group">
                             <label for="wb-srch-q" class="wb-inv">Rechercher dans Canada.ca</label>
                             <input id="wb-srch-q" list="wb-srch-q-ac" class="wb-srch-q form-control" name="q" type="search"
-                                   value="" size="34" maxlength="170" placeholder="Rechercher dans Canada.ca<">
+                                   value="" size="34" maxlength="170" placeholder="Rechercher dans Canada.ca">
                             <datalist id="wb-srch-q-ac">
                             </datalist>
                         </div>
@@ -291,8 +301,12 @@
     <![endif]-->
     <script src="./static/GCWeb/js/theme.min.js"></script>
     <script src="./static/js/main.js"></script>
+
+    <!-- I18Next: Translations: https://www.i18next.com/ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/23.7.19/i18next.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-browser-languagedetector/7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
+
+    <!-- HTML Entities-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.min.js"></script>
 
     <script type="module" src="./app/app.js"></script>
