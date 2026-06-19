@@ -433,8 +433,8 @@ const LangFR = {
         FoodSearchResetButton: "Réinitialiser",
 
         NoneSelected: "Aucune Sélectionnée",
-        SelectAll: REMPLACER_MOI,
-        DeselectAll: REMPLACER_MOI,
+        SelectAll: "Tout Sélectionner",
+        DeselectAll: "Tout Désélectionner",
 
         SearchTableInstructions: REMPLACER_MOI,
 
