@@ -122,6 +122,10 @@ const LangEN = {
         FoodSearchButton: "Food Search",
         FoodSearchResetButton: "Reset",
 
+        NoneSelected: "None Selected",
+        SelectAll: "Select All",
+        DeselectAll: "Deselect All",
+
         SearchTableInstructions: "Please select (click) on the food item you are interested",
         SearchTableCols: {
             [DataCols.FoodCode]: "Food Code",
@@ -427,6 +431,10 @@ const LangFR = {
 
         FoodSearchButton: "Recherche de l'Aliment",
         FoodSearchResetButton: "Réinitialiser",
+
+        NoneSelected: "Aucune Sélectionnée",
+        SelectAll: REMPLACER_MOI,
+        DeselectAll: REMPLACER_MOI,
 
         SearchTableInstructions: REMPLACER_MOI,
 

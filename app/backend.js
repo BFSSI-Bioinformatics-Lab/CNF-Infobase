@@ -5,6 +5,7 @@ import { Translation, TableTools } from "./tools.js";
 export class Model {
     constructor() {
         this.searchOpt = SearchOpts.SearchByFood;
+        this.searchSelections = this.initSearchSelections();
         this.searchInputs = this.initSearchInputs();
         this.selectedFoodCodes = {};
         this.foodSelected = {
@@ -13,6 +14,7 @@ export class Model {
         };
 
         this.foodTable;
+        this.foodGroupTable;
         this.measureConvTable;
         this.nutrientTable;
 
@@ -43,6 +45,14 @@ export class Model {
         };
     }
 
+    initSearchSelections() {
+        return {
+            [SearchOpts.SearchByFood]: {
+                [SearchAtts.FoodGroup]: new Set()
+            }
+        }
+    }
+
     // loadCSV(file): Loads the table and its columns from a CSV file
     async loadCSV(file) {
         const data = await d3.csv(file);
@@ -57,6 +67,9 @@ export class Model {
     }
 
     async loadFoodTable(foodNameTable, foodGroupTable) {
+        this.foodGroupTable = foodGroupTable;
+        this.searchSelections[SearchOpts.SearchByFood][SearchAtts.FoodGroup] = this.getFoodGroups();
+
         this.foodTable = TableTools.dataLeftJoinById(foodNameTable, foodGroupTable, DataCols.FoodGroupCode, DataCols.FoodGroupCode);
         const foodTableData = this.foodTable.data;
         
@@ -325,5 +338,10 @@ export class Model {
 
         this.searchedNutrientData = {measureWeightConv, food, nutrients};
         return this.searchedNutrientData;
+    }
+
+    getFoodGroups() {
+        let result = this.foodGroupTable.data.map((row) => row[Translation.getDataCol(DataCols.FoodGroupDescription)]);
+        return new Set(result);
     }
 }

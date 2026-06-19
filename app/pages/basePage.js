@@ -57,6 +57,43 @@ export class BasePage {
         checkboxLabel.attr("for", checkboxId);
         checkboxLabel.html(checkboxText);
     }
+
+    // updateDropdownSelect(dropdownSelector, selections, inputs, onChange, translations): Updates the selections for the dropdown select widget
+    updateDropdownSelect({dropdownSelector, selections, inputs, onChange = undefined, noneSelectedText = ""} = {}) {
+        // destroy the select picker, so that when adding the new selections
+        //  to the dropdown, the dropdown will not fire extra events
+        let dropdown = $(dropdownSelector);
+        dropdown.selectpicker('destroy');
+
+        const orderedSelections = Array.from(selections);
+        orderedSelections.sort();
+
+        d3.select(dropdownSelector)
+            .html("")
+            .selectAll("option")
+            .data(orderedSelections)
+            .enter()
+            .append("option")
+            .text((d) => d);
+
+        dropdown = $(dropdownSelector).selectpicker({
+            deselectAllText: Translation.translate("DeselectAll"), 
+            selectAllText: Translation.translate("SelectAll"),
+            container: 'body',
+            noneSelectedText});
+        
+        if (orderedSelections.length == inputs.size) {
+            dropdown.selectpicker('selectAll');
+        } else {
+            dropdown.selectpicker('val', Array.from(inputs));
+        }
+
+        dropdown.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            if (onChange !== undefined) {
+                onChange(dropdown.val());
+            }
+        });
+    }
 }
 
 
@@ -289,6 +326,7 @@ export class BaseSearchPage extends BasePage {
     }
 
     loadPage() {
+        super.loadPage();
         this.updateHTMLElements();
         this.updateStaticText();
         this.setupListeners();
