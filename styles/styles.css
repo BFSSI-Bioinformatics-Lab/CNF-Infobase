@@ -361,7 +361,6 @@
 }
 
 .foodResultContainer {
-    padding: 80px 10% 0 10%;
     border-radius: var(--borderRadius);
 }
 
@@ -411,10 +410,30 @@
     }
 
     #foodResultCard .servingSizeContainer label  {
-        font-size: calc(0.8em + 1vw) !important;
+        font-size: calc(0.6em + 1vw) !important;
     }
 
     .dt-paging-button .page-link {
         font-size: calc(0.6em + 1vw) !important;
     }
+}
+
+
+/* Extra larger break points for very wide screens */
+@media screen and (min-width: 1600px) {
+  .foodResultContainer {
+    width: 1520px;
+  }
+}
+
+@media screen and (min-width: 1800px) {
+  .foodResultContainer {
+    width: 1720px;
+  }
+}
+
+@media screen and (min-width: 2000px) {
+  .foodResultContainer {
+    width: 1920px;
+  }
 }
