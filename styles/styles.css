@@ -332,6 +332,22 @@
     margin-bottom: 15px;
 }
 
+.bootstrap-select .bs-actionsbox {
+    overflow: visible !important;
+}
+
+.bootstrap-select .bs-actionsbox .btn-group {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.bootstrap-select .bs-actionsbox .btn-group .btn {
+    padding-top: 0.375rem !important;
+    padding-bottom: 0.375rem !important;
+    line-height: normal !important;
+    height: auto !important;
+}
+
 /* =================================================== */
 
 
@@ -415,6 +431,10 @@
 
     .dt-paging-button .page-link {
         font-size: calc(0.6em + 1vw) !important;
+    }
+
+    .dropdown-menu {
+        font-size: calc(0.7em + 1vw) !important;
     }
 }
 
