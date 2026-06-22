@@ -249,7 +249,17 @@ export class BaseSearchPage extends BasePage {
                 pre: [0, 'asc'] // Fix the nutrient group column so when sorting, the nutrients only get sorted in their corresponding sections
             },
             rowGroup: {
-                dataSrc: TableCols.NutrientGroup
+                dataSrc: TableCols.NutrientGroup,
+                startRender: function (rows, group) {
+                    var stickyWrapper = $('<div class="dtrg-sticky-window"/>')
+                        .append($('<span class="dtrg-sticky-text"/>').text(group));
+
+                    return $('<tr class="dtrg-group dtrg-start dtrg-level-0"/>')
+                        .append(
+                            $('<th colspan="6" scope="row"/>')
+                                .append(stickyWrapper)
+                        );
+                }
             }
         });
         return dataTable;

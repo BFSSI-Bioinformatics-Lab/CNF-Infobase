@@ -236,6 +236,35 @@
     color: white;
 }
 
+/* ----- row group ----- */
+/* Make row group horizontal sticky */
+
+tr.dtrg-group th {
+    padding: 0 !important;
+}
+
+tr.dtrg-group th .dtrg-sticky-window {
+    position: sticky !important;
+    left: 0;
+    width: 100%;
+    max-width: calc(100vw - 40px);
+    
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0;
+    box-sizing: border-box;
+}
+
+tr.dtrg-group th .dtrg-sticky-text {
+    display: inline-block;
+    width: max-content;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* ---------------------- */
+
 /* =================================================== */
 /* ======== Pagination =============================== */
 
