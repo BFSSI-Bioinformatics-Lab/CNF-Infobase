@@ -195,16 +195,19 @@
 .dataTable td {
     color: var(--fontColour);
     text-align: center !important;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+    line-height: 1.4375;
 }
 
 .dataTable tr:nth-child(even) td {
-    background-color: var(--secondarySurface) !important;
+    background-color: #ffffff !important;
     opacity: 0.95;
     transition: var(--fastTransition);
 }
 
 .dataTable tr:nth-child(odd) td {
-    background-color: var(--surface) !important;
+    background-color: #f5f5f5 !important;
     opacity: 0.95;
     box-shadow: none !important;
     transition: var(--fastTransition);
