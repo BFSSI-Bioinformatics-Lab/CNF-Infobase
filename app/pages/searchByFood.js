@@ -53,6 +53,7 @@ export class SearchByFoodPage extends BaseSearchPage {
 
     clearSearch() {
         this.model.clearSearchInputs(this.searchOpt);
+        this.model.clearSelectedFoods(this.searchOpt);
         this.syncInputs();
         super.clearSearch();
     }
@@ -67,8 +68,6 @@ export class SearchByFoodPage extends BaseSearchPage {
 
         const foodGroups = $(this.htmlSelectors.foodGroupInput).selectpicker('val');
         inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
-
-        console.log(inputs[SearchAtts.FoodGroup]," AND ", foodGroups);
 
         super.submitSearch();
     }

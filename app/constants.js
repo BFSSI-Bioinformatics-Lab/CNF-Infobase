@@ -77,7 +77,6 @@ export const FoodSearchTableCols = [
 export const NutrientTableCols = [
     DataCols.NutrientName,
     DataCols.NutrientUnit,
-    DataCols.NutrientAmount,
     DataCols.NutrientNoOfObservations,
     DataCols.NutrientStdErr,
     DataCols.NutrientDataSrc

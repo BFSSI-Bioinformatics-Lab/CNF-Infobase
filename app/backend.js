@@ -34,6 +34,13 @@ export class Model {
         }
     }
 
+    clearSelectedFoods(searchOpt) {
+        if (this.selectedFoodCodes[searchOpt] == undefined) return;
+
+        delete this.selectedFoodCodes[searchOpt];
+        this.foodSelected[searchOpt] = false;
+    }
+
     initSearchInputs() {
         return {
             [SearchOpts.SearchByFood]: {

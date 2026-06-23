@@ -18,23 +18,30 @@ export class BasePage {
     // updateTable(data, selector): Updates the data in the table
     // Note:
     // - based off Jquery's Datatables: https://datatables.net/
-    updateTable(selector, columnInfo, data, dataTableAtts = {}) {
+    updateTable(selector, columnInfo, data, dataTableAtts = {}, destroyExisting = false) {
         let dataTable;
+
+        const dataTableTranslations = Translation.translate("dataTable", { returnObjects: true });
+        const fullAttributes = DictTools.combine([{
+            language: dataTableTranslations,
+            columns: columnInfo,
+            scrollCollapse: true,
+            scrollX: true,
+            scrollY: '400px',
+            pageLength: 100,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+        }, dataTableAtts]);
+
         if (DataTable.isDataTable(selector)) {
             dataTable = $(selector).DataTable();
-        } else {
-            const dataTableTranslations = Translation.translate("dataTable", { returnObjects: true });
-            dataTableAtts = DictTools.combine([{
-                language: dataTableTranslations,
-                columns: columnInfo,
-                scrollCollapse: true,
-                scrollX: true,
-                scrollY: '400px',
-                pageLength: 100,
-                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
-            }, dataTableAtts]);
 
-            dataTable = $(selector).DataTable(dataTableAtts);
+            if (destroyExisting) {
+                dataTable.destroy();
+                $(selector).empty();
+                dataTable = $(selector).DataTable(fullAttributes);
+            }
+        } else {
+            dataTable = $(selector).DataTable(fullAttributes);
         }
 
         dataTable.clear();
@@ -206,6 +213,7 @@ export class BaseSearchPage extends BasePage {
     }
 
     clearSearch() {
+        this.hideFoodNutrientStats();
         this.updateSearchTable();
     }
 
@@ -251,23 +259,31 @@ export class BaseSearchPage extends BasePage {
             rowGroup: {
                 dataSrc: TableCols.NutrientGroup,
                 startRender: function (rows, group) {
+                    var api = rows.context[0].oInstance.api();
+                    var visibleColumnsCount = api.columns(':visible').count();
+
                     var stickyWrapper = $('<div class="dtrg-sticky-window"/>')
                         .append($('<span class="dtrg-sticky-text"/>').text(group));
 
                     return $('<tr class="dtrg-group dtrg-start dtrg-level-0"/>')
                         .append(
-                            $('<th colspan="6" scope="row"/>')
+                            $(`<th colspan="${visibleColumnsCount}" scope="row"/>`)
                                 .append(stickyWrapper)
                         );
                 }
             }
-        });
+        }, true);
         return dataTable;
     }
 
     updateNutrientTableConvCols(dataTable, ind, show) {
         const colName = Model.getConvertedNutrientColName(ind);
         dataTable.column(`${colName}:name`).visible(show); 
+
+        if (dataTable.rowGroup) {
+            dataTable.rowGroup().draw();
+        }
+
         dataTable.columns.adjust().draw(false); 
     }
 
@@ -286,6 +302,10 @@ export class BaseSearchPage extends BasePage {
                                             convertedMeasure: Translation.translateNum(measureConv[TableCols.MeasureWeight], undefined)});
 
         this.htmlElements.refuseList.append("li").html(text);
+    }
+
+    hideFoodNutrientStats() {
+        this.htmlElements.foodResultContainer.classed("d-none", true);
     }
 
     // showFoodNutrientStats(foodCode): Shows the stats of a particular foods' nutrients
