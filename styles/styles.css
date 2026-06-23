@@ -340,6 +340,9 @@ tr.dtrg-group th .dtrg-sticky-text {
     color: var(--secondary);
     background-color: var(--surface);
     transition: var(--defaultTransition);
+    border: 1px solid #ccc;
+    padding: 10px 0;
+    min-height: 37px;
 }
 
 .bootstrap-select > .dropdown-toggle.bs-placeholder:hover {
@@ -420,6 +423,7 @@ tr.dtrg-group th .dtrg-sticky-text {
 #nutrientTable_wrapper th {
     min-width: 160px !important;
 }
+
 
 
 /* For small phone screeens */
