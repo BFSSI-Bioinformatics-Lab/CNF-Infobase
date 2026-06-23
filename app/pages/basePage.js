@@ -257,7 +257,7 @@ export class BaseSearchPage extends BasePage {
                 pre: [0, 'asc'] // Fix the nutrient group column so when sorting, the nutrients only get sorted in their corresponding sections
             },
             rowGroup: {
-                dataSrc: TableCols.NutrientGroup,
+                dataSrc: Translation.getDataCol(TableCols.NutrientGroup),
                 startRender: function (rows, group) {
                     var api = rows.context[0].oInstance.api();
                     var visibleColumnsCount = api.columns(':visible').count();

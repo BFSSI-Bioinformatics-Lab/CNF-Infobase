@@ -138,7 +138,7 @@ export class Model {
         const nutrientGroupOrder = {};
 
         for (const row of nutrientGroupData) {
-            const nutrientGroup = row[DataCols.NutrientGroup];
+            const nutrientGroup = row[Translation.getDataCol(DataCols.NutrientGroup)];
             if (nutrientGroupOrder[nutrientGroup] === undefined) {
                 nutrientGroupOrder[nutrientGroup] = currentNutrientGroupInd;
                 currentNutrientGroupInd++;
@@ -219,7 +219,15 @@ export class Model {
             result = [row];
         }
 
-        if (foodName == "" && foodGroup == "" && foodAltName == "") return result;
+        if (foodName == "" && foodGroup == "" && foodAltName == "") {
+            for (const row of result) {
+                row[TableCols.FoodNameOrder] = Infinity;
+                row[TableCols.FoodAltNameOrder] = Infinity;
+                row[TableCols.FoodGroupOrder] = Infinity;
+            }
+
+            return result;
+        }
 
         const foodNamePattern = (foodName != "") ? new RegExp(foodName, "i") : undefined;
         const foodAltNamePattern = (foodAltName != "") ? new RegExp(foodAltName, "i") : undefined;
@@ -229,6 +237,10 @@ export class Model {
             let foodNameIndex = Infinity;
             let foodAltNameIndex = Infinity;
             let foodGroupIndex = Infinity;
+
+            row[TableCols.FoodNameOrder] = Infinity;
+            row[TableCols.FoodAltNameOrder] = Infinity;
+            row[TableCols.FoodGroupOrder] = Infinity;
 
             if (foodName != "") {
                 foodNameIndex = row[Translation.getDataCol(DataCols.FoodDescription)].search(foodNamePattern);
@@ -302,6 +314,7 @@ export class Model {
         for (const row of nutrientTable) {
             const nutrientDecimalPlace = row[DataCols.NutrientDecimalPlace];
 
+            row[DataCols.FoodCode] = Number(row[DataCols.FoodCode]);
             row[DataCols.NutrientAmount] = Translation.translateNum(row[DataCols.NutrientAmount], nutrientDecimalPlace);
             row[DataCols.NutrientNoOfObservations] = Translation.translateNum(row[DataCols.NutrientNoOfObservations], 0);
             row[DataCols.NutrientStdErr] = Translation.translateNum(row[DataCols.NutrientStdErr], nutrientDecimalPlace);

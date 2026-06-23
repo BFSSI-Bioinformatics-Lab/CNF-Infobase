@@ -33,12 +33,12 @@ export const DataCols = {
     NutrientStdErr: "STD_Error",
     NutrientDataSrc: "Nutrient_Source_Description_",
     NutrientDecimalPlace: "Nutrient_Decimals",
-    NutrientGroup: "Nutrient_Group"
+    NutrientGroup: "Nutrient_Group_"
 }
 
 // Columns with translations
 export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription, DataCols.MeasureDescription,
-    DataCols.NutrientName, DataCols.NutrientDataSrc, DataCols.FoodAltDescription
+    DataCols.NutrientName, DataCols.NutrientDataSrc, DataCols.FoodAltDescription, DataCols.NutrientGroup
 ]);
 
 // columns used in the table in the app
@@ -102,15 +102,20 @@ const LangEN = {
         CompareByNutrient:"Compare by Nutrient",
 
         InstructionsTitle: "Instructions",
-        InstructionsText: `The food search is case- and accent-insensitive, and keywords used can represent complete or partial words. 
-        Keywords will be matched in any order against any part of food descriptions. If more than one keyword is used, they may be separated by a space or any of the operators 
-        'and', 'or', or 'not'. A space is equivalent to the operator 'and'. In all cases, keywords are searched both as whole words and partial words, 
-        which means that a singular keyword will also find the corresponding plural forms, and prefixed forms. 
-        Examples: a) 'fish' will also find 'Crayfish', b) 'apple raw' (or 'apple and raw') will find all the foods having both keywords anywhere in their description, 
-        but also: 'Pineapple, raw', c) 'apple or raw' will find any food having either or both keywords anywhere in the description, while 'apple 
-        not raw' will find all instances of 'apple' except where 'raw' is also present anywhere in the description.
+        InstructionsText: `
+        <p>
+            The food search is case- and accent-insensitive, and keywords used can represent complete or partial words. 
+            Keywords will be matched in any order against any part of food descriptions. If more than one keyword is used, they may be separated by a space or any of the operators 
+            'and', 'or', or 'not'. A space is equivalent to the operator 'and'. In all cases, keywords are searched both as whole words and partial words, 
+            which means that a singular keyword will also find the corresponding plural forms, and prefixed forms. 
+            Examples: a) 'fish' will also find 'Crayfish', b) 'apple raw' (or 'apple and raw') will find all the foods having both keywords anywhere in their description, 
+            but also: 'Pineapple, raw', c) 'apple or raw' will find any food having either or both keywords anywhere in the description, while 'apple 
+            not raw' will find all instances of 'apple' except where 'raw' is also present anywhere in the description.
+        </p>
 
-        Alternatively, you can search by the unique four digit Canadian Nutrient File (CNF) food code.`,
+        <p class="mrgn-tp-lg">
+            Alternatively, you can search by the unique four digit Canadian Nutrient File (CNF) food code.
+        </p>`,
 
         SearchCriteriaTitle: "Search Criteria",
         FoodNameInputTitle: "Food Name",
@@ -420,7 +425,19 @@ const LangFR = {
         CompareByNutrient: REMPLACER_MOI,
 
         InstructionsTitle: "Instructions",
-        InstructionsText: REMPLACER_MOI,
+        InstructionsText: `
+        <p>
+            Vous pouvez effectuer une recherche d'aliments avec ou sans accents, en lettres majuscules ou minuscules et avec des mots clés complets ou partiels. 
+            Les mots clés seront recherchés peu importe leur ordre, partout dans la description. Un espace laissé entre les mots sera interprété comme l'opérateur « et ». 
+            Vous pouvez aussi utiliser les opérateur « ou » et « non » pour préciser la recherche. Les mots clés sont cherchés en tant que mots complets ou mots partiels, 
+            ce qui veut dire qu'une recherche au singulier trouvera les mots au pluriel. Exemples : a) pomme trouvera aussi pommes, pommette, b) pomme crue (ou pomme et crue) trouvera aussi 
+            tous les aliments qui contiennent ces deux mots dont pomme de terre crue, c) pomme ou crue trouvera les aliments qui contiennent l'un ou l'autre de ces mots ainsi que les deux mots présents dans le nom. 
+            Pomme non crue trouvera tous les aliments qui contiennent le mot pomme sauf ceux renfermant le mot crue.
+        </p>
+
+        <p class="mrgn-tp-lg">
+            Vous pouvez également effectuer une recherche par le code d'aliment du Fichier canadien sur les éléments nutritifs (FCÉN) de 4 chiffres.
+        </p>`,
 
         SearchCriteriaTitle: "Critères de Recherche",
         FoodNameInputTitle: "Nom de l'Aliment",
