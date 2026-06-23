@@ -344,7 +344,7 @@ tr.dtrg-group th .dtrg-sticky-text {
     background-color: var(--surface);
     transition: var(--defaultTransition);
     border: 1px solid #ccc;
-    padding: 10px 0;
+    padding: 0 10px;
     min-height: 37px;
 }
 
@@ -477,19 +477,19 @@ tr.dtrg-group th .dtrg-sticky-text {
 
 /* Extra larger break points for very wide screens */
 @media screen and (min-width: 1600px) {
-  .foodResultContainer {
+  .foodTableContainer {
     width: 1520px;
   }
 }
 
 @media screen and (min-width: 1800px) {
-  .foodResultContainer {
+  .foodTableContainer {
     width: 1720px;
   }
 }
 
 @media screen and (min-width: 2000px) {
-  .foodResultContainer {
+  .foodTableContainer {
     width: 1920px;
   }
 }
