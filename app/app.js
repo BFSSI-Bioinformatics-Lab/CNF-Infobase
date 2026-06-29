@@ -2,6 +2,7 @@ import { SearchOpts, PageSrc, TranslationObj, FoodSearchTableCols, SearchAtts, D
 import { Translation } from "./tools.js";
 import { Model } from "./backend.js";
 import { SearchByFoodPage } from "./pages/searchByFood.js";
+import { SearchByNutrientPage } from "./pages/searchByNutrient.js";
 
 
 
@@ -9,7 +10,8 @@ class App {
     constructor(model) {
         this.model = model;
         this.searchPages = {
-            [SearchOpts.SearchByFood]: new SearchByFoodPage(model, this)
+            [SearchOpts.SearchByFood]: new SearchByFoodPage(model, this),
+            [SearchOpts.SearchByNutrient]: new SearchByNutrientPage(model, this)
         }
     }
 
@@ -86,7 +88,7 @@ class App {
         }
 
         $("#searchPage").load(PageSrc[searchOpt], function() {
-            if (searchOpt == SearchOpts.SearchByFood) {
+            if (searchOpt == SearchOpts.SearchByFood || searchOpt == SearchOpts.SearchByNutrient) {
                 self.searchPages[searchOpt].loadPage();
             }
         });

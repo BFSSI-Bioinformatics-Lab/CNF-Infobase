@@ -1,27 +1,23 @@
-import { SearchOpts, SearchAtts, TableCols, FoodSearchTableCols } from "../constants.js";
+import { SearchOpts, SearchAtts, NutrientSearchTableCols } from "../constants.js";
 import { Translation } from "../tools.js";
 import { BaseSearchPage } from "./basePage.js";
 
 
 
-export class SearchByFoodPage extends BaseSearchPage {
+export class SearchByNutrientPage extends BaseSearchPage {
     constructor(model, app) {
-        super(model, app, SearchOpts.SearchByFood);
+        super(model, app, SearchOpts.SearchByNutrient);
+
         this.htmlSelectors.foodGroupInput = "#foodGroupInput";
+        this.htmlSelectors.nutrientInput = "#nutrientInput";
     }
 
     updateHTMLElements() {
         super.updateHTMLElements();
         const elements = this.htmlElements;
 
-        elements.foodNameInputContainer = d3.select("#foodNameInputContainer");
-        elements.foodAltNameInputContainer = d3.select("#foodAltNameInputContainer");
         elements.foodGroupInputContainer = d3.select("#foodGroupInputContainer");
-        elements.foodCodeInputContainer = d3.select("#foodCodeInputContainer");
-
-        elements.foodNameInput = elements.foodNameInputContainer.select("input");
-        elements.foodAltNameInput = elements.foodAltNameInputContainer.select("input");
-        elements.foodCodeInput = elements.foodCodeInputContainer.select("input");
+        elements.nutrientInputContainer = d3.select("#nutrientInputContainer");
     }
 
     updateStaticText() {
@@ -30,16 +26,15 @@ export class SearchByFoodPage extends BaseSearchPage {
 
         d3.select("#searchTitle").html(Translation.translate("SearchCriteriaTitle"));
 
-        elements.foodNameInputContainer.select("label").html(Translation.translate("FoodNameInputTitle"));
-        elements.foodAltNameInputContainer.select("label").html(Translation.translate("FoodAltNameInputTitle"));
         elements.foodGroupInputContainer.select("label").html(Translation.translate("FoodGroupInputTitle"));
-        elements.foodCodeInputContainer.select("label").html(Translation.translate("FoodCodeInputTitle"));
+        elements.nutrientInputContainer.select("label").html(Translation.translate("NutrientInputTitle"))
+
         elements.searchButton.attr("value", Translation.translate("FoodSearchButton"));
         elements.resetSearchButton.html(Translation.translate("FoodSearchResetButton"));
     }
 
     updateSearchTable(selectFood = false) {
-        const tableData = (selectFood) ? this.model.getFoodSearchSelectedData(this.searchOpt) : this.model.getFoodSearchTableData(this.searchOpt);
+        const tableData = (selectFood) ? this.model.getNutrientSearchSelectedData(this.searchOpt) : this.model.getNutrientSearchTableData(this.searchOpt);
 
         let searchTable = this.htmlElements.searchTable;
         if (searchTable === undefined) {
@@ -52,21 +47,12 @@ export class SearchByFoodPage extends BaseSearchPage {
         if (tableData !== undefined) {
             const translations = Translation.translate(`SearchTableCols.${this.searchOpt}`,{ returnObjects: true });
             
-            let tableColInfo = [{data: TableCols.FoodNameOrder, visible: false},
-                                {data: TableCols.FoodAltNameOrder, visible: false}
-            ];
-
-            for (const tableAtt of FoodSearchTableCols) {
+            let tableColInfo = [];
+            for (const tableAtt of NutrientSearchTableCols) {
                 tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
             }
 
-            const dataTable = this.updateTable(this.htmlSelectors.foodSearchTable, tableColInfo, tableData,  
-                {orderFixed: {
-                    pre: [
-                        [0, "asc"],
-                        [1, "asc"]
-                    ]
-                }});
+            const dataTable = this.updateTable(this.htmlSelectors.foodSearchTable, tableColInfo, tableData);
             return dataTable;
         }
     }
@@ -75,12 +61,11 @@ export class SearchByFoodPage extends BaseSearchPage {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt]; 
 
-        inputs[SearchAtts.FoodName] = elements.foodNameInput.property("value");
-        inputs[SearchAtts.FoodAltName] = elements.foodAltNameInput.property("value");
-        inputs[SearchAtts.FoodCode] = elements.foodCodeInput.property("value");
-
         const foodGroups = $(this.htmlSelectors.foodGroupInput).selectpicker('val');
         inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
+
+        const nutrients = $(this.htmlSelectors.nutrientInput).selectpicker('val');
+        inputs[SearchAtts.Nutrient] = (nutrients.length == 0) ? "" : nutrients;
 
         super.submitSearch();
     }
@@ -89,20 +74,23 @@ export class SearchByFoodPage extends BaseSearchPage {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt];
 
-        elements.foodNameInput.property("value", inputs[SearchAtts.FoodName]);
-        elements.foodAltNameInput.property("value", inputs[SearchAtts.FoodAltName]);
         $(this.htmlSelectors.foodGroupInput).selectpicker('val', [inputs[SearchAtts.FoodGroup]]);
-        elements.foodCodeInput.property("value", inputs[SearchAtts.FoodCode]);
+        $(this.htmlSelectors.nutrientInput).selectpicker('val', [inputs[SearchAtts.Nutrient]]);
     }
 
     loadPageInputs() {
         const inputs = this.model.searchInputs[this.searchOpt];
         const selections = this.model.searchSelections[this.searchOpt];
 
-        // add in the food groups
+        // add in the food groups and nutrient dropdowns
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
                                    selections: selections[SearchAtts.FoodGroup], 
                                    inputs: new Set([inputs[SearchAtts.FoodGroup]]),
+                                   noneSelectedText: Translation.translate("NoneSelected")});
+
+        this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.nutrientInput, 
+                                   selections: selections[SearchAtts.Nutrient], 
+                                   inputs: new Set([inputs[SearchAtts.Nutrient]]),
                                    noneSelectedText: Translation.translate("NoneSelected")});
 
         this.syncInputs();

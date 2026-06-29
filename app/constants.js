@@ -48,7 +48,6 @@ export const TableCols = {...DataCols,
     NutrientGroupOrder: "Nutrient_Group_Order",
     FoodNameOrder: "Food Name Order",
     FoodAltNameOrder: "Food Alt Name Order",
-    FoodGroupOrder: "Food Group Order"
 };
 
 // Measure codes to filter out in the app
@@ -73,6 +72,14 @@ export const FoodSearchTableCols = [
     DataCols.FoodAltDescription
 ];
 
+// The columns to display in the Search By Nutrient table
+export const NutrientSearchTableCols = [
+    DataCols.FoodCode,
+    DataCols.FoodGroupDescription,
+    DataCols.FoodDescription,
+    DataCols.NutrientAmount
+];
+
 // The columns to display in the Nutrient table
 export const NutrientTableCols = [
     DataCols.NutrientName,
@@ -87,7 +94,8 @@ export const SearchAtts = {
     FoodName: "food name",
     FoodAltName: "food alternative name",
     FoodGroup: "food group",
-    FoodCode: "food code"
+    FoodCode: "food code",
+    Nutrient: "nutrient"
 }
 
 
@@ -122,6 +130,7 @@ const LangEN = {
         FoodAltNameInputTitle: "Food Common Name",
         FoodGroupInputTitle: "Food Group",
         FoodCodeInputTitle: "Food Code",
+        NutrientInputTitle: "Nutrient",
 
         FoodSearchButton: "Food Search",
         FoodSearchResetButton: "Reset",
@@ -132,10 +141,19 @@ const LangEN = {
 
         SearchTableInstructions: "Please select (click) on the food item you are interested",
         SearchTableCols: {
-            [DataCols.FoodCode]: "Food Code",
-            [DataCols.FoodGroupDescription]: "Food Group",
-            [DataCols.FoodDescription]: "Food Name",
-            [DataCols.FoodAltDescription]: "Food Alternative Name"
+            [SearchOpts.SearchByFood]: {
+                [DataCols.FoodCode]: "Food Code",
+                [DataCols.FoodGroupDescription]: "Food Group",
+                [DataCols.FoodDescription]: "Food Name",
+                [DataCols.FoodAltDescription]: "Food Alternative Name"
+            },
+
+            [SearchOpts.SearchByNutrient]: {
+                [DataCols.FoodCode]: "Food Code",
+                [DataCols.FoodGroupDescription]: "Food Group",
+                [DataCols.FoodDescription]: "Food Name",
+                [DataCols.NutrientAmount]: "Nutrient Amoung g"
+            }
         },
 
         FoodNutrientStats: {
@@ -444,6 +462,7 @@ const LangFR = {
         FoodAltNameInputTitle: REMPLACER_MOI,
         FoodGroupInputTitle: "Groupe de l'Aliment",
         FoodCodeInputTitle: "Code de l'Aliment",
+        NutrientInputTitle: "Élément nutritif",
 
         FoodSearchButton: "Recherche de l'Aliment",
         FoodSearchResetButton: "Réinitialiser",
@@ -455,10 +474,18 @@ const LangFR = {
         SearchTableInstructions: REMPLACER_MOI,
 
         SearchTableCols: {
-            [DataCols.FoodCode]: "Code de l'Aliment",
-            [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
-            [DataCols.FoodDescription]: "Nom de l'Aliment",
-            [DataCols.FoodAltDescription]: "Nom Alternatif de l'Aliment"
+            [SearchOpts.SearchByFood]: {
+                [DataCols.FoodCode]: "Code de l'Aliment",
+                [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
+                [DataCols.FoodDescription]: "Nom de l'Aliment",
+                [DataCols.FoodAltDescription]: "Nom Alternatif de l'Aliment"
+            },
+            [SearchOpts.SearchByNutrient]: {
+                [DataCols.FoodCode]: "Code de l'Aliment",
+                [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
+                [DataCols.FoodDescription]: "Nom de l'Aliment",
+                [DataCols.NutrientAmount]: "Valeur nutritive g"
+            }
         },
 
         FoodNutrientStats: {
