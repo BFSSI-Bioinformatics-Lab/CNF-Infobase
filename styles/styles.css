@@ -339,7 +339,7 @@ tr.dtrg-group th .dtrg-sticky-text {
     border-radius: var(--smBorderRadius) !important;
 }
 
-.bootstrap-select > .dropdown-toggle.bs-placeholder {
+.bootstrap-select > .dropdown-toggle.btn {
     color: var(--secondary);
     background-color: var(--surface);
     transition: var(--defaultTransition);
@@ -348,7 +348,7 @@ tr.dtrg-group th .dtrg-sticky-text {
     min-height: 37px;
 }
 
-.bootstrap-select > .dropdown-toggle.bs-placeholder:hover {
+.bootstrap-select > .dropdown-toggle.btn:hover {
     color: var(--secondaryHover);
 }
 
@@ -398,7 +398,7 @@ tr.dtrg-group th .dtrg-sticky-text {
     border-radius: 0 var(--borderRadius) var(--borderRadius) 0;
 }
 
-#foodGroupInputContainer {
+.dropdownInputContainer {
     display: flex;
     flex-direction: column;
 }

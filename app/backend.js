@@ -6,6 +6,7 @@ export class Model {
     constructor() {
         this.searchOpt = SearchOpts.SearchByFood;
         this.searchSelections = this.initSearchSelections();
+        this.defaultSearchInputs = this.initSearchInputs();
         this.searchInputs = this.initSearchInputs();
         this.selectedFoodCodes = {};
         this.foodSelected = {
@@ -17,6 +18,7 @@ export class Model {
         this.foodGroupTable;
         this.measureConvTable;
         this.nutrientTable;
+        this.nutrientNameTable;
 
         this.searchedNutrientData;
         this.webSearchedNutrientTable;
@@ -24,14 +26,7 @@ export class Model {
     }
 
     clearSearchInputs(searchOpt) {
-        if (searchOpt == SearchOpts.SearchByFood) {
-            this.searchInputs[searchOpt] = {
-                [SearchAtts.FoodName]: "",
-                [SearchAtts.FoodAltName]: "",
-                [SearchAtts.FoodGroup]: "",
-                [SearchAtts.FoodCode]: ""
-            }
-        }
+        this.searchInputs[searchOpt] = structuredClone(this.defaultSearchInputs[searchOpt]);
     }
 
     clearSelectedFoods(searchOpt) {
@@ -48,6 +43,10 @@ export class Model {
                 [SearchAtts.FoodAltName]: "",
                 [SearchAtts.FoodGroup]: "",
                 [SearchAtts.FoodCode]: ""
+            },
+            [SearchOpts.SearchByNutrient]: {
+                [SearchAtts.Nutrient]: "",
+                [SearchAtts.FoodGroup]: ""
             }
         };
     }
@@ -55,7 +54,11 @@ export class Model {
     initSearchSelections() {
         return {
             [SearchOpts.SearchByFood]: {
-                [SearchAtts.FoodGroup]: new Set()
+                [SearchAtts.FoodGroup]: []
+            },
+            [SearchOpts.SearchByNutrient]: {
+                [SearchAtts.FoodGroup]: [],
+                [SearchAtts.Nutrient]: []
             }
         }
     }
@@ -75,7 +78,10 @@ export class Model {
 
     async loadFoodTable(foodNameTable, foodGroupTable) {
         this.foodGroupTable = foodGroupTable;
-        this.searchSelections[SearchOpts.SearchByFood][SearchAtts.FoodGroup] = this.getFoodGroups();
+
+        const foodGroups = this.getFoodGroups();
+        this.searchSelections[SearchOpts.SearchByFood][SearchAtts.FoodGroup] = foodGroups;
+        this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.FoodGroup] = structuredClone(foodGroups);
 
         this.foodTable = TableTools.dataLeftJoinById(foodNameTable, foodGroupTable, DataCols.FoodGroupCode, DataCols.FoodGroupCode);
         const foodTableData = this.foodTable.data;
@@ -92,7 +98,6 @@ export class Model {
             foodCodeIndex[indexVal] = [i];
 
             row[TableCols.FoodNameOrder] = Infinity;
-            row[TableCols.FoodGroupOrder] = Infinity;
             row[TableCols.FoodAltNameOrder] = Infinity;
         }
     }
@@ -132,7 +137,7 @@ export class Model {
     }
 
     async loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable, nutrientGroupTable) {
-        // add the order nutrient group ordering
+        // add the nutrient group ordering
         const nutrientGroupData = nutrientGroupTable.data;
         let currentNutrientGroupInd = 0;
         const nutrientGroupOrder = {};
@@ -147,10 +152,21 @@ export class Model {
             row[TableCols.NutrientGroupOrder] = nutrientGroupOrder[nutrientGroup];
         }
 
+        this.nutrientNameTable = nutrientNameTable;
+        const nutrients = this.getNutrients();
+        nutrients.sort((a, b) => a.text.localeCompare(b.text));
+
+        this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = nutrients;
+        const defaultNutrient = nutrients[0].value
+        this.searchInputs[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = defaultNutrient;
+        this.defaultSearchInputs[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = defaultNutrient;
+
         // join the different parts of the nutrients
         nutrientNameTable = TableTools.dataLeftJoinById(nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
         this.nutrientTable = TableTools.dataLeftJoinById(nutrientAmtTable, nutrientNameTable, DataCols.NutrientCode, DataCols.NutrientCode);
         this.nutrientTable = TableTools.dataLeftJoinById(this.nutrientTable, nutrientSrcTable, DataCols.NutrientSrcCode, DataCols.NutrientSrcCode);
+        this.nutrientTable = TableTools.dataLeftJoinById(this.nutrientTable, this.foodTable, DataCols.FoodCode, DataCols.FoodCode);
+
         const nutrientTableData = this.nutrientTable.data;
 
         const foodCodeIndex = {};
@@ -210,7 +226,7 @@ export class Model {
         return rowInds.map((ind) => table.data[ind]);
     }
 
-    filterFoodSearchTable(foodName, foodAltName, foodGroup, foodCode) {
+    filterFoodSearchTable(foodName, foodAltName, foodGroupCode, foodCode) {
         let result = this.foodTable.data;
 
         if (foodCode != "") {
@@ -219,7 +235,11 @@ export class Model {
             result = [row];
         }
 
-        if (foodName == "" && foodGroup == "" && foodAltName == "") {
+        if (foodGroupCode != "") {
+            result = result.filter((row) => row[DataCols.FoodGroupCode] == foodGroupCode);
+        }
+
+        if (foodName == "" && foodAltName == "") {
             for (const row of result) {
                 row[TableCols.FoodNameOrder] = Infinity;
                 row[TableCols.FoodAltNameOrder] = Infinity;
@@ -231,16 +251,13 @@ export class Model {
 
         const foodNamePattern = (foodName != "") ? new RegExp(foodName, "i") : undefined;
         const foodAltNamePattern = (foodAltName != "") ? new RegExp(foodAltName, "i") : undefined;
-        const foodGroupPattern = (foodGroup != "") ? new RegExp(foodGroup, "i") : undefined;
         
         result = result.filter((row) => {
             let foodNameIndex = Infinity;
             let foodAltNameIndex = Infinity;
-            let foodGroupIndex = Infinity;
 
             row[TableCols.FoodNameOrder] = Infinity;
             row[TableCols.FoodAltNameOrder] = Infinity;
-            row[TableCols.FoodGroupOrder] = Infinity;
 
             if (foodName != "") {
                 foodNameIndex = row[Translation.getDataCol(DataCols.FoodDescription)].search(foodNamePattern);
@@ -252,17 +269,31 @@ export class Model {
                 if (foodAltNameIndex == -1) return false;
             }
 
-            if (foodGroup != "") {
-                foodGroupIndex = row[Translation.getDataCol(DataCols.FoodGroupDescription)].search(foodGroupPattern);
-                if (foodGroupIndex == -1) return false;
-            }
-
             row[TableCols.FoodNameOrder] = foodNameIndex;
             row[TableCols.FoodAltNameOrder] = foodAltNameIndex;
-            row[TableCols.FoodGroupOrder] = foodGroupIndex;
 
             return true;
         });
+
+        return result;
+    }
+
+    filterNutrientSearchTable(nutrientCode, foodGroupCode, foodCode) {
+        let result = this.nutrientTable.data;
+
+        if (foodCode != "") {
+            const row = this.getRowById(this.nutrientTable, DataCols.FoodCode, foodCode);
+            if (row === undefined) return [];
+            result = [row];
+        }
+
+        if (foodGroupCode != "") {
+            result = result.filter((row) => row[DataCols.FoodGroupCode] == foodGroupCode);
+        }
+
+        if (nutrientCode != "") {
+            result = result.filter((row) => row[DataCols.NutrientCode] == nutrientCode);
+        }
 
         return result;
     }
@@ -279,6 +310,30 @@ export class Model {
         if (selectedFoods === undefined || selectedFoods.length == 0) return [];
 
         return this.filterFoodSearchTable("", "", "", selectedFoods[0]);
+    }
+
+    formatNutrientSearchTable(nutrientSearchTable) {
+        for (const row of nutrientSearchTable) {
+            const nutrientDecimalPlace = row[DataCols.NutrientDecimalPlace];
+            row[DataCols.NutrientAmount] = Translation.translateNum(row[DataCols.NutrientAmount], nutrientDecimalPlace);
+        }
+    }
+
+    getNutrientSearchTableData(searchOpt) {
+        const inputs = this.searchInputs[searchOpt];
+        let result = this.filterNutrientSearchTable(inputs[SearchAtts.Nutrient], inputs[SearchAtts.FoodGroup], "");
+        this.formatNutrientSearchTable(result);
+        return result
+    }
+
+    getNutrientSearchSelectedData(searchOpt) {
+        const selectedFoods = this.selectedFoodCodes[searchOpt];
+        if (selectedFoods === undefined || selectedFoods.length == 0) return [];
+
+        const inputs = this.searchInputs[searchOpt];
+        let result = this.filterNutrientSearchTable("", "", selectedFoods[0]);
+        this.formatNutrientSearchTable(result);
+        return result;
     }
 
     static getConvertedNutrientColName(ind) {
@@ -361,7 +416,12 @@ export class Model {
     }
 
     getFoodGroups() {
-        let result = this.foodGroupTable.data.map((row) => row[Translation.getDataCol(DataCols.FoodGroupDescription)]);
-        return new Set(result);
+        let result = this.foodGroupTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodGroupDescription)], value: row[DataCols.FoodGroupCode]}});
+        return result;
+    }
+
+    getNutrients() {
+        let result = this.nutrientNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.NutrientName)], value: row[DataCols.NutrientCode]}});
+        return result;
     }
 }

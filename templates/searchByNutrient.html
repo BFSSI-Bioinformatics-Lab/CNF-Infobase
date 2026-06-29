@@ -4,6 +4,72 @@ Purpose: Defines the page for searching by nutrients
 
 -------------------------------------------------->
 
-<div>
-    <h2>REPLACE ME: SEARCH BY NUTRIENT</h2>
+<div class="mrgn-tp-lg">
+    <div class="container foodTableContainer">
+        <h3 id="searchTitle"></h3>
+
+        <fieldset class="pb-5 border-bottom">
+            <div class="searchInputContainer d-flex flex-wrap gap-5 justify-content-around mrgn-bttm-lg">
+                <div class="form-group dropdownInputContainer" id="nutrientInputContainer">
+                    <label for="nutrientInput"></label>
+                    <select class="singleOptSelect" data-actions-box="true" data-container="body" id="nutrientInput">
+                    </select>
+                </div>
+
+                <div class="form-group dropdownInputContainer" id="foodGroupInputContainer">
+                    <label for="foodGroupInput"></label>
+                    <select class="singleOptSelect" multiple data-actions-box="true" data-max-options="1" data-container="body" id="foodGroupInput">
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <input type="submit" class="btn btn-primary" id="searchButton">
+                <button type="button" class="btn btn-danger" id="resetButton"></button>
+            </div>
+        </fieldset>
+
+        <div class="mrgn-tp-xl">
+            <h4 id="foodSearchInstructions" class="text-muted"></h4>
+            <div class="tableContainer mrgn-tp-lg">
+                <table id="foodSearchTable"></table>
+            </div>
+        </div>
+    
+    </div>
+
+    <div class="mrgn-tp-xl d-flex justify-content-center">
+        <div class="foodResultContainer foodTableContainer d-none container">
+            <div class="border-top">
+                <div class="mb-3" id="foodResultCard">
+                    <div class="card-body cardHeader">
+                        <div>
+                            <h2 class="card-title"></h2>
+                            <h4 class="card-subtitle mb-2 text-muted"></h4>
+                        </div>
+                    </div>
+                    <div class="card-body border-top mrgn-tp-lg cardDetails">
+                        <h3 class="card-title mrgn-bttm-lg"></h3>
+
+                        <div class="servingSizeContainer">
+                            <fieldset class="gc-chckbxrdio">
+                                <ul class="list-unstyled lst-spcd-2">
+                                </ul>
+                            </fieldset>
+                        </div>
+
+                        <div class="servingRefuseContainer mrgn-tp-lg">
+                            <h5></h5>
+                            <ul></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tableContainer mrgn-tp-lg">
+                <h3 id="nutrientTableTitle"></h3>
+                <table id="nutrientTable"></table>
+            </div>
+        </div>
+    </div>
 </div>

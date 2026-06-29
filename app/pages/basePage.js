@@ -72,8 +72,14 @@ export class BasePage {
         let dropdown = $(dropdownSelector);
         dropdown.selectpicker('destroy');
 
-        const orderedSelections = Array.from(selections);
-        orderedSelections.sort();
+        const selectionIsArr = Array.isArray(selections);
+        const orderedSelections = selectionIsArr ? selections : Array.from(selections);
+
+        if (selectionIsArr) {
+            orderedSelections.sort((a, b) => a.text.localeCompare(b.text));
+        } else {
+            orderedSelections.sort();
+        }
 
         d3.select(dropdownSelector)
             .html("")
@@ -81,7 +87,8 @@ export class BasePage {
             .data(orderedSelections)
             .enter()
             .append("option")
-            .text((d) => d);
+            .attr("value", (d) => selectionIsArr ? d.value : null)
+            .text((d) => selectionIsArr ? d.text : d);
 
         dropdown = $(dropdownSelector).selectpicker({
             deselectAllText: Translation.translate("DeselectAll"), 
@@ -149,7 +156,16 @@ export class BaseSearchPage extends BasePage {
 
     // setupListeners(): Setups all the initial listeners
     setupListeners() {
+        const elements = this.htmlElements;
 
+        elements.searchButton.on("click", () => { 
+            this.htmlElements.searchTable.removeClass(this.htmlNames.foodSelected);
+            this.submitSearch(); 
+        });
+
+        elements.resetSearchButton.on("click", () => {
+            this.clearSearch();
+        })
     }
 
     loadPageInputs() {
@@ -178,41 +194,13 @@ export class BaseSearchPage extends BasePage {
     }
 
     updateSearchTable(selectFood = false) {
-        const tableData = (selectFood) ? this.model.getFoodSearchSelectedData(this.searchOpt) : this.model.getFoodSearchTableData(this.searchOpt);
 
-        let searchTable = this.htmlElements.searchTable;
-        if (searchTable === undefined) {
-            this.htmlElements.searchTable = $(this.htmlSelectors.foodSearchTable);
-            searchTable = this.htmlElements.searchTable;
-        }
-
-        searchTable.toggleClass(this.htmlNames.foodSelected, selectFood);
-
-        if (tableData !== undefined) {
-            const translations = Translation.translate("SearchTableCols",{ returnObjects: true });
-            
-            let tableColInfo = [{data: TableCols.FoodGroupOrder, visible: false},
-                                {data: TableCols.FoodNameOrder, visible: false},
-                                {data: TableCols.FoodAltNameOrder, visible: false}
-            ];
-
-            for (const tableAtt of FoodSearchTableCols) {
-                tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
-            }
-
-            const dataTable = this.updateTable(this.htmlSelectors.foodSearchTable, tableColInfo, tableData,  
-                {orderFixed: {
-                    pre: [
-                        [0, "asc"],
-                        [1, "asc"],
-                        [2, "asc"]
-                    ]
-                }});
-            return dataTable;
-        }
     }
 
     clearSearch() {
+        this.model.clearSearchInputs(this.searchOpt);
+        this.model.clearSelectedFoods(this.searchOpt);
+        this.syncInputs();
         this.hideFoodNutrientStats();
         this.updateSearchTable();
     }
