@@ -152,7 +152,7 @@ const LangEN = {
                 [DataCols.FoodCode]: "Food Code",
                 [DataCols.FoodGroupDescription]: "Food Group",
                 [DataCols.FoodDescription]: "Food Name",
-                [DataCols.NutrientAmount]: "Nutrient Amoung g"
+                [DataCols.NutrientAmount]: "Nutrient Amount g"
             }
         },
 

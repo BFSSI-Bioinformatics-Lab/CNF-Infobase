@@ -159,6 +159,7 @@ export class BaseSearchPage extends BasePage {
         const elements = this.htmlElements;
 
         elements.searchButton.on("click", () => { 
+            this.model.clearSelectedFoods(this.searchOpt);
             this.htmlElements.searchTable.removeClass(this.htmlNames.foodSelected);
             this.submitSearch(); 
         });
