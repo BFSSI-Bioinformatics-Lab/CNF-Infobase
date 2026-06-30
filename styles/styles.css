@@ -43,6 +43,7 @@
     --onTertiary: #333333;
     --link: #284162;
     --headerTitleColor: #000000;
+    --tableBorderColor: #ddd;
 
     --smBorderRadius: 5px;
     --borderRadius: 10px;
@@ -168,8 +169,8 @@
 .dataTable th {
     background-color: var(--primary) !important;
     color: var(--onPrimary);
-    text-align: center !important;
-    padding: 10px 2px;
+    text-align: left !important;
+    padding: 10px 5px 10px 5px;
 }
 
 .dataTable th:first-child {
@@ -194,15 +195,16 @@
 
 .dataTable td {
     color: var(--fontColour);
-    text-align: center !important;
-    border-top: 1px solid #ddd;
-    border-left: 1px solid #ddd;
+    text-align: left !important;
+    padding-left: 5px;
+    border-top: 1px solid var(--tableBorderColor);
+    border-left: 1px solid var(--tableBorderColor);
     vertical-align: top;
     line-height: 1.4375;
 }
 
 .dataTable td:last-child {
-    border-right: 1px solid #ddd;
+    border-right: 1px solid var(--tableBorderColor);
 }
 
 .dataTable tr:nth-child(even) td {
@@ -242,11 +244,6 @@
 #foodSearchTable.foodSelected td {
     background-color: var(--secondary) !important;
     color: white;
-}
-
-#foodSearchTable td {
-    text-align: left !important;
-    padding-left: 5px;
 }
 
 /* ----- row group ----- */
