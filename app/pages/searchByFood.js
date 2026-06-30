@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, TableCols, FoodSearchTableCols } from "../constants.js";
+import { SearchOpts, SearchAtts, TableCols, FoodSearchTableCols, KeyboardCodes } from "../constants.js";
 import { Translation } from "../tools.js";
 import { BaseSearchPage } from "./basePage.js";
 
@@ -36,6 +36,15 @@ export class SearchByFoodPage extends BaseSearchPage {
         elements.foodCodeInputContainer.select("label").html(Translation.translate("FoodCodeInputTitle"));
         elements.searchButton.attr("value", Translation.translate("FoodSearchButton"));
         elements.resetSearchButton.html(Translation.translate("FoodSearchResetButton"));
+    }
+
+    setupListeners() {
+        super.setupListeners();
+
+        const elements = this.htmlElements;
+        elements.foodNameInput.on("keydown", () => {this.submitSearchKeyboardListener()});
+        elements.foodAltNameInput.on("keydown", () => {this.submitSearchKeyboardListener()});
+        elements.foodCodeInput.on("keydown", () => {this.submitSearchKeyboardListener()});
     }
 
     updateSearchTable(selectFood = false) {
