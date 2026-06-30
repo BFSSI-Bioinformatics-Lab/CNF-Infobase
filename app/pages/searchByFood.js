@@ -43,7 +43,7 @@ export class SearchByFoodPage extends BaseSearchPage {
         elements.foodCodeInput.on("keydown", () => {this.submitSearchKeyboardListener()});
     }
 
-    updateSearchTable(selectFood = false) {
+    updateSearchTable(selectFood = false, searchTxt = null) {
         const tableData = (selectFood) ? this.model.getFoodSearchSelectedData(this.searchOpt) : this.model.getFoodSearchTableData(this.searchOpt);
 
         let searchTable = this.htmlElements.searchTable;
@@ -65,13 +65,18 @@ export class SearchByFoodPage extends BaseSearchPage {
                 tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
             }
 
-            const dataTable = this.updateTable(this.htmlSelectors.foodSearchTable, tableColInfo, tableData,  
-                {orderFixed: {
+            const dataTable = this.updateTable({
+                selector: this.htmlSelectors.foodSearchTable, 
+                columnInfo: tableColInfo, 
+                data: tableData, 
+                dataTableAtts: {orderFixed: {
                     pre: [
                         [0, "asc"],
                         [1, "asc"]
                     ]
-                }});
+                }},
+                searchTxt: (searchTxt !== null) ? searchTxt : undefined
+            });
             return dataTable;
         }
     }
@@ -85,6 +90,8 @@ export class SearchByFoodPage extends BaseSearchPage {
 
         const foodGroups = $(this.htmlSelectors.foodGroupInput).selectpicker('val');
         inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
+
+        inputs[SearchAtts.FilterHelper] = this.searchTable.search();
 
         super.submitSearch();
     }
