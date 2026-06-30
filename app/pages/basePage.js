@@ -249,9 +249,9 @@ export class BaseSearchPage extends BasePage {
     updateNutrientTable(visibleMeasureCodes) {
         const translations = Translation.translate("FoodNutrientStats.TableCols", { returnObjects: true });
 
-        let tableColInfo = [{data: TableCols.NutrientGroupOrder, visible: false}];
+        let tableColInfo = [{data: DataCols.NutrientOrder, visible: false}];
         tableColInfo.push(...NutrientTableCols.map((tableAtt) => {
-            return {title: translations[tableAtt], data: Translation.getDataCol(tableAtt)};
+            return {title: translations[tableAtt], data: Translation.getDataCol(tableAtt), orderable: false};
         }));
 
         const measureWeightConv = this.model.searchedNutrientData.measureWeightConv;
@@ -274,7 +274,7 @@ export class BaseSearchPage extends BasePage {
             const measureVisible = visibleMeasureCodes.has(measureCode);
 
             const dataCol = Model.getConvertedNutrientColName(i);
-            tableColInfo.push({title: measureColTitle, data: dataCol, name: dataCol, visible: measureVisible});
+            tableColInfo.push({title: measureColTitle, data: dataCol, name: dataCol, visible: measureVisible, orderable: false});
         }
 
         const dataTable = this.updateTable({
@@ -283,9 +283,8 @@ export class BaseSearchPage extends BasePage {
             data: this.model.webSearchedNutrientTable, 
             dataTableAtts: {scrollY: '800px',
                 pageLength: -1,
-                order: [[1, 'asc']],
                 orderFixed: {
-                    pre: [0, 'asc'] // Fix the nutrient group column so when sorting, the nutrients only get sorted in their corresponding sections
+                    pre: [0, 'asc'] // Fix the order for the nutrients
                 },
                 rowGroup: {
                     dataSrc: Translation.getDataCol(TableCols.NutrientGroup),

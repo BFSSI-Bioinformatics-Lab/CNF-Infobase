@@ -33,7 +33,8 @@ export const DataCols = {
     NutrientStdErr: "STD_Error",
     NutrientDataSrc: "Nutrient_Source_Description_",
     NutrientDecimalPlace: "Nutrient_Decimals",
-    NutrientGroup: "Nutrient_Group_"
+    NutrientGroup: "Nutrient_Group_",
+    NutrientOrder: "Display order for web tool (do not publish this info)"
 }
 
 // Columns with translations
@@ -45,7 +46,6 @@ export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroup
 export const TableCols = {...DataCols,
     ConvertedNutrientAmount: "Nutrient_Converted_",
     MeasureWeightConvId: "Meausre_Weight_Conversion_Id",
-    NutrientGroupOrder: "Nutrient_Group_Order",
     FoodNameOrder: "Food Name Order",
     FoodAltNameOrder: "Food Alt Name Order",
 };
