@@ -193,7 +193,7 @@ export class BaseSearchPage extends BasePage {
         const self = this;
 
         $(`${this.htmlSelectors.foodSearchTable} tbody`).on('click', 'tr', function () {
-            const rowData = self.dataTable.row(this).data();
+            const rowData = self.searchTable.row(this).data();
             if (rowData === undefined) return;
 
             const foodCode = rowData[TableCols.FoodCode];
