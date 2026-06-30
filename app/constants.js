@@ -98,6 +98,11 @@ export const SearchAtts = {
     Nutrient: "nutrient"
 }
 
+// Keyboard codes when the user enters a key
+export const KeyboardCodes = {
+    Enter: 13
+}
+
 
 // ================= ENGLISH TRANSLATIONS =======================
 

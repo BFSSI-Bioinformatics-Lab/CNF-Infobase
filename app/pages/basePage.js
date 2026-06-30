@@ -1,5 +1,5 @@
 import { Model } from "../backend.js";
-import { SearchOpts, SearchAtts, FoodSearchTableCols, NutrientTableCols, TableCols, DataCols, MeasureTypeCodes } from "../constants.js";
+import { SearchOpts, SearchAtts, FoodSearchTableCols, NutrientTableCols, TableCols, DataCols, MeasureTypeCodes, KeyboardCodes } from "../constants.js";
 import { DictTools, Translation } from "../tools.js";
 
 
@@ -208,6 +208,14 @@ export class BaseSearchPage extends BasePage {
 
     syncInputs() {
 
+    }
+
+    // submitSearchKeyboardListener(): Listener to submit the search results when the user uses the keyboard
+    submitSearchKeyboardListener() {
+        if (d3.event.keyCode != KeyboardCodes.Enter) return;
+
+        d3.event.preventDefault();
+        this.submitSearch();
     }
 
     submitSearch() {
