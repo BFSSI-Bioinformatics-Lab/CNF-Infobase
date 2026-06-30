@@ -94,7 +94,8 @@ export const SearchAtts = {
     FoodAltName: "food alternative name",
     FoodGroup: "food group",
     FoodCode: "food code",
-    Nutrient: "nutrient"
+    Nutrient: "nutrient",
+    FilterHelper: "filter helper" // The text input on top of the search table, provided by Jquery Datatable
 }
 
 // Keyboard codes when the user enters a key

@@ -18,7 +18,7 @@ export class BasePage {
     // updateTable(data, selector): Updates the data in the table
     // Note:
     // - based off Jquery's Datatables: https://datatables.net/
-    updateTable(selector, columnInfo, data, dataTableAtts = {}, destroyExisting = false) {
+    updateTable({selector, columnInfo, data, dataTableAtts = {}, destroyExisting = false, searchTxt} = {}) {
         let dataTable;
 
         const dataTableTranslations = Translation.translate("dataTable", { returnObjects: true });
@@ -45,6 +45,10 @@ export class BasePage {
         }
 
         dataTable.clear();
+        if (searchTxt !== undefined) {
+            dataTable.search(searchTxt);
+        }
+
         dataTable.rows.add(data);
         dataTable.draw();
         return dataTable;
@@ -131,6 +135,7 @@ export class BaseSearchPage extends BasePage {
 
         this.htmlElements = {};
         this.searchOpt = searchOpt;
+        this.searchTable;
     }
 
     // updateHtmlElements(): Updates the common HTML elements for the search page
@@ -180,13 +185,15 @@ export class BaseSearchPage extends BasePage {
 
     // setupSearchTable(): Setup the search table
     setupSearchTable() {
-        const dataTable = this.updateSearchTable(this.model.foodSelected[this.searchOpt]);
-        if (dataTable === undefined) return;
+        const inputs = this.model.searchInputs[this.searchOpt]; 
+
+        this.searchTable = this.updateSearchTable(this.model.foodSelected[this.searchOpt], inputs[SearchAtts.FilterHelper]);
+        if (this.searchTable === undefined) return;
 
         const self = this;
 
         $(`${this.htmlSelectors.foodSearchTable} tbody`).on('click', 'tr', function () {
-            const rowData = dataTable.row(this).data();
+            const rowData = self.dataTable.row(this).data();
             if (rowData === undefined) return;
 
             const foodCode = rowData[TableCols.FoodCode];
@@ -198,10 +205,14 @@ export class BaseSearchPage extends BasePage {
             self.updateSearchTable(foodSelected);
             self.showFoodNutrientStats(foodCode);
         });
+
+        this.searchTable.on('search.dt', function() {
+            self.model.searchInputs[self.searchOpt][SearchAtts.FilterHelper] = self.searchTable.search();
+        });
     }
 
-    // updateSearchTable(selectFood): Updates the search table
-    updateSearchTable(selectFood = false) {
+    // updateSearchTable(selectFood, searchTxt): Updates the search table
+    updateSearchTable(selectFood = false, searchTxt = null) {
 
     }
 
@@ -211,7 +222,8 @@ export class BaseSearchPage extends BasePage {
         this.model.clearSelectedFoods(this.searchOpt);
         this.syncInputs();
         this.hideFoodNutrientStats();
-        this.updateSearchTable();
+
+        this.updateSearchTable(false, "");
     }
 
     // syncInputs: Synchronizes the page's inputs with the inputs the user has previously entered
@@ -229,7 +241,8 @@ export class BaseSearchPage extends BasePage {
     
     // submitSearch(): Submits the search inputs to retrieve the search results in the search table
     submitSearch() {
-        this.updateSearchTable();
+        const inputs = this.model.searchInputs[this.searchOpt]; 
+        this.updateSearchTable(false, inputs[SearchAtts.FilterHelper]);
     }
 
     // updateNutrientTable(visibleMeasureCodes): Updates the nutrient table
@@ -264,30 +277,34 @@ export class BaseSearchPage extends BasePage {
             tableColInfo.push({title: measureColTitle, data: dataCol, name: dataCol, visible: measureVisible});
         }
 
-        const dataTable = this.updateTable(this.htmlSelectors.nutrientTable, tableColInfo, this.model.webSearchedNutrientTable, 
-            {scrollY: '800px',
-             pageLength: -1,
-             order: [[1, 'asc']],
-             orderFixed: {
-                pre: [0, 'asc'] // Fix the nutrient group column so when sorting, the nutrients only get sorted in their corresponding sections
-            },
-            rowGroup: {
-                dataSrc: Translation.getDataCol(TableCols.NutrientGroup),
-                startRender: function (rows, group) {
-                    var api = rows.context[0].oInstance.api();
-                    var visibleColumnsCount = api.columns(':visible').count();
+        const dataTable = this.updateTable({
+            selector: this.htmlSelectors.nutrientTable, 
+            columnInfo: tableColInfo, 
+            data: this.model.webSearchedNutrientTable, 
+            dataTableAtts: {scrollY: '800px',
+                pageLength: -1,
+                order: [[1, 'asc']],
+                orderFixed: {
+                    pre: [0, 'asc'] // Fix the nutrient group column so when sorting, the nutrients only get sorted in their corresponding sections
+                },
+                rowGroup: {
+                    dataSrc: Translation.getDataCol(TableCols.NutrientGroup),
+                    startRender: function (rows, group) {
+                        var api = rows.context[0].oInstance.api();
+                        var visibleColumnsCount = api.columns(':visible').count();
 
-                    var stickyWrapper = $('<div class="dtrg-sticky-window"/>')
-                        .append($('<span class="dtrg-sticky-text"/>').text(group));
+                        var stickyWrapper = $('<div class="dtrg-sticky-window"/>')
+                            .append($('<span class="dtrg-sticky-text"/>').text(group));
 
-                    return $('<tr class="dtrg-group dtrg-start dtrg-level-0"/>')
-                        .append(
-                            $(`<th colspan="${visibleColumnsCount}" scope="row"/>`)
-                                .append(stickyWrapper)
-                        );
+                        return $('<tr class="dtrg-group dtrg-start dtrg-level-0"/>')
+                            .append(
+                                $(`<th colspan="${visibleColumnsCount}" scope="row"/>`)
+                                    .append(stickyWrapper)
+                            );
+                    }
                 }
-            }
-        }, true);
+            }, 
+            destroyExisting: true});
         return dataTable;
     }
 

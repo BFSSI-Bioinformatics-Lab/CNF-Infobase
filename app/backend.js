@@ -41,11 +41,13 @@ export class Model {
             [SearchOpts.SearchByFood]: {
                 [SearchAtts.FoodName]: "",
                 [SearchAtts.FoodGroup]: "",
-                [SearchAtts.FoodCode]: ""
+                [SearchAtts.FoodCode]: "",
+                [SearchAtts.FilterHelper]: ""
             },
             [SearchOpts.SearchByNutrient]: {
                 [SearchAtts.Nutrient]: "",
-                [SearchAtts.FoodGroup]: ""
+                [SearchAtts.FoodGroup]: "",
+                [SearchAtts.FilterHelper]: ""
             }
         };
     }
