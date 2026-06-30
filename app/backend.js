@@ -141,17 +141,6 @@ export class Model {
         // add the nutrient group ordering
         const nutrientGroupData = nutrientGroupTable.data;
         let currentNutrientGroupInd = 0;
-        const nutrientGroupOrder = {};
-
-        for (const row of nutrientGroupData) {
-            const nutrientGroup = row[Translation.getDataCol(DataCols.NutrientGroup)];
-            if (nutrientGroupOrder[nutrientGroup] === undefined) {
-                nutrientGroupOrder[nutrientGroup] = currentNutrientGroupInd;
-                currentNutrientGroupInd++;
-            }
-
-            row[TableCols.NutrientGroupOrder] = nutrientGroupOrder[nutrientGroup];
-        }
 
         this.nutrientNameTable = nutrientNameTable;
         const nutrients = this.getNutrients();
