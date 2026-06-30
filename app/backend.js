@@ -40,7 +40,6 @@ export class Model {
         return {
             [SearchOpts.SearchByFood]: {
                 [SearchAtts.FoodName]: "",
-                [SearchAtts.FoodAltName]: "",
                 [SearchAtts.FoodGroup]: "",
                 [SearchAtts.FoodCode]: ""
             },
@@ -301,7 +300,7 @@ export class Model {
     // getFoodSearchTableData(searchOpt): Retrieves the data for the searched foods 
     getFoodSearchTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
-        return this.filterFoodSearchTable(inputs[SearchAtts.FoodName], inputs[SearchAtts.FoodAltName], inputs[SearchAtts.FoodGroup], inputs[SearchAtts.FoodCode]);
+        return this.filterFoodSearchTable(inputs[SearchAtts.FoodName], "", inputs[SearchAtts.FoodGroup], inputs[SearchAtts.FoodCode]);
     }
 
     // getFoodSearchSelectedData(searchOpt): Retrieves the data for the selected foods

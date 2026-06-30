@@ -15,12 +15,10 @@ export class SearchByFoodPage extends BaseSearchPage {
         const elements = this.htmlElements;
 
         elements.foodNameInputContainer = d3.select("#foodNameInputContainer");
-        elements.foodAltNameInputContainer = d3.select("#foodAltNameInputContainer");
         elements.foodGroupInputContainer = d3.select("#foodGroupInputContainer");
         elements.foodCodeInputContainer = d3.select("#foodCodeInputContainer");
 
         elements.foodNameInput = elements.foodNameInputContainer.select("input");
-        elements.foodAltNameInput = elements.foodAltNameInputContainer.select("input");
         elements.foodCodeInput = elements.foodCodeInputContainer.select("input");
     }
 
@@ -31,7 +29,6 @@ export class SearchByFoodPage extends BaseSearchPage {
         d3.select("#searchTitle").html(Translation.translate("SearchCriteriaTitle"));
 
         elements.foodNameInputContainer.select("label").html(Translation.translate("FoodNameInputTitle"));
-        elements.foodAltNameInputContainer.select("label").html(Translation.translate("FoodAltNameInputTitle"));
         elements.foodGroupInputContainer.select("label").html(Translation.translate("FoodGroupInputTitle"));
         elements.foodCodeInputContainer.select("label").html(Translation.translate("FoodCodeInputTitle"));
         elements.searchButton.attr("value", Translation.translate("FoodSearchButton"));
@@ -43,7 +40,6 @@ export class SearchByFoodPage extends BaseSearchPage {
 
         const elements = this.htmlElements;
         elements.foodNameInput.on("keydown", () => {this.submitSearchKeyboardListener()});
-        elements.foodAltNameInput.on("keydown", () => {this.submitSearchKeyboardListener()});
         elements.foodCodeInput.on("keydown", () => {this.submitSearchKeyboardListener()});
     }
 
@@ -85,7 +81,6 @@ export class SearchByFoodPage extends BaseSearchPage {
         const inputs = this.model.searchInputs[this.searchOpt]; 
 
         inputs[SearchAtts.FoodName] = elements.foodNameInput.property("value");
-        inputs[SearchAtts.FoodAltName] = elements.foodAltNameInput.property("value");
         inputs[SearchAtts.FoodCode] = elements.foodCodeInput.property("value");
 
         const foodGroups = $(this.htmlSelectors.foodGroupInput).selectpicker('val');
@@ -99,7 +94,6 @@ export class SearchByFoodPage extends BaseSearchPage {
         const inputs = this.model.searchInputs[this.searchOpt];
 
         elements.foodNameInput.property("value", inputs[SearchAtts.FoodName]);
-        elements.foodAltNameInput.property("value", inputs[SearchAtts.FoodAltName]);
         $(this.htmlSelectors.foodGroupInput).selectpicker('val', [inputs[SearchAtts.FoodGroup]]);
         elements.foodCodeInput.property("value", inputs[SearchAtts.FoodCode]);
     }
