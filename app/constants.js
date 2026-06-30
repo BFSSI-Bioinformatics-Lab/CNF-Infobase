@@ -68,8 +68,7 @@ export const MeasureTypeCodes = {
 export const FoodSearchTableCols = [
     DataCols.FoodCode,
     DataCols.FoodGroupDescription,
-    DataCols.FoodDescription,
-    DataCols.FoodAltDescription
+    DataCols.FoodDescription
 ];
 
 // The columns to display in the Search By Nutrient table
@@ -150,7 +149,6 @@ const LangEN = {
                 [DataCols.FoodCode]: "Food Code",
                 [DataCols.FoodGroupDescription]: "Food Group",
                 [DataCols.FoodDescription]: "Food Name",
-                [DataCols.FoodAltDescription]: "Food Alternative Name"
             },
 
             [SearchOpts.SearchByNutrient]: {
@@ -482,8 +480,7 @@ const LangFR = {
             [SearchOpts.SearchByFood]: {
                 [DataCols.FoodCode]: "Code de l'Aliment",
                 [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
-                [DataCols.FoodDescription]: "Nom de l'Aliment",
-                [DataCols.FoodAltDescription]: "Nom Alternatif de l'Aliment"
+                [DataCols.FoodDescription]: "Nom de l'Aliment"
             },
             [SearchOpts.SearchByNutrient]: {
                 [DataCols.FoodCode]: "Code de l'Aliment",
