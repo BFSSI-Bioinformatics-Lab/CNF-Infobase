@@ -8,6 +8,8 @@
 import { DataCols, LangDataCols } from "./constants.js";
 
 
+let ActiveURLObjIds = [];
+
 
 // Translation: Helper class for doing translations
 export class Translation {
@@ -137,6 +139,30 @@ export class TextTools {
 
 // TableTools: Helper class for doing tabular operations
 export class TableTools {
+    // createCSVContent(matrix): Creates the string needed for exporting to CSV
+    static createCSVContent(matrix) {
+        let result = "";
+        for (const row of matrix) {
+            const colLen = row.length;
+            const csvRow = [];
+
+            // clean up the text for each cell
+            for (let i = 0; i < colLen; ++i) {
+                let cell = row[i];
+                if (Number.isNaN(cell) || cell === undefined || cell === null) {
+                    cell = "";
+                }
+
+                let cleanedText = `${cell}`.replace(/"/g, "'").replace('"', "'");
+                cleanedText = `"${cleanedText}"`;
+                csvRow.push(cleanedText);
+            }
+
+            result += csvRow.join(",") + "\r\n";
+        }
+
+        return result;
+    }
 
     // leftJoinById(srcTable, refTable, srcIdCol, refIdCol, joinedRefCols): Performs a left-join where
     //  the join condition is based on some id
@@ -174,5 +200,54 @@ export class TableTools {
         let columns = new Set([...srcTable.columns, ...refTable.columns]);
         columns = Array.from(columns);
         return {data, columns};
+    }
+
+    // downloadCSV(csvConvent): Exports some table as a CSV file
+    // Note: For large CSV files, their string content are so big, that they take up
+    //  all of the browser's memory and end up not downloading the file.
+    //  We want to slowly stream the data download using 'URL.CreateObjectURL'.
+    //  https://stackoverflow.com/questions/30167326/unable-to-download-large-data-using-javascript
+    //
+    // WARNING: Remember to FREE UP the memory of the newly created URL object by calling 'URL.revokeObjectURL'
+    //  https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL_static
+    static downloadCSV({csvContent, fileName = "", freePreviousObjects = true, saveNewObjId = true} = {}) {
+        if (freePreviousObjects) {
+        for (const objId of ActiveURLObjIds) {
+            URL.revokeObjectURL(objId);
+        }
+
+        ActiveURLObjIds = [];
+        }
+
+        const universalBOM = "\uFEFF";
+
+        // creates a temporary link for exporting the table
+        const link = document.createElement('a');
+        var urlObjId = URL.createObjectURL( new Blob( [universalBOM + csvContent], {type:'text/csv;charset=utf-8'} ) );
+        link.setAttribute('href', urlObjId);
+        link.setAttribute('download', `${fileName}.csv`);
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        if (saveNewObjId) {
+        ActiveURLObjIds.push(urlObjId);
+        }
+
+        return urlObjId;
+    }
+
+    /**
+     * Download data in CSV format
+     *
+     * Parameters:
+     * - An object that represents downloadable data
+     *   - rows: Array of objects, where each object has column titles as keys with corresponding values
+     *   - filename: Formatted filename
+     */
+    static downloadCSVFromData(data, freePreviousObjects = true) {
+        const csvContent = d3.csvFormat(data.rows);
+        return downloadCSV({csvContent: csvContent, fileName: data.csvFilename, freePreviousObjects: freePreviousObjects});
     }
 }
