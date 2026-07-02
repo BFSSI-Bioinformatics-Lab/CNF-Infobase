@@ -6,7 +6,7 @@ import { BaseSearchPage } from "./basePage.js";
 
 export class SearchByNutrientPage extends BaseSearchPage {
     constructor(model, app) {
-        super(model, app, SearchOpts.SearchByNutrient);
+        super(model, app, SearchOpts.SearchByNutrient); 
 
         this.htmlSelectors.foodGroupInput = "#foodGroupInput";
         this.htmlSelectors.nutrientInput = "#nutrientInput";
