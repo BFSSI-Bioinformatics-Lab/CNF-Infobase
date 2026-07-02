@@ -471,8 +471,11 @@ export class BaseSearchPage extends BasePage {
                 measureCodesSelected.delete(measureCode);
             }
 
-            const showExtraDetails = self.model.showFoodNutrientsExtraCols(self.searchOpt);
-            const showUnits = self.model.showFoodNutrientsUnitCol(self.searchOpt);
+            nutrientStatsInputs[NutrientStatAtts.ShowExtraDetails] = null;
+            nutrientStatsInputs[NutrientStatAtts.ShowUnit] = null;
+
+            let showExtraDetails = self.model.showFoodNutrientsExtraCols(self.searchOpt);
+            let showUnits = self.model.showFoodNutrientsUnitCol(self.searchOpt);
 
             self.updateNutrientTableConvCols(dataTable, measureConvInd, this.checked);
             self.updateNutrientTableExtraCols(dataTable, showExtraDetails);
@@ -483,9 +486,6 @@ export class BaseSearchPage extends BasePage {
             }
 
             dataTable.columns.adjust().draw(false); 
-            
-            nutrientStatsInputs[NutrientStatAtts.ShowExtraDetails] = null;
-            nutrientStatsInputs[NutrientStatAtts.ShowUnit] = null;
 
             self.htmlElements.nutrientStatsShowExtraDetailsCheckbox.property("checked", showExtraDetails);
             self.htmlElements.nutrientStatsShowUnitsCheckbox.property("checked", showUnits);
