@@ -76,6 +76,65 @@ export class DictTools {
 }
 
 
+export class TextTools {
+    // buildAhoCorasickDFA(keywords): Builds the DFA for AhoCorasick
+    static buildAhoCorasickDFA(keywords) {
+        const result = new AhoCorasick(keywords);
+        result.keywordCount = keywords.length;
+        return result;
+    }
+
+    // findFirstKeywords(txt, ahoCorasickDFA): Finds the unique keywords within a text
+    static findFirstKeywords(txt, ahoCorasickDFA) {
+        const result = {};
+
+        const gotoFn = ahoCorasickDFA.gotoFn;
+        const failure = ahoCorasickDFA.failure;
+        const output = ahoCorasickDFA.output;
+
+        let uniqueCount = 0;
+        let currentState = 0;
+
+        for (let i = 0; i < txt.length; i++) {
+            const char = txt[i];
+            
+            // Rollback through failure states safely if the character isn't a valid transition
+            while (currentState !== 0 && !(gotoFn[currentState] && char in gotoFn[currentState])) {
+                currentState = failure[currentState];
+            }
+            
+            // Advance to the next numerical state position
+            if (gotoFn[currentState] && char in gotoFn[currentState]) {
+                currentState = gotoFn[currentState][char];
+            } else {
+                currentState = 0; // Fall back to root state safely if nothing matches
+            }
+            
+            // Extract matching words immediately from the active numerical state
+            const matches = output[currentState];
+            if (matches && matches.length > 0) {
+                for (let j = 0; j < matches.length; j++) {
+                    const keyword = matches[j];
+
+                    if (result[keyword] === undefined) {
+                        const startIndex = i - keyword.length + 1;
+                        result[keyword] = startIndex;
+                        uniqueCount++;
+                    }
+                }
+
+                // 3. Early breakout condition adjusted to use uniqueCount tracking
+                if (uniqueCount === ahoCorasickDFA.keywordCount) {
+                    break; 
+                }
+            }
+        }
+        
+        return result;
+    }
+}
+
+
 // TableTools: Helper class for doing tabular operations
 export class TableTools {
 
