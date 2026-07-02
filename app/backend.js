@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts } from "./constants.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols } from "./constants.js";
 import { Translation, TableTools, TextTools } from "./tools.js";
 
 
@@ -25,7 +25,7 @@ export class Model {
 
         this.searchedNutrientData;
         this.webSearchedNutrientTable;
-        this.pdfSearchedNutrientTable;
+        this.csvSearchedNutrientTable;
     }
 
     clearSearchInputs(searchOpt) {
@@ -432,6 +432,74 @@ export class Model {
         return measureWeightConv;
     }
 
+    getNutrientCSVDownload(food, webSearchedNutrientTable, measureWeightConv) {
+        let result = [];
+
+        // retrieve the table columns and their translations
+        const nutrientColTranslations = Translation.translate("FoodNutrientStats.TableCols", { returnObjects: true });
+        const tableAtts = NutrientTableCols.map((col) => Translation.getDataCol(col));
+        const tableColDisplay = NutrientTableCols.map((col) => nutrientColTranslations[col]);
+
+        const measureTableAtts = [];
+        const measureColDisplay = [];
+        const measureConvLen = measureWeightConv.length;
+
+        for (let i = 0; i < measureConvLen; ++i) {
+            const measureConv = measureWeightConv[i];
+            if (measureConv[DataCols.MeasureTypeCode] == MeasureTypeCodes.Refuse) continue;
+
+            const dataCol = Model.getConvertedNutrientColName(i);
+            const currentMeasureDisplay = Translation.translate("FoodNutrientStats.ConvertedMeasureCol", {
+                measureName: Translation.translateNum(measureConv[Translation.getDataCol(TableCols.MeasureDescription)]), 
+                convertedMeasure: Translation.translateNum(measureConv[TableCols.MeasureWeight], undefined)
+            });
+
+            measureTableAtts.push(dataCol);
+            measureColDisplay.push(currentMeasureDisplay);
+        }
+
+        tableAtts.splice(1, 0, ...measureTableAtts);
+        tableColDisplay.splice(1, 0, ...measureColDisplay);
+
+        const tableAttsLen = tableAtts.length;
+
+        // header of the CSV
+        for (let i = 0; i < 4; ++i) {
+            result.push(Array(tableAttsLen).fill(null));
+        }
+
+        result[0][0] = Translation.translate("SiteName");
+        result[1][0] = food[Translation.getDataCol(TableCols.FoodDescription)];
+        result[2][0] = Translation.translate("FoodNutrientStats.SubTitle", { foodCode: food[DataCols.FoodCode] });
+
+        // table headings
+        result.push(tableColDisplay);
+
+        // table data
+        for (const row of webSearchedNutrientTable) {
+            const currentCSVRow = [];
+
+            for (const tableAtt of tableAtts) {
+                currentCSVRow.push(row[tableAtt]);
+            }
+
+            result.push(currentCSVRow);
+        }
+
+        // footer of the CSV
+        const footer = [];
+        for (let i = 0; i < 2; ++i) {
+            footer.push(Array(tableAttsLen).fill(null));
+        }
+
+        const today = new Date().toLocaleDateString('en-CA');
+        footer[1][0] = today;
+
+        result.push(...footer);
+        result = TableTools.createCSVContent(result);
+        return result;
+    }
+
     // getFoodNutrientStats(): Retrives the nutrient data for the selected foods
     getFoodNutrientStats(foodCode) {
         let food = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
@@ -445,6 +513,8 @@ export class Model {
 
         this.webSearchedNutrientTable = this.convertNutrientAmounts(nutrients, measureWeightConv);
         this.webSearchedNutrientTable = this.formatNutrientTable(this.webSearchedNutrientTable, measureWeightConv.length);
+
+        this.csvSearchedNutrientTable = this.getNutrientCSVDownload(food, this.webSearchedNutrientTable, measureWeightConv);
 
         this.searchedNutrientData = {measureWeightConv, food, nutrients};
         return this.searchedNutrientData;
@@ -482,5 +552,20 @@ export class Model {
         }
 
         return nutrientStatInputs[NutrientStatAtts.MeasureCodesSelected].has(DefaultMeasureCode);
+    }
+
+    // downloadNutrientCSV(searchOpt): Downloads the CSV for the nutrient table
+    downloadNutrientCSV(searchOpt) {
+        const selectedFoodCodes = this.selectedFoodCodes[searchOpt];
+        if (selectedFoodCodes === undefined ||  selectedFoodCodes.length == 0) return;
+
+        const foodCode = selectedFoodCodes[0];
+        let food = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
+        if (food == undefined) return;
+
+        const foodName = food[Translation.getDataCol(DataCols.FoodDescription)];
+        const csvFileName = Translation.translate("CSVDownload.FileName", {foodName});
+        
+        TableTools.downloadCSV({csvContent: this.csvSearchedNutrientTable, fileName: csvFileName});
     }
 }

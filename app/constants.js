@@ -124,6 +124,8 @@ const LangEN = {
     translation: {
         Number: "{{num, number}}",
 
+        SiteName: "Canadian Nutrient File (CNF) 2026",
+
         SearchByFood: "Search by Food",
         SearchByNutrient: "Search by Nutrient",
         CompareByNutrient:"Compare by Nutrient",
@@ -195,6 +197,11 @@ const LangEN = {
 
             ShowUnits: "Show Units",
             ShowExtraDetails: "Show Extra Details"
+        },
+
+        CSVDownload: {
+            ButtonTitle: "Download Table",
+            FileName: `Nutrient Profile - {{ foodName }}.csv`
         },
 
         // reference: https://datatables.net/plug-ins/i18n/English.html
@@ -459,6 +466,8 @@ const LangFR = {
     translation: {
         Number: "{{num, number}}",
 
+        SiteName: "Fichier canadien sur les éléments nutritifs (FCÉN) 2026",
+
         SearchByFood: "Recherche par Aliment",
         SearchByNutrient: "Recherche par Éléments Nutritifs",
         CompareByNutrient: REMPLACER_MOI,
@@ -527,6 +536,11 @@ const LangFR = {
 
             ShowUnits: "Afficher les Unités ",
             ShowExtraDetails: "Afficher Plus de Détails"
+        },
+
+        CSVDownload: {
+            ButtonTitle: "Télécharger les Données",
+            FileName: `Profil Nutritionel - {{ foodName }}.csv`
         },
 
         // references: https://datatables.net/plug-ins/i18n/French.html

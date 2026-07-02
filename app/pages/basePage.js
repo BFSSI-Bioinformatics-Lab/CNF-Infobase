@@ -152,7 +152,9 @@ export class BaseSearchPage extends BasePage {
             nutrientStatsShowUnitContainer: d3.select("#nutrientStatsShowUnitContainer"),
             nutrientStatsShowExtraDetailsContainer: d3.select("#nutrientStatsShowExtraDetailsContainer"),
             nutrientStatsShowUnitsCheckbox: d3.select("#nutrientStatsShowUnit"),
-            nutrientStatsShowExtraDetailsCheckbox: d3.select("#nutrientStatsShowExtraDetails")
+            nutrientStatsShowExtraDetailsCheckbox: d3.select("#nutrientStatsShowExtraDetails"),
+
+            nutrientStatCSVDownloadBtn: d3.select("#nutrientCSVDownload")
         };
 
         elements.refuseList = elements.refuseListContainer.select("ul")
@@ -170,6 +172,8 @@ export class BaseSearchPage extends BasePage {
 
         this.htmlElements.nutrientStatsShowUnitContainer.select("label").html(Translation.translate("FoodNutrientStats.ShowUnits"));
         this.htmlElements.nutrientStatsShowExtraDetailsContainer.select("label").html(Translation.translate("FoodNutrientStats.ShowExtraDetails"));
+
+        this.htmlElements.nutrientStatCSVDownloadBtn.html(Translation.translate("CSVDownload.ButtonTitle"));
     }
 
     // setupListeners(): Setups all the initial listeners
@@ -185,7 +189,11 @@ export class BaseSearchPage extends BasePage {
 
         elements.resetSearchButton.on("click", () => {
             this.clearSearch();
-        })
+        });
+
+        elements.nutrientStatCSVDownloadBtn.on("click", () => {
+            this.model.downloadNutrientCSV(this.searchOpt);
+        });
     }
 
     // loadPageInputs(): Setup any initial inputs for the page
@@ -308,7 +316,7 @@ export class BaseSearchPage extends BasePage {
             dataTableAtts: {scrollY: '800px',
                 pageLength: -1,
                 orderFixed: {
-                    pre: [0, 'asc'] // Fix the order for the nutrientss
+                    pre: [0, 'asc'] // Fix the order for the nutrients
                 },
                 rowGroup: {
                     dataSrc: Translation.getDataCol(TableCols.NutrientGroup),
