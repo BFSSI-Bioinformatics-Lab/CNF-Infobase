@@ -1,5 +1,5 @@
 import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes } from "./constants.js";
-import { Translation, TableTools } from "./tools.js";
+import { Translation, TableTools, TextTools } from "./tools.js";
 
 
 export class Model {
@@ -241,6 +241,18 @@ export class Model {
 
         const foodNamePattern = (foodName != "") ? new RegExp(foodName, "i") : undefined;
         const foodAltNamePattern = (foodAltName != "") ? new RegExp(foodAltName, "i") : undefined;
+
+        let foodNameAhoCorasickDFA;
+        let foodNameKeywords;
+        let foodNameKeywordsLen;
+
+        if (foodName != "") {
+            foodNameKeywords = Array.from(new Set(foodName.trim().split(/\s+/)));
+            foodNameKeywords = foodNameKeywords.map((keyword) => keyword.toLowerCase());
+            foodNameKeywordsLen = foodNameKeywords.length;
+
+            foodNameAhoCorasickDFA = TextTools.buildAhoCorasickDFA(foodNameKeywords);
+        }
         
         result = result.filter((row) => {
             let foodNameIndex = Infinity;
@@ -250,8 +262,17 @@ export class Model {
             row[TableCols.FoodAltNameOrder] = Infinity;
 
             if (foodName != "") {
-                foodNameIndex = row[Translation.getDataCol(DataCols.FoodDescription)].search(foodNamePattern);
-                if (foodNameIndex == -1) return false;
+                let foundFoodNameKeywords = TextTools.findFirstKeywords(row[Translation.getDataCol(DataCols.FoodDescription)].toLowerCase(), foodNameAhoCorasickDFA);
+                let foundFoodNameKeywordInds = Object.values(foundFoodNameKeywords);
+
+                if (foundFoodNameKeywordInds.length != foodNameKeywordsLen) {
+                    foundFoodNameKeywords = TextTools.findFirstKeywords(row[Translation.getDataCol(DataCols.FoodAltDescription)].toLowerCase(), foodNameAhoCorasickDFA);
+                    foundFoodNameKeywordInds = Object.values(foundFoodNameKeywords);
+
+                    if (foundFoodNameKeywordInds.length != foodNameKeywordsLen) return false;
+                }
+
+                foodNameIndex = Math.min(...foundFoodNameKeywordInds);
             }
 
             if (foodAltName != "") {
