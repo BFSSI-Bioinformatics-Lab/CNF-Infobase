@@ -1,5 +1,5 @@
 import { Model } from "../backend.js";
-import { SearchOpts, SearchAtts, FoodSearchTableCols, NutrientTableCols, TableCols, DataCols, MeasureTypeCodes, KeyboardCodes, DefaultMeasureCode } from "../constants.js";
+import { SearchOpts, SearchAtts, FoodSearchTableCols, NutrientTableCols, TableCols, DataCols, MeasureTypeCodes, KeyboardCodes, DefaultMeasureCode, NutrientTableExtraCols, NutrientStatAtts } from "../constants.js";
 import { DictTools, Translation } from "../tools.js";
 
 
@@ -125,7 +125,8 @@ export class BaseSearchPage extends BasePage {
         this.htmlNames = {
             foodSelected: "foodSelected",
             servingSizeInput: "servingSizeInput",
-            servingSizeOpt: "servingSizeOpt"
+            servingSizeOpt: "servingSizeOpt",
+            portionValCell: "nutrientPortionValCell"
         }
 
         this.htmlSelectors = {
@@ -145,8 +146,13 @@ export class BaseSearchPage extends BasePage {
             resetSearchButton: d3.select("#resetButton"),
             foodResultContainer: d3.select(".foodResultContainer"),
             foodResultCard: d3.select("#foodResultCard"),
-            servingSizeCheckList: d3.select(".servingSizeContainer"),
-            refuseListContainer: d3.select(".servingRefuseContainer")
+            servingSizeCheckList: d3.select(".servingSizeContainer ul"),
+            refuseListContainer: d3.select(".servingRefuseContainer"),
+
+            nutrientStatsShowUnitContainer: d3.select("#nutrientStatsShowUnitContainer"),
+            nutrientStatsShowExtraDetailsContainer: d3.select("#nutrientStatsShowExtraDetailsContainer"),
+            nutrientStatsShowUnitsCheckbox: d3.select("#nutrientStatsShowUnit"),
+            nutrientStatsShowExtraDetailsCheckbox: d3.select("#nutrientStatsShowExtraDetails")
         };
 
         elements.refuseList = elements.refuseListContainer.select("ul")
@@ -161,11 +167,15 @@ export class BaseSearchPage extends BasePage {
 
         this.htmlElements.foodResultCard.select(".cardDetails .card-title").html(Translation.translate("FoodNutrientStats.ServingTitle"));
         this.htmlElements.refuseListContainer.select("h5").html(Translation.translate("FoodNutrientStats.ServingRefuseTitle"));
+
+        this.htmlElements.nutrientStatsShowUnitContainer.select("label").html(Translation.translate("FoodNutrientStats.ShowUnits"));
+        this.htmlElements.nutrientStatsShowExtraDetailsContainer.select("label").html(Translation.translate("FoodNutrientStats.ShowExtraDetails"));
     }
 
     // setupListeners(): Setups all the initial listeners
     setupListeners() {
         const elements = this.htmlElements;
+        const self = this;
 
         elements.searchButton.on("click", () => { 
             this.model.clearSelectedFoods(this.searchOpt);
@@ -203,6 +213,10 @@ export class BaseSearchPage extends BasePage {
             self.model.foodSelected[self.searchOpt] = foodSelected;
             
             self.updateSearchTable(foodSelected);
+
+            if (!foodSelected) return;
+
+            self.model.clearNutrientStatsInputs(self.searchOpt);
             self.showFoodNutrientStats(foodCode);
         });
 
@@ -251,7 +265,14 @@ export class BaseSearchPage extends BasePage {
 
         let tableColInfo = [{data: DataCols.NutrientOrder, visible: false}];
         tableColInfo.push(...NutrientTableCols.map((tableAtt) => {
-            return {title: translations[tableAtt], data: Translation.getDataCol(tableAtt), orderable: false};
+            const isUnit = tableAtt == TableCols.NutrientUnit;
+            const isExtraCol = NutrientTableExtraCols.has(tableAtt);
+
+            const visible = ((isUnit && this.model.showFoodNutrientsUnitCol(this.searchOpt)) || 
+                             (isExtraCol && this.model.showFoodNutrientsExtraCols(this.searchOpt)) || 
+                             (!isUnit && !isExtraCol));
+
+            return {title: translations[tableAtt], data: Translation.getDataCol(tableAtt), name: tableAtt, orderable: false, visible };
         }));
 
         const measureWeightConv = this.model.searchedNutrientData.measureWeightConv;
@@ -261,6 +282,7 @@ export class BaseSearchPage extends BasePage {
             visibleMeasureCodes = new Set();
         }
 
+        const measureTableColInfo = [];
         for (let i = 0; i < measureConvLen; ++i) {
             const measureConv = measureWeightConv[i];
             if (measureConv[DataCols.MeasureTypeCode] == MeasureTypeCodes.Refuse) continue;
@@ -274,8 +296,10 @@ export class BaseSearchPage extends BasePage {
             const measureVisible = visibleMeasureCodes.has(measureCode);
 
             const dataCol = Model.getConvertedNutrientColName(i);
-            tableColInfo.push({title: measureColTitle, data: dataCol, name: dataCol, visible: measureVisible, orderable: false});
+            measureTableColInfo.push({title: measureColTitle, data: dataCol, name: dataCol, visible: measureVisible, orderable: false, className: this.htmlNames.portionValCell});
         }
+
+        tableColInfo.splice(2, 0, ...measureTableColInfo);
 
         const dataTable = this.updateTable({
             selector: this.htmlSelectors.nutrientTable, 
@@ -284,7 +308,7 @@ export class BaseSearchPage extends BasePage {
             dataTableAtts: {scrollY: '800px',
                 pageLength: -1,
                 orderFixed: {
-                    pre: [0, 'asc'] // Fix the order for the nutrients
+                    pre: [0, 'asc'] // Fix the order for the nutrientss
                 },
                 rowGroup: {
                     dataSrc: Translation.getDataCol(TableCols.NutrientGroup),
@@ -308,9 +332,37 @@ export class BaseSearchPage extends BasePage {
     }
 
     // updateNutrientTableConvCols(dataTable, ind, show): Updates the nutrient table to hide/show certain portion serving columns
-    updateNutrientTableConvCols(dataTable, ind, show) {
+    updateNutrientTableConvCols(dataTable, ind, show, updateDatable = false) {
         const colName = Model.getConvertedNutrientColName(ind);
         dataTable.column(`${colName}:name`).visible(show); 
+        if (!updateDatable) return;
+
+        if (dataTable.rowGroup) {
+            dataTable.rowGroup().draw();
+        }
+
+        dataTable.columns.adjust().draw(false); 
+    }
+
+    // updateNutrientTableExtraCols(dataTable, show): Updates the nutrient table to hide/show the extra detail columns
+    updateNutrientTableExtraCols(dataTable, show, updateDatable = false) {
+        for (const tableAtt of NutrientTableExtraCols) {
+            dataTable.column(`${tableAtt}:name`).visible(show); 
+        }
+
+        if (!updateDatable) return;
+
+        if (dataTable.rowGroup) {
+            dataTable.rowGroup().draw();
+        }
+
+        dataTable.columns.adjust().draw(false); 
+    }
+
+    // updateNutrientTableUnitCol(dataTable, show, updateDataTable): Updates the nutrient table to hide/show the unit column
+    updateNutrientTableUnitCol(dataTable, show, updateDatable = false) {
+        dataTable.column(`${TableCols.NutrientUnit}:name`).visible(show); 
+        if (!updateDatable) return;
 
         if (dataTable.rowGroup) {
             dataTable.rowGroup().draw();
@@ -326,14 +378,13 @@ export class BaseSearchPage extends BasePage {
         const checkboxText = Translation.translate("FoodNutrientStats.ServingSizeOption", 
                                                     {measureName: measureConv[Translation.getDataCol(TableCols.MeasureDescription)], 
                                                     convertedMeasure: Translation.translateNum(measureConv[TableCols.MeasureWeight], undefined)});
-        const isDefaultMeasure = measureCode == DefaultMeasureCode;
 
         this.addCheckbox({checkboxLst: this.htmlElements.servingSizeCheckList, 
                           checkLstName: this.htmlNames.servingSizeInput, 
-                          checkboxVal: [measureConvInd], 
+                          checkboxVal: [{measureConvInd, measureConv}], 
                           checkboxId, 
                           checkboxText, 
-                          isChecked: isDefaultMeasure});
+                          isChecked});
     }
 
     // addRefuseListItem(measureConv): Adds a list item to the refused serving portions
@@ -372,6 +423,8 @@ export class BaseSearchPage extends BasePage {
         const measureConvLen = measureWeightConv.length;
         let hasRefuse = false;
 
+        const measureCodesSelected = this.model.nutrientStatsInputs[this.searchOpt][NutrientStatAtts.MeasureCodesSelected];
+
         // add the checkboxes for the serving sizes
         for (let i = 0; i < measureConvLen; ++i) {
             const measureConv = measureWeightConv[i];
@@ -382,18 +435,71 @@ export class BaseSearchPage extends BasePage {
                     hasRefuse = true;
                 }
             } else {
-                this.addServingCheckbox(measureConv, i);
+                const measureCode = measureConv[TableCols.MeasureCode];
+                const isChecked = measureCodesSelected.has(measureCode);
+                this.addServingCheckbox(measureConv, i, isChecked);
             }
         }
 
         this.htmlElements.refuseListContainer.classed("d-none", !hasRefuse);
 
-        const visibleMeasureCodes = new Set([DefaultMeasureCode]);
+        const visibleMeasureCodes = this.model.nutrientStatsInputs[this.searchOpt][NutrientStatAtts.MeasureCodesSelected];
         const dataTable = this.updateNutrientTable(visibleMeasureCodes);
 
-        this.htmlElements.servingSizeCheckList.selectAll("input[type=checkbox]").on("change", function(measureConvInd) {
+        // when the user selects some serving size checkbox
+        this.htmlElements.servingSizeCheckList.selectAll("input[type=checkbox]").on("change", function(measureConvData) {
+            const measureConvInd = measureConvData.measureConvInd;
+            const measureConv = measureConvData.measureConv;
+            const measureCode = measureConv[TableCols.MeasureCode];
+
+            const nutrientStatsInputs = self.model.nutrientStatsInputs[self.searchOpt];
+
+            const measureCodesSelected = nutrientStatsInputs[NutrientStatAtts.MeasureCodesSelected];
+            if (this.checked) {
+                measureCodesSelected.add(measureCode);
+            } else {
+                measureCodesSelected.delete(measureCode);
+            }
+
+            const showExtraDetails = self.model.showFoodNutrientsExtraCols(self.searchOpt);
+            const showUnits = self.model.showFoodNutrientsUnitCol(self.searchOpt);
+
             self.updateNutrientTableConvCols(dataTable, measureConvInd, this.checked);
-        })
+            self.updateNutrientTableExtraCols(dataTable, showExtraDetails);
+            self.updateNutrientTableUnitCol(dataTable, showUnits);
+
+            if (dataTable.rowGroup) {
+                dataTable.rowGroup().draw();
+            }
+
+            dataTable.columns.adjust().draw(false); 
+            
+            nutrientStatsInputs[NutrientStatAtts.ShowExtraDetails] = null;
+            nutrientStatsInputs[NutrientStatAtts.ShowUnit] = null;
+
+            self.htmlElements.nutrientStatsShowExtraDetailsCheckbox.property("checked", showExtraDetails);
+            self.htmlElements.nutrientStatsShowUnitsCheckbox.property("checked", showUnits);
+        });
+
+        // setup the checkbox for hide/show the units columns and the other extra details columns
+        const nutrientStatsInputs = this.model.nutrientStatsInputs[this.searchOpt];
+        const showExtraDetails = nutrientStatsInputs[NutrientStatAtts.ShowExtraDetails];
+        const showUnits = nutrientStatsInputs[NutrientStatAtts.ShowUnit];
+     
+        this.htmlElements.nutrientStatsShowExtraDetailsCheckbox.property("checked", (showExtraDetails !== null && showExtraDetails));
+        this.htmlElements.nutrientStatsShowUnitsCheckbox.property("checked", (showUnits !== null && showUnits));
+
+        this.htmlElements.nutrientStatsShowExtraDetailsCheckbox.on("change", function() {
+            const nutrientStatsInputs = self.model.nutrientStatsInputs[self.searchOpt];
+            nutrientStatsInputs[NutrientStatAtts.ShowExtraDetails] = this.checked;
+            self.updateNutrientTableExtraCols(dataTable, this.checked, true);
+        });
+
+        this.htmlElements.nutrientStatsShowUnitsCheckbox.on("change", function() {
+            const nutrientStatsInputs = self.model.nutrientStatsInputs[self.searchOpt];
+            nutrientStatsInputs[NutrientStatAtts.ShowUnit] = this.checked;
+            self.updateNutrientTableUnitCol(dataTable, this.checked, true);
+        });
 
         return dataTable;
     }

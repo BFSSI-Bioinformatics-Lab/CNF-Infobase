@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes } from "./constants.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts } from "./constants.js";
 import { Translation, TableTools, TextTools } from "./tools.js";
 
 
@@ -13,6 +13,9 @@ export class Model {
             [SearchOpts.SearchByFood]: false,
             [SearchOpts.SearchByNutrient]: false
         };
+
+        this.nutrientStatsInputs = this.initNutrientStatsInputs();
+        this.defaultNutrientStatsInputs = this.initNutrientStatsInputs();
 
         this.foodTable;
         this.foodGroupTable;
@@ -29,11 +32,17 @@ export class Model {
         this.searchInputs[searchOpt] = structuredClone(this.defaultSearchInputs[searchOpt]);
     }
 
+    clearNutrientStatsInputs(searchOpt) {
+        this.nutrientStatsInputs[searchOpt] = structuredClone(this.defaultNutrientStatsInputs[searchOpt]);
+    }
+
     clearSelectedFoods(searchOpt) {
         if (this.selectedFoodCodes[searchOpt] == undefined) return;
 
         delete this.selectedFoodCodes[searchOpt];
         this.foodSelected[searchOpt] = false;
+
+        this.clearNutrientStatsInputs(searchOpt);
     }
 
     initSearchInputs() {
@@ -60,6 +69,21 @@ export class Model {
             [SearchOpts.SearchByNutrient]: {
                 [SearchAtts.FoodGroup]: [],
                 [SearchAtts.Nutrient]: []
+            }
+        }
+    }
+
+    initNutrientStatsInputs() {
+        return {
+            [SearchOpts.SearchByFood]: {
+                [NutrientStatAtts.MeasureCodesSelected]: new Set([DefaultMeasureCode]),
+                [NutrientStatAtts.ShowExtraDetails]: null,
+                [NutrientStatAtts.ShowUnit]: null,
+            },
+            [SearchOpts.SearchByNutrient]: {
+                [NutrientStatAtts.MeasureCodesSelected]: new Set([DefaultMeasureCode]),
+                [NutrientStatAtts.ShowExtraDetails]: null,
+                [NutrientStatAtts.ShowUnit]: null,
             }
         }
     }
@@ -434,5 +458,29 @@ export class Model {
     getNutrients() {
         let result = this.nutrientNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.NutrientName)], value: row[DataCols.NutrientCode]}});
         return result;
+    }
+
+    showFoodNutrientsExtraCols(searchOpt) {
+        const nutrientStatInputs = this.nutrientStatsInputs[searchOpt];
+        if (nutrientStatInputs == undefined) return false;
+
+        const showExtraColsOverride = nutrientStatInputs[NutrientStatAtts.ShowExtraDetails];
+        if (showExtraColsOverride !== null) {
+            return showExtraColsOverride;
+        }
+
+        return nutrientStatInputs[NutrientStatAtts.MeasureCodesSelected].size < 2;
+    }
+
+    showFoodNutrientsUnitCol(searchOpt) {
+        const nutrientStatInputs = this.nutrientStatsInputs[searchOpt];
+        if (nutrientStatInputs == undefined) return false;
+
+        const showUnitOverride = nutrientStatInputs[NutrientStatAtts.ShowUnit];
+        if (showUnitOverride !== null) {
+            return showUnitOverride;
+        }
+
+        return nutrientStatInputs[NutrientStatAtts.MeasureCodesSelected].has(DefaultMeasureCode);
     }
 }

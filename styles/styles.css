@@ -256,20 +256,20 @@ tr.dtrg-group th {
 tr.dtrg-group th .dtrg-sticky-window {
     position: sticky !important;
     left: 0;
-    width: 100%;
+    width: max-content;
     max-width: calc(100vw - 40px);
     
-    display: flex !important;
-    justify-content: center;
+    display: inline-flex !important;
+    justify-content: left;
     align-items: center;
-    padding: 8px 0;
+    padding: 8px 5px;
     box-sizing: border-box;
 }
 
 tr.dtrg-group th .dtrg-sticky-text {
     display: inline-block;
     width: max-content;
-    text-align: center;
+    text-align: left;
     white-space: nowrap;
 }
 
@@ -410,7 +410,7 @@ tr.dtrg-group th .dtrg-sticky-text {
     flex-direction: column;
 }
 
-#foodResultCard .servingSizeContainer label  {
+#foodResultCard .servingSizeContainer label, #foodResultCard .columnOverrideContainer label {
     font-size: 20px;
 }
 
@@ -434,6 +434,9 @@ tr.dtrg-group th .dtrg-sticky-text {
     min-width: 160px !important;
 }
 
+.dataTable td.nutrientPortionValCell {
+    text-align: center !important;
+}
 
 
 /* For small phone screeens */

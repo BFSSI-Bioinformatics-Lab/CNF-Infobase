@@ -88,6 +88,13 @@ export const NutrientTableCols = [
     DataCols.NutrientDataSrc
 ]
 
+// The extra columns in the Nutrient table that the user can choose to display
+export const NutrientTableExtraCols = new Set([
+    DataCols.NutrientNoOfObservations,
+    DataCols.NutrientStdErr,
+    DataCols.NutrientDataSrc
+]);
+
 // Different attributes used to search some food/nutrient
 export const SearchAtts = {
     FoodName: "food name",
@@ -97,6 +104,13 @@ export const SearchAtts = {
     Nutrient: "nutrient",
     FilterHelper: "filter helper" // The text input on top of the search table, provided by Jquery Datatable
 }
+
+// Different attributes used in the nutrient stats
+export const NutrientStatAtts = {
+    MeasureCodesSelected: "measure codes selected",
+    ShowUnit: "show unit",
+    ShowExtraDetails: "show extra details"
+};
 
 // Keyboard codes when the user enters a key
 export const KeyboardCodes = {
@@ -177,7 +191,10 @@ const LangEN = {
                 [DataCols.NutrientDataSrc]: `Data source`
             },
 
-            ConvertedMeasureCol: `{{ measureName }} / {{ convertedMeasure }} g`
+            ConvertedMeasureCol: `{{ measureName }} / {{ convertedMeasure }} g`,
+
+            ShowUnits: "Show Units",
+            ShowExtraDetails: "Show Extra Details"
         },
 
         // reference: https://datatables.net/plug-ins/i18n/English.html
@@ -506,7 +523,10 @@ const LangFR = {
                 [DataCols.NutrientNoOfObservations]: `Nombre d'obser­vations`,
                 [DataCols.NutrientStdErr]: `Écart-type`,
                 [DataCols.NutrientDataSrc]: `Source des données`
-            }
+            },
+
+            ShowUnits: "Afficher les Unités ",
+            ShowExtraDetails: "Afficher Plus de Détails"
         },
 
         // references: https://datatables.net/plug-ins/i18n/French.html
