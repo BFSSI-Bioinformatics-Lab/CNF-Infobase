@@ -476,8 +476,21 @@ export class Model {
         result.push(tableColDisplay);
 
         // table data
+        let nutrientGroup = "";
+        let nutrientRowGroup = [];
+
         for (const row of webSearchedNutrientTable) {
             const currentCSVRow = [];
+
+            // add a row for the nutrient group
+            const currentNutrientGroup = row[Translation.getDataCol(DataCols.NutrientGroup)];
+            if (currentNutrientGroup != nutrientGroup) {
+                nutrientGroup = currentNutrientGroup;
+
+                nutrientRowGroup = Array(tableAttsLen).fill(null);
+                nutrientRowGroup[0] = nutrientGroup;
+                result.push(nutrientRowGroup);
+            }
 
             for (const tableAtt of tableAtts) {
                 currentCSVRow.push(row[tableAtt]);
@@ -493,7 +506,7 @@ export class Model {
         }
 
         const today = new Date().toLocaleDateString('en-CA');
-        footer[1][0] = today;
+        footer[1][0] = Translation.translate("CSVDownload.Date", {date: today});
 
         result.push(...footer);
         result = TableTools.createCSVContent(result);

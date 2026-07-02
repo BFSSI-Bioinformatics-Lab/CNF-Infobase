@@ -28,6 +28,7 @@ export const DataCols = {
     NutrientSrcCode: "Nutrient_Source_Code",
     NutrientName: "Nutrient_Name_",
     NutrientUnit: "Nutrient_Unit",
+    NutrientShortUnit: "Nutrient unit",
     NutrientAmount: "Nutrient_Amount",
     NutrientNoOfObservations: "Observations",
     NutrientStdErr: "STD_Error",
@@ -82,7 +83,7 @@ export const NutrientSearchTableCols = [
 // The columns to display in the Nutrient table
 export const NutrientTableCols = [
     DataCols.NutrientName,
-    DataCols.NutrientUnit,
+    DataCols.NutrientShortUnit,
     DataCols.NutrientNoOfObservations,
     DataCols.NutrientStdErr,
     DataCols.NutrientDataSrc
@@ -187,7 +188,7 @@ const LangEN = {
 
             TableCols: {
                 [DataCols.NutrientName]: `Nutrient Name`,
-                [DataCols.NutrientUnit]: `Unit`,
+                [DataCols.NutrientShortUnit]: `Unit`,
                 [DataCols.NutrientNoOfObservations]: `Number of obser­vations`,
                 [DataCols.NutrientStdErr]: `Standard error`,
                 [DataCols.NutrientDataSrc]: `Data source`
@@ -201,7 +202,8 @@ const LangEN = {
 
         CSVDownload: {
             ButtonTitle: "Download Table",
-            FileName: `Nutrient Profile - {{ foodName }}.csv`
+            FileName: `Nutrient Profile - {{ foodName }}.csv`,
+            Date: `Date: {{ date }}`
         },
 
         // reference: https://datatables.net/plug-ins/i18n/English.html
@@ -528,7 +530,7 @@ const LangFR = {
 
             TableCols: {
                 [DataCols.NutrientName]: `Nom de l'élément nutritif`,
-                [DataCols.NutrientUnit]: `Unité`,
+                [DataCols.NutrientShortUnit]: `Unité`,
                 [DataCols.NutrientNoOfObservations]: `Nombre d'obser­vations`,
                 [DataCols.NutrientStdErr]: `Écart-type`,
                 [DataCols.NutrientDataSrc]: `Source des données`
@@ -540,7 +542,8 @@ const LangFR = {
 
         CSVDownload: {
             ButtonTitle: "Télécharger les Données",
-            FileName: `Profil Nutritionel - {{ foodName }}.csv`
+            FileName: `Profil Nutritionel - {{ foodName }}.csv`,
+            Date: `Date : {{ date }}`
         },
 
         // references: https://datatables.net/plug-ins/i18n/French.html

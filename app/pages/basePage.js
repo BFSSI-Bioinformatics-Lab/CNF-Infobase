@@ -273,7 +273,7 @@ export class BaseSearchPage extends BasePage {
 
         let tableColInfo = [{data: DataCols.NutrientOrder, visible: false}];
         tableColInfo.push(...NutrientTableCols.map((tableAtt) => {
-            const isUnit = tableAtt == TableCols.NutrientUnit;
+            const isUnit = tableAtt == TableCols.NutrientShortUnit;
             const isExtraCol = NutrientTableExtraCols.has(tableAtt);
 
             const visible = ((isUnit && this.model.showFoodNutrientsUnitCol(this.searchOpt)) || 
@@ -369,7 +369,7 @@ export class BaseSearchPage extends BasePage {
 
     // updateNutrientTableUnitCol(dataTable, show, updateDataTable): Updates the nutrient table to hide/show the unit column
     updateNutrientTableUnitCol(dataTable, show, updateDatable = false) {
-        dataTable.column(`${TableCols.NutrientUnit}:name`).visible(show); 
+        dataTable.column(`${TableCols.NutrientShortUnit}:name`).visible(show); 
         if (!updateDatable) return;
 
         if (dataTable.rowGroup) {
