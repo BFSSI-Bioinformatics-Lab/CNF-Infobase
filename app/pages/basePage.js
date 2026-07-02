@@ -149,6 +149,7 @@ export class BaseSearchPage extends BasePage {
             servingSizeCheckList: d3.select(".servingSizeContainer ul"),
             refuseListContainer: d3.select(".servingRefuseContainer"),
 
+            nutrientColOverrideContainer: d3.select(".columnOverrideContainer"),
             nutrientStatsShowUnitContainer: d3.select("#nutrientStatsShowUnitContainer"),
             nutrientStatsShowExtraDetailsContainer: d3.select("#nutrientStatsShowExtraDetailsContainer"),
             nutrientStatsShowUnitsCheckbox: d3.select("#nutrientStatsShowUnit"),
@@ -173,6 +174,7 @@ export class BaseSearchPage extends BasePage {
         this.htmlElements.nutrientStatsShowUnitContainer.select("label").html(Translation.translate("FoodNutrientStats.ShowUnits"));
         this.htmlElements.nutrientStatsShowExtraDetailsContainer.select("label").html(Translation.translate("FoodNutrientStats.ShowExtraDetails"));
 
+        this.htmlElements.nutrientColOverrideContainer.select("h5").html(Translation.translate("FoodNutrientStats.OverrideTitle"));
         this.htmlElements.nutrientStatCSVDownloadBtn.html(Translation.translate("CSVDownload.ButtonTitle"));
     }
 
