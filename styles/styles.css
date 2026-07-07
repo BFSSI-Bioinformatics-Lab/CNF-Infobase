@@ -391,6 +391,38 @@ tr.dtrg-group th .dtrg-sticky-text {
 }
 
 /* =================================================== */
+/* ============ MultiSelect Autocomplete ============= */
+
+.choices__inner {
+    padding: 0px 3px;
+    min-height: 37px !important;
+    background-color: var(--background) !important;
+}
+
+.choices__input {
+    margin: 0 !important;
+    padding-top: 0px !important;
+    background-color: var(--background) !important;
+}
+
+.choices__button {
+    margin: 0 0 0 4px !important;
+}
+
+.choices__list--multiple .choices__item {
+    padding: 0 0 0 5px !important;
+    background-color: var(--primary) !important;
+    border: 1px solid var(--primary) !important;
+    color: var(--onPrimary) !important;
+    margin-bottom: 0px !important;
+    line-height: 1.65em;
+}
+
+.choices__list--multiple .choices__button {
+    border-left: 1px solid var(--onPrimary) !important;
+}
+
+/* =================================================== */
 
 
 .leftSearchTab {
