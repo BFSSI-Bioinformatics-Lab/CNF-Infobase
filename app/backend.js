@@ -57,6 +57,10 @@ export class Model {
                 [SearchAtts.Nutrient]: "",
                 [SearchAtts.FoodGroup]: "",
                 [SearchAtts.FilterHelper]: ""
+            },
+            [SearchOpts.CompareNutrients]: {
+                [SearchAtts.FoodGroup]: "",
+                [SearchAtts.Nutrient]: []
             }
         };
     }
@@ -67,6 +71,10 @@ export class Model {
                 [SearchAtts.FoodGroup]: []
             },
             [SearchOpts.SearchByNutrient]: {
+                [SearchAtts.FoodGroup]: [],
+                [SearchAtts.Nutrient]: []
+            },
+            [SearchOpts.CompareNutrients]: {
                 [SearchAtts.FoodGroup]: [],
                 [SearchAtts.Nutrient]: []
             }
@@ -107,6 +115,7 @@ export class Model {
         const foodGroups = this.getFoodGroups();
         this.searchSelections[SearchOpts.SearchByFood][SearchAtts.FoodGroup] = foodGroups;
         this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.FoodGroup] = structuredClone(foodGroups);
+        this.searchSelections[SearchOpts.CompareNutrients][SearchAtts.FoodGroup] = structuredClone(foodGroups);
 
         this.foodTable = TableTools.dataLeftJoinById(foodNameTable, foodGroupTable, DataCols.FoodGroupCode, DataCols.FoodGroupCode);
         const foodTableData = this.foodTable.data;
@@ -167,10 +176,12 @@ export class Model {
         let currentNutrientGroupInd = 0;
 
         this.nutrientNameTable = nutrientNameTable;
-        const nutrients = this.getNutrients();
+        let nutrients = this.getNutrients();
         nutrients.sort((a, b) => a.text.localeCompare(b.text));
 
         this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = nutrients;
+        this.searchSelections[SearchOpts.CompareNutrients][SearchAtts.Nutrient] = structuredClone(nutrients);
+
         const defaultNutrient = nutrients[0].value
         this.searchInputs[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = defaultNutrient;
         this.defaultSearchInputs[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = defaultNutrient;

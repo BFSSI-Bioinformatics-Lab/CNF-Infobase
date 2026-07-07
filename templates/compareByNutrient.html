@@ -4,6 +4,29 @@ Purpose: Defines the page for comparing nutrients
 
 -------------------------------------------------->
 
-<div>
-    <h2>REPLACE ME: COMPARE NUTRIENTS</h2>
+<div class="mrgn-tp-lg">
+    <div class="container foodTableContainer">
+        <h3 id="searchTitle"></h3>
+
+        <fieldset class="pb-5 border-bottom">
+            <div class="searchInputContainer d-flex flex-wrap gap-5 justify-content-around mrgn-bttm-lg">
+                <div class="form-group dropdownInputContainer" id="nutrientInputContainer">
+                    <label for="nutrientInput"></label>
+                    <select id="nutrientInput" multiple>
+                    </select>
+                </div>
+
+                <div class="form-group dropdownInputContainer" id="foodGroupInputContainer">
+                    <label for="foodGroupInput"></label>
+                    <select class="singleOptSelect" multiple data-actions-box="true" data-max-options="1" data-container="body" id="foodGroupInput">
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <input type="submit" class="btn btn-primary" id="searchButton">
+                <button type="button" class="btn btn-danger" id="resetButton"></button>
+            </div>
+        </fieldset>        
+    </div>
 </div>

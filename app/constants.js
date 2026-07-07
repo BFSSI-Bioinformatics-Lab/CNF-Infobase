@@ -153,6 +153,8 @@ const LangEN = {
         FoodGroupInputTitle: "Food Group",
         FoodCodeInputTitle: "Food Code",
         NutrientInputTitle: "Nutrient",
+        MultiNutrientPlaceholder: "Search and select nutrients",
+        MultiNutrientInputTitle: "Nutrients",
 
         FoodSearchButton: "Food Search",
         FoodSearchResetButton: "Reset",
@@ -205,6 +207,12 @@ const LangEN = {
             ButtonTitle: "Download Table",
             FileName: `Nutrient Profile - {{ foodName }}.csv`,
             Date: `Date: {{ date }}`
+        },
+
+        multiselectAutoComplete: {
+            canOnlySelectOne: "Only one item can be selected",
+            maxItemText: "Only {{ maxItemCount }} items can be selected",
+            noResultsText: "No results"
         },
 
         // reference: https://datatables.net/plug-ins/i18n/English.html
@@ -496,6 +504,8 @@ const LangFR = {
         FoodGroupInputTitle: "Groupe de l'Aliment",
         FoodCodeInputTitle: "Code de l'Aliment",
         NutrientInputTitle: "Élément nutritif",
+        MultiNutrientPlaceholder: "Rechercher et sélectionner les éléments nutritifs",
+        MultiNutrientInputTitle: "Éléments nutritifs",
 
         FoodSearchButton: "Recherche de l'Aliment",
         FoodSearchResetButton: "Réinitialiser",
@@ -546,6 +556,12 @@ const LangFR = {
             ButtonTitle: "Télécharger les Données",
             FileName: `Profil Nutritionel - {{ foodName }}.csv`,
             Date: `Date : {{ date }}`
+        },
+
+        multiselectAutoComplete: {
+            canOnlySelectOne: "Seulement un élément peut être sélectionné",
+            maxItemText: "Seulement {{ maxItemCount }} éléments peuvent être sélectionnés",
+            noResultsText: "Aucun résultats"
         },
 
         // references: https://datatables.net/plug-ins/i18n/French.html

@@ -115,6 +115,52 @@ export class BasePage {
             }
         });
     }
+
+    setupAutoCompleteSelect({elementSelector, selections, inputs, onChange = undefined, maxItemCount = undefined, 
+                             maxItemText = undefined, placeholder = undefined, noResultsText = undefined}) {
+        const element = d3.select(elementSelector);
+        const hasPlaceholder = placeholder !== undefined;
+
+        const choicesOpts = {
+            removeItemButton: true,
+            searchEnabled: true,
+            placeholder: hasPlaceholder,
+            placeholderValue: hasPlaceholder ? placeholder : "",
+            itemSelectText: ""
+        };
+
+        if (maxItemCount !== undefined) {
+            choicesOpts.maxItemCount = maxItemCount;
+        }
+
+        if (maxItemText !== undefined) {
+            choicesOpts.maxItemText = maxItemText
+        }
+
+        if (noResultsText !== undefined) {
+            choicesOpts.noResultsText = noResultsText;
+        }
+
+        const result = new Choices(element.node(), choicesOpts);
+
+        result.setChoices(selections, 'value', 'text', true);
+
+        if (!Array.isArray(inputs)) {
+            inputs = Array.from(inputs);
+        }
+
+        result.removeActiveItems();
+        result.setChoiceByValue(inputs);
+
+        element.on('change', function () {
+            if (onChange !== undefined) {
+                const currentSelections = result.getValue(true);
+                onChange(currentSelection);
+            }
+        });
+
+        return result;
+    }
 }
 
 

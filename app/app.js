@@ -3,6 +3,7 @@ import { Translation } from "./tools.js";
 import { Model } from "./backend.js";
 import { SearchByFoodPage } from "./pages/searchByFood.js";
 import { SearchByNutrientPage } from "./pages/searchByNutrient.js";
+import { CompareByNutrient } from "./pages/compareByNutrient.js";
 
 
 
@@ -11,7 +12,8 @@ class App {
         this.model = model;
         this.searchPages = {
             [SearchOpts.SearchByFood]: new SearchByFoodPage(model, this),
-            [SearchOpts.SearchByNutrient]: new SearchByNutrientPage(model, this)
+            [SearchOpts.SearchByNutrient]: new SearchByNutrientPage(model, this),
+            [SearchOpts.CompareNutrients]: new CompareByNutrient(model, this)
         }
     }
 
@@ -88,7 +90,7 @@ class App {
         }
 
         $("#searchPage").load(PageSrc[searchOpt], function() {
-            if (searchOpt == SearchOpts.SearchByFood || searchOpt == SearchOpts.SearchByNutrient) {
+            if (searchOpt == SearchOpts.SearchByFood || searchOpt == SearchOpts.SearchByNutrient || searchOpt == SearchOpts.CompareNutrients) {
                 self.searchPages[searchOpt].loadPage();
             }
         });

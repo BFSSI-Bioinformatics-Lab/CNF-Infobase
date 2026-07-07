@@ -18,6 +18,8 @@ export class SearchByNutrientPage extends BaseSearchPage {
 
         elements.foodGroupInputContainer = d3.select("#foodGroupInputContainer");
         elements.nutrientInputContainer = d3.select("#nutrientInputContainer");
+
+        elements.nutrientInput = null;
     }
 
     updateStaticText() {
@@ -64,7 +66,8 @@ export class SearchByNutrientPage extends BaseSearchPage {
         const foodGroups = $(this.htmlSelectors.foodGroupInput).selectpicker('val');
         inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
 
-        const nutrients = $(this.htmlSelectors.nutrientInput).selectpicker('val');
+        const nutrients = elements.nutrientInput.getValue(true);
+        console.log(nutrients);
         inputs[SearchAtts.Nutrient] = (nutrients.length == 0) ? "" : nutrients;
 
         inputs[SearchAtts.FilterHelper] = this.searchTable.search();
@@ -77,12 +80,15 @@ export class SearchByNutrientPage extends BaseSearchPage {
         const inputs = this.model.searchInputs[this.searchOpt];
 
         $(this.htmlSelectors.foodGroupInput).selectpicker('val', [inputs[SearchAtts.FoodGroup]]);
-        $(this.htmlSelectors.nutrientInput).selectpicker('val', [inputs[SearchAtts.Nutrient]]);
+
+        elements.nutrientInput.removeActiveItems();
+        elements.nutrientInput.setChoiceByValue(inputs[SearchAtts.Nutrient]);
     }
 
     loadPageInputs() {
         const inputs = this.model.searchInputs[this.searchOpt];
         const selections = this.model.searchSelections[this.searchOpt];
+        const elements = this.htmlElements;
 
         // add in the food groups and nutrient dropdowns
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
@@ -90,10 +96,13 @@ export class SearchByNutrientPage extends BaseSearchPage {
                                    inputs: new Set([inputs[SearchAtts.FoodGroup]]),
                                    noneSelectedText: Translation.translate("NoneSelected")});
 
-        this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.nutrientInput, 
-                                   selections: selections[SearchAtts.Nutrient], 
-                                   inputs: new Set([inputs[SearchAtts.Nutrient]]),
-                                   noneSelectedText: Translation.translate("NoneSelected")});
+        elements.nutrientInput = this.setupAutoCompleteSelect({elementSelector: this.htmlSelectors.nutrientInput, 
+                                                               selections: selections[SearchAtts.Nutrient], 
+                                                               inputs: new Set([inputs[SearchAtts.Nutrient]]),
+                                                               maxItemCount: 1,
+                                                               maxItemText: (maxItemCount) => Translation.translate("multiselectAutoComplete.canOnlySelectOne"),
+                                                               placeholder: Translation.translate("MultiNutrientPlaceholder"),
+                                                               noResultsText: Translation.translate("multiselectAutoComplete.noResultsText")});
 
         this.syncInputs();
 
