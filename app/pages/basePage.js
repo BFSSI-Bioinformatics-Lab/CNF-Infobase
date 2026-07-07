@@ -447,7 +447,7 @@ export class BaseSearchPage extends BasePage {
     addRefuseListItem(measureConv) {
         const text = Translation.translate("FoodNutrientStats.ServingRefuseListItem", 
                                            {measureName: measureConv[Translation.getDataCol(TableCols.MeasureDescription)],
-                                            convertedMeasure: Translation.translateNum(measureConv[TableCols.MeasureWeight], undefined)});
+                                            convertedMeasure: Translation.translateNum(measureConv[TableCols.MeasureWeight], 0)});
 
         this.htmlElements.refuseList.append("li").html(text);
     }
