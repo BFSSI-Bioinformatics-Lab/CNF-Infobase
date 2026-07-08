@@ -109,9 +109,16 @@ export class Model {
         }
     }
 
+    // tokenizeFoodDescription(foodDescription): Split the food description name into different tokens
+    tokenizeFoodDescription(foodDescription) {
+        if (foodDescription === "") return [];
+        return foodDescription.toLowerCase().split(" ");
+    }
+
     async loadFoodTable(foodNameTable, foodGroupTable) {
         this.foodGroupTable = foodGroupTable;
 
+        // setup the food group selections
         const foodGroups = this.getFoodGroups();
         this.searchSelections[SearchOpts.SearchByFood][SearchAtts.FoodGroup] = foodGroups;
         this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.FoodGroup] = structuredClone(foodGroups);
@@ -133,6 +140,10 @@ export class Model {
 
             row[TableCols.FoodNameOrder] = Infinity;
             row[TableCols.FoodAltNameOrder] = Infinity;
+            
+            // tokenize the food descriptions for searching
+            row[Translation.getDataCol(TableCols.FoodDescriptionTokens)] = this.tokenizeFoodDescription(row[Translation.getDataCol(DataCols.FoodDescription)]);
+            row[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)] = this.tokenizeFoodDescription(row[Translation.getDataCol(DataCols.FoodAltDescription)]);
         }
     }
 
@@ -251,6 +262,33 @@ export class Model {
         return rowInds.map((ind) => table.data[ind]);
     }
 
+    findAllExactKeywords(tokens, ahoCorasickDFA) {
+        let foundKeywords = {};
+        let keyword = null;
+        let uniqueCount = 0;
+        let foundKeywordData = null;
+        let tokenLen = 0;
+
+        for (const token of tokens) {
+            tokenLen = token.length;
+            foundKeywordData = TextTools.findExactKeyword(token, ahoCorasickDFA);
+            if (foundKeywordData === null) continue;
+
+            const keyword = foundKeywordData.keyword;
+            if (foundKeywords[keyword] === undefined) {
+                foundKeywords[keyword] = foundKeywordData.start;
+                uniqueCount++;
+            }
+
+            if (uniqueCount == ahoCorasickDFA.keywordCount) {
+                const minKeywordInd = Math.min(...Object.values(foundKeywords));
+                return minKeywordInd;
+            }
+        }
+
+        return -1;
+    }
+
     filterFoodSearchTable(foodName, foodAltName, foodGroupCode, foodCode) {
         let result = this.foodTable.data;
 
@@ -297,17 +335,14 @@ export class Model {
             row[TableCols.FoodAltNameOrder] = Infinity;
 
             if (foodName != "") {
-                let foundFoodNameKeywords = TextTools.findFirstKeywords(row[Translation.getDataCol(DataCols.FoodDescription)].toLowerCase(), foodNameAhoCorasickDFA);
-                let foundFoodNameKeywordInds = Object.values(foundFoodNameKeywords);
+                let foundFoodNameKeywordInd = this.findAllExactKeywords(row[Translation.getDataCol(TableCols.FoodDescriptionTokens)], foodNameAhoCorasickDFA);
 
-                if (foundFoodNameKeywordInds.length != foodNameKeywordsLen) {
-                    foundFoodNameKeywords = TextTools.findFirstKeywords(row[Translation.getDataCol(DataCols.FoodAltDescription)].toLowerCase(), foodNameAhoCorasickDFA);
-                    foundFoodNameKeywordInds = Object.values(foundFoodNameKeywords);
-
-                    if (foundFoodNameKeywordInds.length != foodNameKeywordsLen) return false;
+                if (foundFoodNameKeywordInd == -1) {
+                    foundFoodNameKeywordInd = this.findAllExactKeywords(row[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)], foodNameAhoCorasickDFA);
+                    if (foundFoodNameKeywordInd == -1) return false;
                 }
 
-                foodNameIndex = Math.min(...foundFoodNameKeywordInds);
+                foodNameIndex = foundFoodNameKeywordInd;
             }
 
             if (foodAltName != "") {

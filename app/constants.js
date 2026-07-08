@@ -38,18 +38,21 @@ export const DataCols = {
     NutrientOrder: "Display order for web tool (do not publish this info)"
 }
 
-// Columns with translations
-export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription, DataCols.MeasureDescription,
-    DataCols.NutrientName, DataCols.NutrientDataSrc, DataCols.FoodAltDescription, DataCols.NutrientGroup
-]);
-
 // columns used in the table in the app
 export const TableCols = {...DataCols,
     ConvertedNutrientAmount: "Nutrient_Converted_",
     MeasureWeightConvId: "Meausre_Weight_Conversion_Id",
     FoodNameOrder: "Food Name Order",
     FoodAltNameOrder: "Food Alt Name Order",
+    FoodDescriptionTokens: "Food_Description_Tokens_",
+    FoodAltDescriptionTokens: "Food_Alt_Description_Tokens_"
 };
+
+// Columns with translations
+export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription, DataCols.MeasureDescription,
+    DataCols.NutrientName, DataCols.NutrientDataSrc, DataCols.FoodAltDescription, DataCols.NutrientGroup, 
+    TableCols.FoodDescriptionTokens, TableCols.FoodAltDescriptionTokens
+]);
 
 // Measure codes to filter out in the app
 export const HiddenMeasureCodes = new Set([
