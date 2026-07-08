@@ -363,9 +363,8 @@ export class Model {
         let result = this.nutrientTable.data;
 
         if (foodCode != "") {
-            const row = this.getRowById(this.nutrientTable, DataCols.FoodCode, foodCode);
-            if (row === undefined) return [];
-            result = [row];
+            result = this.getRowsById(this.nutrientTable, DataCols.FoodCode, foodCode);
+            if (result === undefined) return [];
         }
 
         if (foodGroupCode != "") {
@@ -412,7 +411,7 @@ export class Model {
         if (selectedFoods === undefined || selectedFoods.length == 0) return [];
 
         const inputs = this.searchInputs[searchOpt];
-        let result = this.filterNutrientSearchTable("", "", selectedFoods[0]);
+        let result = this.filterNutrientSearchTable(inputs[SearchAtts.Nutrient], "", selectedFoods[0]);
         this.formatNutrientSearchTable(result);
         return result;
     }
