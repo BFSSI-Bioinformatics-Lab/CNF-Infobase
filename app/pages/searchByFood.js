@@ -70,7 +70,7 @@ export class SearchByFoodPage extends BaseSearchPage {
                 columnInfo: tableColInfo, 
                 data: tableData, 
                 dataTableAtts: {orderFixed: {
-                    pre: [
+                    post: [
                         [0, "asc"],
                         [1, "asc"]
                     ]
