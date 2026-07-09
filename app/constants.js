@@ -2,14 +2,16 @@
 export const SearchOpts = {
     SearchByFood: "Search by Food",
     SearchByNutrient: "Search By Nutrient",
-    CompareNutrients: "Compare Nutrients"
+    CompareNutrients: "Compare Nutrients",
+    CompareFoods: "Compare Foods"
 }
 
 // File locations for each page
 export const PageSrc = {
     [SearchOpts.SearchByFood]: "./templates/searchByFood.html",
     [SearchOpts.SearchByNutrient]: "./templates/searchByNutrient.html",
-    [SearchOpts.CompareNutrients]: "./templates/compareByNutrient.html"
+    [SearchOpts.CompareNutrients]: "./templates/compareByNutrient.html",
+    [SearchOpts.CompareFoods]: "./templates/compareByFood.html"
 };
 
 // Different columns in the raw data
@@ -141,6 +143,7 @@ const LangEN = {
         SearchByFood: "Search by Food",
         SearchByNutrient: "Search by Nutrient",
         CompareByNutrient:"Compare by Nutrient",
+        CompareByFoods: "Compare by Foods",
 
         InstructionsTitle: "Instructions",
         InstructionsText: `
@@ -499,6 +502,7 @@ const LangFR = {
         SearchByFood: "Recherche par Aliment",
         SearchByNutrient: "Recherche par Éléments Nutritifs",
         CompareByNutrient: REMPLACER_MOI,
+        CompareByFoods: REMPLACER_MOI,
 
         InstructionsTitle: "Instructions",
         InstructionsText: `
