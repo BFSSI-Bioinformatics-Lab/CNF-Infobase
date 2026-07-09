@@ -41,6 +41,7 @@ export const DataCols = {
 // columns used in the table in the app
 export const TableCols = {...DataCols,
     ConvertedNutrientAmount: "Nutrient_Converted_",
+    CompareNutrient: "Nutrient_Compare_",
     MeasureWeightConvId: "Meausre_Weight_Conversion_Id",
     FoodNameOrder: "Food Name Order",
     FoodAltNameOrder: "Food Alt Name Order",
@@ -68,19 +69,26 @@ export const MeasureTypeCodes = {
     Refuse: 3
 };
 
-// The columns to display in the Search By Food table
+// The columns to display in the "Search By Food" search table
 export const FoodSearchTableCols = [
     DataCols.FoodCode,
     DataCols.FoodGroupDescription,
     DataCols.FoodDescription
 ];
 
-// The columns to display in the Search By Nutrient table
+// The columns to display in the "Search By Nutrient" table
 export const NutrientSearchTableCols = [
     DataCols.FoodCode,
     DataCols.FoodGroupDescription,
     DataCols.FoodDescription,
     DataCols.NutrientAmount
+];
+
+// The columns to display in the "Compare by Nutrients" search table
+export const CompNutrientSearchTableCols = [
+    DataCols.FoodCode,
+    DataCols.FoodDescription,
+    DataCols.FoodGroupDescription
 ];
 
 // The columns to display in the Nutrient table
@@ -179,7 +187,13 @@ const LangEN = {
                 [DataCols.FoodGroupDescription]: "Food Group",
                 [DataCols.FoodDescription]: "Food Name",
                 [DataCols.NutrientAmount]: "Nutrient Amount g"
-            }
+            },
+            [SearchOpts.CompareNutrients]: {
+                [DataCols.FoodCode]: "Food Code",
+                [DataCols.FoodGroupDescription]: "Food Group",
+                [DataCols.FoodDescription]: "Food Name"
+            },
+            ElementNutrientAmount: `{{ element }} (g)`
         },
 
         FoodNutrientStats: {
@@ -530,7 +544,14 @@ const LangFR = {
                 [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
                 [DataCols.FoodDescription]: "Nom de l'Aliment",
                 [DataCols.NutrientAmount]: "Valeur nutritive g"
-            }
+            },
+            [SearchOpts.CompareNutrients]: {
+                [DataCols.FoodCode]: "Code de l'Aliment",
+                [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
+                [DataCols.FoodDescription]: "Nom de l'Aliment"
+            },
+
+            ElementNutrientAmount: `{{ element }} (g)`
         },
 
         FoodNutrientStats: {
