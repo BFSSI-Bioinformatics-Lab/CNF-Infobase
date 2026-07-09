@@ -29,6 +29,7 @@ class App {
         d3.select("#searchByFoodTab").html(Translation.translate("SearchByFood"));
         d3.select("#searchByNutrientTab").html(Translation.translate("SearchByNutrient"));
         d3.select("#compareNutrientsTab").html(Translation.translate("CompareByNutrient"));
+        d3.select("#compareFoodsTab").html(Translation.translate("CompareByFoods"));
 
         d3.select("#about-tool-details summary h2").html(Translation.translate("InstructionsTitle"));
         d3.select("#about-tool-details div p").html(Translation.translate("InstructionsText"));
