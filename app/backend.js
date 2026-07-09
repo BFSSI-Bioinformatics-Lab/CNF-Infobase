@@ -421,14 +421,20 @@ export class Model {
 
     filterCompareNutrientTable(nutrientCodes, foodGroupCode) {
         let result = this.nutrientTable.data;
+        const foodGroupEmpty = foodGroupCode == "";
+        const nutrientCodesEmpty = nutrientCodes.length <= 0;
 
-        if (foodGroupCode != "") {
+        if (!foodGroupEmpty) {
             result = result.filter((row) => row[DataCols.FoodGroupCode] == foodGroupCode);
         }
 
-        if (nutrientCode.length > 0) {
+        if (!nutrientCodesEmpty) {
             nutrientCodes = new Set(nutrientCodes);
             result = result.filter((row) => nutrientCodes.has(row[DataCols.NutrientCode]));
+        }
+
+        if (foodGroupEmpty && nutrientCodesEmpty) {
+            return [];
         }
 
         return result;
@@ -481,12 +487,13 @@ export class Model {
     getCompareNutrientTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
         let result = this.filterCompareNutrientTable(inputs[SearchAtts.Nutrient], inputs[SearchAtts.FoodGroup]);
-        if (result.length == 0) return undefined;
 
         // get the data for the nutrients
         const nutrientCodes = inputs[SearchAtts.Nutrient];
         const nutrientNameData = this.getRowsByIds(this.nutrientNameTable, DataCols.NutrientCode, nutrientCodes);
         const nutrientColNames = {};
+
+        if (result.length == 0) return {data: [], nutrientNames: nutrientNameData};
 
         for (const nutrientCode of nutrientCodes) {
             nutrientColNames[nutrientCode] = Model.getCompareNutrientAmtColName(nutrientCode);
@@ -501,26 +508,35 @@ export class Model {
         result.length = 0;
         const foodDescriptionCol = Translation.getDataCol(DataCols.FoodDescription);
         const foodAltDescriptionCol = Translation.getDataCol(DataCols.FoodAltDescription);
+        const foodGroupCol = Translation.getDataCol(DataCols.FoodGroupDescription);
 
         for (const foodCode in groupedResult) {
             const currentNutrientData = groupedResult[foodCode];
-            const currentNutrients = Object.keys(nutrientData);
-            const foodRow = currentNutrientData[currentNutrients[0]];
+            const currentNutrients = Object.keys(currentNutrientData);
+            const foodRow = currentNutrientData[currentNutrients[0]][0];
+            let rowError = false;
 
             const row = {
                 [DataCols.FoodCode]: foodRow[DataCols.FoodCode],
+                [foodGroupCol]: foodRow[foodGroupCol],
                 [foodDescriptionCol]: foodRow[foodDescriptionCol],
                 [foodAltDescriptionCol]: foodRow[foodAltDescriptionCol]
             };
 
             for (const nutrientCode of nutrientCodes) {
                 const nutrientAmtColName = nutrientColNames[nutrientCode];
-                const nutrientRow = currentNutrientData[nutrientCode][0];
+                const nutrientRows = currentNutrientData[nutrientCode];
+                if (nutrientRows == undefined) {
+                    rowError = true;
+                    break;
+                }
 
+                const nutrientRow = nutrientRows[0];
                 const nutrientDecimalPlace = nutrientRow[DataCols.NutrientDecimalPlace];
                 row[nutrientAmtColName] = Translation.translateNum(nutrientRow[DataCols.NutrientAmount], nutrientDecimalPlace);
             }
 
+            if (rowError) continue;
             result.push(row);
         }
 

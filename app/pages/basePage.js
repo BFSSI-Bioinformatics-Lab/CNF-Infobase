@@ -141,6 +141,7 @@ export class BasePage {
             choicesOpts.noResultsText = noResultsText;
         }
 
+        choicesOpts.allowHTML = true;
         const result = new Choices(element.node(), choicesOpts);
 
         result.setChoices(selections, 'value', 'text', true);

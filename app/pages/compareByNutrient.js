@@ -1,6 +1,7 @@
-import { SearchOpts, SearchAtts } from "../constants.js";
+import { SearchOpts, SearchAtts, DataCols, CompNutrientSearchTableCols } from "../constants.js";
 import { Translation } from "../tools.js";
 import { BasePage } from "./basePage.js";
+import { Model } from "../backend.js";
 
 
 export class CompareByNutrient extends BasePage {
@@ -10,7 +11,8 @@ export class CompareByNutrient extends BasePage {
 
         this.htmlSelectors = {
             foodGroupInput: "#foodGroupInput",
-            nutrientInput: "#nutrientInput"
+            nutrientInput: "#nutrientInput",
+            foodSearchTable: '#foodSearchTable'
         }
 
         this.htmlElements = {};
@@ -23,7 +25,7 @@ export class CompareByNutrient extends BasePage {
             resetSearchButton: d3.select("#resetButton"),
             foodGroupInputContainer: d3.select("#foodGroupInputContainer"),
             multiNutrientInputContainer: d3.select("#nutrientInputContainer"),
-            searchTable = $(this.htmlSelectors.foodSearchTable)
+            searchTable: $(this.htmlSelectors.foodSearchTable)
         };
 
         this.htmlElements = elements;
@@ -71,10 +73,10 @@ export class CompareByNutrient extends BasePage {
         inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
 
         const nutrients = elements.nutrientInput.getValue(true);
-        console.log(nutrients);
         inputs[SearchAtts.Nutrient] = (nutrients.length == 0) ? [] : nutrients;
 
         inputs[SearchAtts.FilterHelper] = this.searchTable.search();
+        this.updateSearchTable(inputs[SearchAtts.FilterHelper]);
     }
 
     // setupSearchTable(): Setup the search table
@@ -93,25 +95,33 @@ export class CompareByNutrient extends BasePage {
 
     // updateSearchTable(selectFood, searchTxt): Updates the search table
     updateSearchTable(searchTxt = null) {
-        const tableData = this.model.getCompareNutrientTableData();
+        const tableData = this.model.getCompareNutrientTableData(this.searchOpt);
         let searchTable = this.htmlElements.searchTable;
         if (tableData === undefined) return;
 
         const translations = Translation.translate(`SearchTableCols.${this.searchOpt}`,{ returnObjects: true });
         
         let tableColInfo = [];
-        for (const tableAtt of NutrientSearchTableCols) {
+        for (const tableAtt of CompNutrientSearchTableCols) {
             tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
         }
 
         const nutrientNameData = tableData.nutrientNames;
-        for (const nutrientName of nutrientNameData) {
-            const colName = 
+        for (const nutrientNameDatum of nutrientNameData) {
+            const nutrientCode = nutrientNameDatum[DataCols.NutrientCode];
+            const nutrientName = nutrientNameDatum[Translation.getDataCol(DataCols.NutrientName)];
 
-            tableColInfo.push({title: });
+            const dataCol = Model.getCompareNutrientAmtColName(nutrientCode);
+            const colName = Translation.translate("SearchTableCols.ElementNutrientAmount", { returnObjects: true, element: nutrientName});
+
+            tableColInfo.push({title: colName, data: dataCol});
         }
 
-        const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, columnInfo: tableColInfo, data: tableData, searchTxt: (searchTxt !== null) ? searchTxt : undefined});
+        const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, 
+                                            columnInfo: tableColInfo, 
+                                            data: tableData.data, 
+                                            searchTxt: (searchTxt !== null) ? searchTxt : undefined, 
+                                            destroyExisting: true});
         return dataTable;
     }
 
@@ -154,5 +164,6 @@ export class CompareByNutrient extends BasePage {
         this.updateStaticText();
         this.setupListeners();
         this.loadPageInputs();
+        this.setupSearchTable();
     }
 }

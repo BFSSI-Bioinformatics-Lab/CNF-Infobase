@@ -86,8 +86,9 @@ export const NutrientSearchTableCols = [
 
 // The columns to display in the "Compare by Nutrients" search table
 export const CompNutrientSearchTableCols = [
+    DataCols.FoodCode,
     DataCols.FoodDescription,
-    DataCols.FoodCode
+    DataCols.FoodGroupDescription
 ];
 
 // The columns to display in the Nutrient table
@@ -188,9 +189,11 @@ const LangEN = {
                 [DataCols.NutrientAmount]: "Nutrient Amount g"
             },
             [SearchOpts.CompareNutrients]: {
-                [DataCols.FoodDescription]: "Food Name",
-                [DataCols.FoodCode]: "Food Code"
-            }
+                [DataCols.FoodCode]: "Food Code",
+                [DataCols.FoodGroupDescription]: "Food Group",
+                [DataCols.FoodDescription]: "Food Name"
+            },
+            ElementNutrientAmount: `{{ element }} (g)`
         },
 
         FoodNutrientStats: {
@@ -543,9 +546,12 @@ const LangFR = {
                 [DataCols.NutrientAmount]: "Valeur nutritive g"
             },
             [SearchOpts.CompareNutrients]: {
-                [DataCols.FoodDescription]: "Nom de l'Aliment",
-                [DataCols.FoodCode]: "Code de l'Aliment"
-            }
+                [DataCols.FoodCode]: "Code de l'Aliment",
+                [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
+                [DataCols.FoodDescription]: "Nom de l'Aliment"
+            },
+
+            ElementNutrientAmount: `{{ element }} (g)`
         },
 
         FoodNutrientStats: {
