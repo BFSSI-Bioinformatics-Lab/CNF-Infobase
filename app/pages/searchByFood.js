@@ -20,6 +20,8 @@ export class SearchByFoodPage extends BaseSearchPage {
 
         elements.foodNameInput = elements.foodNameInputContainer.select("input");
         elements.foodCodeInput = elements.foodCodeInputContainer.select("input");
+
+        elements.searchTable = $(this.htmlSelectors.foodSearchTable);
     }
 
     updateStaticText() {
@@ -45,40 +47,34 @@ export class SearchByFoodPage extends BaseSearchPage {
 
     updateSearchTable(selectFood = false, searchTxt = null) {
         const tableData = (selectFood) ? this.model.getFoodSearchSelectedData(this.searchOpt) : this.model.getFoodSearchTableData(this.searchOpt);
-
         let searchTable = this.htmlElements.searchTable;
-        if (searchTable === undefined) {
-            this.htmlElements.searchTable = $(this.htmlSelectors.foodSearchTable);
-            searchTable = this.htmlElements.searchTable;
-        }
 
         searchTable.toggleClass(this.htmlNames.foodSelected, selectFood);
+        if (tableData === undefined) return;
 
-        if (tableData !== undefined) {
-            const translations = Translation.translate(`SearchTableCols.${this.searchOpt}`,{ returnObjects: true });
-            
-            let tableColInfo = [{data: TableCols.FoodNameOrder, visible: false},
-                                {data: TableCols.FoodAltNameOrder, visible: false}
-            ];
+        const translations = Translation.translate(`SearchTableCols.${this.searchOpt}`,{ returnObjects: true });
+        
+        let tableColInfo = [{data: TableCols.FoodNameOrder, visible: false},
+                            {data: TableCols.FoodAltNameOrder, visible: false}
+        ];
 
-            for (const tableAtt of FoodSearchTableCols) {
-                tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
-            }
-
-            const dataTable = this.updateTable({
-                selector: this.htmlSelectors.foodSearchTable, 
-                columnInfo: tableColInfo, 
-                data: tableData, 
-                dataTableAtts: {orderFixed: {
-                    post: [
-                        [0, "asc"],
-                        [1, "asc"]
-                    ]
-                }},
-                searchTxt: (searchTxt !== null) ? searchTxt : undefined
-            });
-            return dataTable;
+        for (const tableAtt of FoodSearchTableCols) {
+            tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
         }
+
+        const dataTable = this.updateTable({
+            selector: this.htmlSelectors.foodSearchTable, 
+            columnInfo: tableColInfo, 
+            data: tableData, 
+            dataTableAtts: {orderFixed: {
+                post: [
+                    [0, "asc"],
+                    [1, "asc"]
+                ]
+            }},
+            searchTxt: (searchTxt !== null) ? searchTxt : undefined
+        });
+        return dataTable;
     }
 
     submitSearch() {

@@ -19,6 +19,7 @@ export class SearchByNutrientPage extends BaseSearchPage {
         elements.foodGroupInputContainer = d3.select("#foodGroupInputContainer");
         elements.nutrientInputContainer = d3.select("#nutrientInputContainer");
 
+        elements.searchTable = $(this.htmlSelectors.foodSearchTable);
         elements.nutrientInput = null;
     }
 
@@ -37,26 +38,20 @@ export class SearchByNutrientPage extends BaseSearchPage {
 
     updateSearchTable(selectFood = false, searchTxt = null) {
         const tableData = (selectFood) ? this.model.getNutrientSearchSelectedData(this.searchOpt) : this.model.getNutrientSearchTableData(this.searchOpt);
-
         let searchTable = this.htmlElements.searchTable;
-        if (searchTable === undefined) {
-            this.htmlElements.searchTable = $(this.htmlSelectors.foodSearchTable);
-            searchTable = this.htmlElements.searchTable;
-        }
 
         searchTable.toggleClass(this.htmlNames.foodSelected, selectFood);
+        if (tableData === undefined) return;
 
-        if (tableData !== undefined) {
-            const translations = Translation.translate(`SearchTableCols.${this.searchOpt}`,{ returnObjects: true });
-            
-            let tableColInfo = [];
-            for (const tableAtt of NutrientSearchTableCols) {
-                tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
-            }
-
-            const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, columnInfo: tableColInfo, data: tableData, searchTxt: (searchTxt !== null) ? searchTxt : undefined});
-            return dataTable;
+        const translations = Translation.translate(`SearchTableCols.${this.searchOpt}`,{ returnObjects: true });
+        
+        let tableColInfo = [];
+        for (const tableAtt of NutrientSearchTableCols) {
+            tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
         }
+
+        const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, columnInfo: tableColInfo, data: tableData, searchTxt: (searchTxt !== null) ? searchTxt : undefined});
+        return dataTable;
     }
 
     submitSearch() {
@@ -67,7 +62,6 @@ export class SearchByNutrientPage extends BaseSearchPage {
         inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
 
         const nutrients = elements.nutrientInput.getValue(true);
-        console.log(nutrients);
         inputs[SearchAtts.Nutrient] = (nutrients.length == 0) ? "" : nutrients;
 
         inputs[SearchAtts.FilterHelper] = this.searchTable.search();
