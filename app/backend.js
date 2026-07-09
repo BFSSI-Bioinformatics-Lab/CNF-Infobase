@@ -235,10 +235,6 @@ export class Model {
         this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = nutrients;
         this.searchSelections[SearchOpts.CompareNutrients][SearchAtts.Nutrient] = structuredClone(nutrients);
 
-        const defaultNutrient = nutrients[0].value
-        this.searchInputs[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = defaultNutrient;
-        this.defaultSearchInputs[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = defaultNutrient;
-
         // join the different parts of the nutrients
         nutrientNameTable = TableTools.dataLeftJoinById(nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
         this.nutrientTable = TableTools.dataLeftJoinById(nutrientAmtTable, nutrientNameTable, DataCols.NutrientCode, DataCols.NutrientCode);
@@ -402,6 +398,9 @@ export class Model {
 
     filterNutrientSearchTable(nutrientCode, foodGroupCode, foodCode) {
         let result = this.nutrientTable.data;
+        const nutrientCodeIsEmpty = nutrientCode == "";
+
+        if (nutrientCodeIsEmpty) return [];
 
         if (foodCode != "") {
             result = this.getRowsById(this.nutrientTable, DataCols.FoodCode, foodCode);
@@ -412,10 +411,7 @@ export class Model {
             result = result.filter((row) => row[DataCols.FoodGroupCode] == foodGroupCode);
         }
 
-        if (nutrientCode != "") {
-            result = result.filter((row) => row[DataCols.NutrientCode] == nutrientCode);
-        }
-
+        result = result.filter((row) => row[DataCols.NutrientCode] == nutrientCode);
         return result;
     }
 
