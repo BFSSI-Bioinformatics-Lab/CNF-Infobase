@@ -30,6 +30,7 @@ export const DataCols = {
     NutrientSrcCode: "Nutrient_Source_Code",
     NutrientName: "Nutrient_Name_",
     NutrientUnit: "Nutrient_Unit",
+    NutrientNameWithUnit: "Nutrient (unit)_",
     NutrientShortUnit: "Nutrient unit",
     NutrientAmount: "Nutrient_Amount",
     NutrientNoOfObservations: "Observations",
@@ -54,7 +55,8 @@ export const TableCols = {...DataCols,
 // Columns with translations
 export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription, DataCols.MeasureDescription,
     DataCols.NutrientName, DataCols.NutrientDataSrc, DataCols.FoodAltDescription, DataCols.NutrientGroup, 
-    TableCols.FoodDescriptionTokens, TableCols.FoodAltDescriptionTokens
+    TableCols.FoodDescriptionTokens, TableCols.FoodAltDescriptionTokens,
+    DataCols.NutrientNameWithUnit
 ]);
 
 // Measure codes to filter out in the app
@@ -95,7 +97,7 @@ export const CompNutrientSearchTableCols = [
 
 // The columns to display in the Nutrient table
 export const NutrientTableCols = [
-    DataCols.NutrientName,
+    DataCols.NutrientNameWithUnit,
     DataCols.NutrientShortUnit,
     DataCols.NutrientNoOfObservations,
     DataCols.NutrientStdErr,
