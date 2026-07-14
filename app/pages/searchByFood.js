@@ -112,7 +112,7 @@ export class SearchByFoodPage extends BaseSearchPage {
                                    inputs: new Set([inputs[SearchAtts.FoodGroup]]),
                                    noneSelectedText: Translation.translate("NoneSelected")});
 
-        this.syncInputs();
+        this.clearSearch();
 
         const selectedFoodCodes = this.model.selectedFoodCodes[this.searchOpt];
         if (selectedFoodCodes === undefined || selectedFoodCodes.length == 0) return;
