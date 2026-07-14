@@ -201,7 +201,6 @@ export class BaseSearchPage extends BasePage {
             servingSizeCheckList: d3.select(".servingSizeContainer ul"),
             refuseListContainer: d3.select(".servingRefuseContainer"),
 
-            nutrientColOverrideContainer: d3.select(".columnOverrideContainer"),
             nutrientStatsShowUnitContainer: d3.select("#nutrientStatsShowUnitContainer"),
             nutrientStatsShowExtraDetailsContainer: d3.select("#nutrientStatsShowExtraDetailsContainer"),
             nutrientStatsShowUnitsCheckbox: d3.select("#nutrientStatsShowUnit"),
@@ -226,7 +225,6 @@ export class BaseSearchPage extends BasePage {
         this.htmlElements.nutrientStatsShowUnitContainer.select("label").html(Translation.translate("FoodNutrientStats.ShowUnits"));
         this.htmlElements.nutrientStatsShowExtraDetailsContainer.select("label").html(Translation.translate("FoodNutrientStats.ShowExtraDetails"));
 
-        this.htmlElements.nutrientColOverrideContainer.select("h5").html(Translation.translate("FoodNutrientStats.OverrideTitle"));
         this.htmlElements.nutrientStatCSVDownloadBtn.html(Translation.translate("CSVDownload.ButtonTitle"));
     }
 
@@ -541,26 +539,6 @@ export class BaseSearchPage extends BasePage {
 
             self.htmlElements.nutrientStatsShowExtraDetailsCheckbox.property("checked", showExtraDetails);
             self.htmlElements.nutrientStatsShowUnitsCheckbox.property("checked", showUnits);
-        });
-
-        // setup the checkbox for hide/show the units columns and the other extra details columns
-        const nutrientStatsInputs = this.model.nutrientStatsInputs[this.searchOpt];
-        const showExtraDetails = nutrientStatsInputs[NutrientStatAtts.ShowExtraDetails];
-        const showUnits = nutrientStatsInputs[NutrientStatAtts.ShowUnit];
-     
-        this.htmlElements.nutrientStatsShowExtraDetailsCheckbox.property("checked", (showExtraDetails !== null && showExtraDetails));
-        this.htmlElements.nutrientStatsShowUnitsCheckbox.property("checked", (showUnits !== null && showUnits));
-
-        this.htmlElements.nutrientStatsShowExtraDetailsCheckbox.on("change", function() {
-            const nutrientStatsInputs = self.model.nutrientStatsInputs[self.searchOpt];
-            nutrientStatsInputs[NutrientStatAtts.ShowExtraDetails] = this.checked;
-            self.updateNutrientTableExtraCols(dataTable, this.checked, true);
-        });
-
-        this.htmlElements.nutrientStatsShowUnitsCheckbox.on("change", function() {
-            const nutrientStatsInputs = self.model.nutrientStatsInputs[self.searchOpt];
-            nutrientStatsInputs[NutrientStatAtts.ShowUnit] = this.checked;
-            self.updateNutrientTableUnitCol(dataTable, this.checked, true);
         });
 
         return dataTable;
