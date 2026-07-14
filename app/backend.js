@@ -244,6 +244,8 @@ export class Model {
         let currentNutrientGroupInd = 0;
 
         this.nutrientNameTable = nutrientNameTable;
+        this.nutrientNameTable = TableTools.dataLeftJoinById(this.nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
+
         let nutrients = this.getNutrients();
         nutrients.sort((a, b) => a.text.localeCompare(b.text));
 
@@ -726,7 +728,7 @@ export class Model {
     }
 
     getNutrients() {
-        let result = this.nutrientNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.NutrientName)], value: row[DataCols.NutrientCode]}});
+        let result = this.nutrientNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.NutrientNameWithUnit)], value: row[DataCols.NutrientCode]}});
         return result;
     }
 

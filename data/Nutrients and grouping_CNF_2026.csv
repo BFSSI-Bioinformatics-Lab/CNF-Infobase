@@ -1,174 +1,174 @@
-﻿Nutrient_Group_EN,Nutrient_Group_FR,Nutrient_Code,Nutrient_Symbol,Nutrient_Name_EN,Nutrient_Name_FR,Nutrient unit,Display order for web tool (do not publish this info)
-Proximates,Constituants proximaux,203,PROT,Protein,Protéines,g,3
-Proximates,Constituants proximaux,204,FAT,Fat (total lipids),Gras (lipides totaux),g,4
-Proximates,Constituants proximaux,205,CARB,"Carbohydrate, total (by difference)",Glucides totaux (par différence),g,5
-Proximates,Constituants proximaux,207,ASH,"Ash, total","Cendres, totales",g,2
-Proximates,Constituants proximaux,208,KCAL,Energy (kilocalories),Énergie (kilocalories),kCal,7
-Carbohydrates,Glucides,210,SUCR,Sucrose,Sucrose,g,14
-Carbohydrates,Glucides,211,GLUC,Glucose,Glucose,g,11
-Carbohydrates,Glucides,212,FRUC,Fructose,Fructose,g,12
-Carbohydrates,Glucides,213,LACT,Lactose,Lactose,g,15
-Carbohydrates,Glucides,214,MALT,Maltose,Maltose,g,16
-Proximates,Constituants proximaux,221,ALCO,Alcohol,Alcool,g,6
-Proximates,Constituants proximaux,255,H2O,Moisture,Humidité (eau),g,1
-Carbohydrates,Glucides,260,MANN,Mannitol,Mannitol,g,18
-Carbohydrates,Glucides,261,SORB,Sorbitol,Sorbitol,g,17
-Other components,Autres composants,262,CAFF,Caffeine,Caféine,mg,170
-Other components,Autres composants,263,THBR,Theobromine,Théobromine,mg,171
-Proximates,Constituants proximaux,268,KJ,Energy (kilojoules),Énergie (kilojoules),kJ,8
-Carbohydrates,Glucides,269,TSUG,"Sugars, total",Sucres totaux,g,10
-Carbohydrates,Glucides,287,GAL,Galactose,Galactose,g,13
-Carbohydrates,Glucides,291,TDF,"Fibre, total dietary",Fibres alimentaires totales,g,9
-Minerals,Minéraux,301,CA,Calcium,Calcium,mg,19
-Minerals,Minéraux,303,FE,Iron,Iron,mg,20
-Minerals,Minéraux,304,MG,Magnesium,Magnésium,mg,21
-Minerals,Minéraux,305,P,Phosphorus,Phosphorus,mg,22
-Minerals,Minéraux,306,K,Potassium,Potassium,mg,23
-Minerals,Minéraux,307,NA,Sodium,Sodium,mg,24
-Minerals,Minéraux,309,ZN,Zinc,Zinc,mg,25
-Minerals,Minéraux,312,CU,Copper,Cuivre,mg,26
-Minerals,Minéraux,315,MN,Manganese,Manganèse,mg,27
-Minerals,Minéraux,317,SE,Selenium,Sélénium,μg,28
-Vitamins and other components,Vitamines et autres composants,319,RT-µg,Retinol,Rétinol,µg,47
-Vitamins and other components,Vitamines et autres composants,320,RAE,Retinol activity equivalents,Équivalents d'activité du rétinol,µg,44
-Vitamins and other components,Vitamines et autres composants,321,BC-µg,Beta carotene,Bêta-carotène,µg,46
-Vitamins and other components,Vitamines et autres composants,322,AC-µg,Alpha carotene,Alpha-carotène,µg,45
-Vitamins and other components,Vitamines et autres composants,323,ATMG,Alpha-tocopherol,Alpha-tocophérol,mg,51
-Vitamins and other components,Vitamines et autres composants,324,D3+D2-IU,Vitamin D (International Units),Vitamine D (unités internationales),IU,59
-Vitamins and other components,Vitamines et autres composants,325,D2-µg,"Vitamin D2, ergocalciferol","Vitamine D2, ergocalciférol",µg,57
-Vitamins and other components,Vitamines et autres composants,326,D3-µg,"Vitamin D3, cholecalciferol","Vitamine D3, cholecalciférol",µg,58
-Vitamins and other components,Vitamines et autres composants,328,D3+D2-µg,Vitamin D (D2 + D3),Vitamine D (D2 + D3),µg,56
-Vitamins and other components,Vitamines et autres composants,329,25(OH)D3,25-hydroxycholecalciferol,25-hydroxycholécalciférol,µg,61
-Vitamins and other components,Vitamines et autres composants,330,25(OH)D2,25-hydroxyergocalciferol,25-hydroxyergocalciférol,µg,60
-Vitamins and other components,Vitamines et autres composants,334,CRYPX,Beta cryptoxanthin,Bêta-cryptoxanthine,µg,49
-Vitamins and other components,Vitamines et autres composants,337,LYCPN,Lycopene,Lycopène,µg,48
-Vitamins and other components,Vitamines et autres composants,338,LUT+ZEA,Lutein and zeaxanthin,Lutéine et zéaxanthine,µg,50
-Vitamins and other components,Vitamines et autres composants,341,BTMG,Beta-tocopherol,Bêta-tocophérol,mg,53
-Vitamins and other components,Vitamines et autres composants,342,GTMG,Gamma-tocopherol,Gamma-tocophérol,mg,54
-Vitamins and other components,Vitamines et autres composants,343,DTMG,Delta-tocopherol,Delta-tocophérol,mg,55
-Vitamins and other components,Vitamines et autres composants,401,VITC,Vitamin C,Vitamine C,mg,29
-Vitamins and other components,Vitamines et autres composants,404,THIA,Thiamine,Thiamine,mg,30
-Vitamins and other components,Vitamines et autres composants,405,RIBO,Riboflavin,Riboflavine,mg,31
-Vitamins and other components,Vitamines et autres composants,406,N-MG,Niacin (nicotinic acid) preformed,Niacine (acide nicotinique) préformée,mg,32
-Vitamins and other components,Vitamines et autres composants,409,N-NE,Total niacin equivalent,équivalent en niacine totale,NE,33
-Vitamins and other components,Vitamines et autres composants,410,PANT,Pantothenic acid,Acide pantothénique,mg,34
-Vitamins and other components,Vitamines et autres composants,415,B6,Vitamin B-6,Vitamine B-6,mg,35
-Vitamins and other components,Vitamines et autres composants,416,BIOT,Biotin,Biotine,µg,62
-Vitamins and other components,Vitamines et autres composants,417,FOLA,Total folacin,Folacine totale,µg,36
-Vitamins and other components,Vitamines et autres composants,418,B12,Vitamin B-12,Vitamine B-12,µg,42
-Vitamins and other components,Vitamines et autres composants,421,CHOLN,"Choline, total","Choline, totale",mg,40
-Vitamins and other components,Vitamines et autres composants,428,MK4,Vitamin K (menaquinone-4),Vitamine K (ménaquinone-4),µg,65
-Vitamins and other components,Vitamines et autres composants,429,VITK1D,Vitamin K (dihydrophylloquinone),Vitamine K (dihydrophylloquinone),µg,64
-Vitamins and other components,Vitamines et autres composants,430,VITK,Vitamin K (phylloquinone),Vitamine K (phylloquinone),µg,63
-Vitamins and other components,Vitamines et autres composants,431,FOAC,Folic acid,Acide folique,µg,37
-Vitamins and other components,Vitamines et autres composants,432,FOLN,Naturally occurring folate,Folates naturellement présents,µg,38
-Vitamins and other components,Vitamines et autres composants,435,DFE,Dietary folate equivalents,Équivalents de folate alimentaire (ÉFA),µg,39
-Vitamins and other components,Vitamines et autres composants,454,BETN,Betaine,Bétaine,mg,41
-Amino Acids,Acides aminés,501,TRP,Tryptophan,Tryptophane,g,66
-Amino Acids,Acides aminés,502,THR,Threonine,Thréonine,g,67
-Amino Acids,Acides aminés,503,ISO,Isoleucine,Isoleucine,g,68
-Amino Acids,Acides aminés,504,LEU,Leucine,Leucine,g,69
-Amino Acids,Acides aminés,505,LYS,Lysine,Lysine,g,70
-Amino Acids,Acides aminés,506,MET,Methionine,Méthionine,g,71
-Amino Acids,Acides aminés,507,CYS,Cystine,Cystine,g,72
-Amino Acids,Acides aminés,508,PHE,Phenylalanine,Phénylalanine,g,73
-Amino Acids,Acides aminés,509,TYR,Tyrosine,Tyrosine,g,74
-Amino Acids,Acides aminés,510,VAL,Valine,Valine,g,75
-Amino Acids,Acides aminés,511,ARG,Arginine,Arginine,g,76
-Amino Acids,Acides aminés,512,HIS,Histidine,Histidine,g,77
-Amino Acids,Acides aminés,513,ALA,Alanine,Alanine,g,78
-Amino Acids,Acides aminés,514,ASP,Aspartic acid,Acide aspartique,g,79
-Amino Acids,Acides aminés,515,GLU,Glutamic acid,Acide glutamique,g,80
-Amino Acids,Acides aminés,516,GLY,Glycine,Glycine,g,81
-Amino Acids,Acides aminés,517,PRO,Proline,Proline,g,82
-Amino Acids,Acides aminés,518,SER,Serine,Serine,g,83
-Amino Acids,Acides aminés,521,HYP,Hydroxyproline,Hydroxyproline,g,84
-Other components,Autres composants,550,ASPA,Aspartame,Aspartame,mg,172
-Vitamins and other components,Vitamines et autres composants,573,ATMG-A,"Alpha-tocopherol, added","Alpha-tocophérol, ajouté",mg,52
-Vitamins and other components,Vitamines et autres composants,578,B12-A,"Vitamin B-12, added","Vitamine B-12, ajoutée",µg,43
-Lipids,Acides gras (lipides),601,CHOL,Cholesterol,Cholestérol,mg,85
-Lipids,Acides gras (lipides),605,TRFA,"Fatty acids, trans, total",acides gras trans totaux,g,148
-Lipids,Acides gras (lipides),606,TSAT,"Fatty acids, saturated, total",acides gras saturés totaux,g,86
-Lipids,Acides gras (lipides),607,4:00,"Fatty acids, saturated, 4:0, butanoic","acides gras saturés 4:0, butanoïque",g,87
-Lipids,Acides gras (lipides),608,6:00,"Fatty acids, saturated, 6:0, hexanoic","acides gras saturés 6:0, hexanoïque",g,88
-Lipids,Acides gras (lipides),609,8:00,"Fatty acids, saturated, 8:0, octanoic","acides gras saturés 8:0, octanoïque",g,89
-Lipids,Acides gras (lipides),610,10:00,"Fatty acids, saturated, 10:0, decanoic","acides gras saturés 10:0, décanoïque",g,90
-Lipids,Acides gras (lipides),611,12:00,"Fatty acids, saturated, 12:0, dodecanoic","acides gras saturés 12:0, dodécanoïque",g,91
-Lipids,Acides gras (lipides),612,14:00,"Fatty acids, saturated, 14:0, tetradecanoic","acides gras saturés 14:0, tétradécanoïque",g,93
-Lipids,Acides gras (lipides),613,16:00,"Fatty acids, saturated, 16:0, hexadecanoic","acides gras saturés 16:0, hexadécanoïque",g,95
-Lipids,Acides gras (lipides),614,18:00,"Fatty acids, saturated, 18:0, octadecanoic","acides gras saturés 18:0, octadécanoïque",g,97
-Lipids,Acides gras (lipides),615,20:00,"Fatty acids, saturated, 20:0, eicosanoic","acides gras saturés 20:0, eïcosanoïque",g,98
-Lipids,Acides gras (lipides),617,18:1undiff,"Fatty acids, monounsaturated, 18:1undifferentiated, octadecenoic","acides gras monoinsaturés, 18:1non différencié, octadécénoïque",g,108
-Lipids,Acides gras (lipides),618,18:2undiff,"Fatty acids, polyunsaturated, 18:2undifferentiated, linoleic, octadecadienoic","acides gras polyinsaturés, 18:2non différencié, linoléique, octadécadiénoïque",g,124
-Lipids,Acides gras (lipides),619,18:3undiff,"Fatty acids, polyunsaturated, 18:3undifferentiated, linolenic, octadecatrienoic","acides gras polyinsaturés, 18:3non différencié, linolénique, octadécatriénoïque",g,130
-Lipids,Acides gras (lipides),620,20:4undiff,"Fatty acids, polyunsaturated, 20:4, eicosatetraenoic","acides gras polyinsaturés, 20:4, arachidonique eïcosatétraénoïque",g,138
-Lipids,Acides gras (lipides),621,22:6n-3DHA,"Fatty acids, polyunsaturated, 22:6 n-3, docosahexaenoic (DHA)","acides gras polyinsaturés,  22:6 n-3, docosahexaénoïque (DHA)",g,147
-Lipids,Acides gras (lipides),624,22:00,"Fatty acids, saturated, 22:0, docosanoic","acides gras saturés, 22:0, docosanoïque",g,99
-Lipids,Acides gras (lipides),625,14:01,"Fatty acids, monounsaturated, 14:1, tetradecenoic","acides gras monoinsaturés, 14:1, tétradécénoïque",g,103
-Lipids,Acides gras (lipides),626,16:1undiff,"Fatty acids, monounsaturated, 16:1undifferentiated, hexadecenoic","acides gras monoinsaturés, 16:1non différencié, hexadécénoïque",g,105
-Lipids,Acides gras (lipides),627,18:04,"Fatty acids, polyunsaturated, 18:4, octadecatetraenoic","acides gras polyinsaturés, 18:4, octadécatétraénoïque",g,133
-Lipids,Acides gras (lipides),628,20:01,"Fatty acids, monounsaturated, 20:1, eicosenoic","acides gras monoinsaturés, 20:1, eïcosénoïque",g,117
-Lipids,Acides gras (lipides),629,20:5n-3EPA,"Fatty acids, polyunsaturated, 20:5 n-3, eicosapentaenoic (EPA)","acides gras polyinsaturés, 20:5 n-3, eïcosapentaénoïque (EPA)",g,140
-Lipids,Acides gras (lipides),630,22:1undiff,"Fatty acids, monounsaturated, 22:1undifferentiated, docosenoic","acides gras monoinsaturés, 22:1non différencié, docosénoïque",g,119
-Lipids,Acides gras (lipides),631,22:5n-3DPA,"Fatty acids, polyunsaturated, 22:5 n-3, docosapentaenoic (DPA)","acides gras polyinsaturés, 22:5 n-3, docosapentaénoïque (DPA)",g,145
-Lipids,Acides gras (lipides),636,TPST,Total plant sterol,stérols végétaux totaux,mg,166
-Lipids,Acides gras (lipides),638,STIG,Stigmasterol,stigmastérol,mg,167
-Lipids,Acides gras (lipides),639,CAMSTR,Campesterol,campéstérol,mg,168
-Lipids,Acides gras (lipides),641,SITSTR,Beta-sitosterol,bêta-sitostérol,mg,169
-Lipids,Acides gras (lipides),645,MUFA,"Fatty acids, monounsaturated, total",acides gras monoinsaturés totaux,g,101
-Lipids,Acides gras (lipides),646,PUFA,"Fatty acids, polyunsaturated, total",acides gras polyinsaturés totaux,g,123
-Lipids,Acides gras (lipides),652,15:00,"Fatty acids, saturated, 15:0, pentadecanoic","acides gras saturés, 15:0, pentadécanoïque",g,94
-Lipids,Acides gras (lipides),653,17:00,"Fatty acids, saturated, 17:0, heptadecanoic","acides gras saturés, 17:0, heptadécanoïque",g,96
-Lipids,Acides gras (lipides),654,24:00:00,"Fatty acids, saturated, 24:0, tetracosanoic","acides gras saturés, 24:0, tétrasanoïque",g,100
-Lipids,Acides gras (lipides),662,16:1t,"Fatty acids, monounsaturated, 16:1t, hexadecenoic","acides gras monoinsaturés, 16:1t, hexadécénoïque",g,150
-Lipids,Acides gras (lipides),663,18:1t,"Fatty acids, monounsaturated, 18:1t, octadecenoic","acides gras monoinsaturés, 18:1t, octadécénoïque",g,151
-Lipids,Acides gras (lipides),664,22:1t,"Fatty acids, monounsaturated, 22:1t, docosenoic","acides gras monoinsaturés, 22:1t, docosénoïque",g,160
-Lipids,Acides gras (lipides),665,18:2t,"Fatty acids, polyunsaturated, 18:2t not further defined, linoleic, octadecadienoic","acides gras polyinsaturés, 18:2t non défini plus précisément, linoléique, octadécadiénoïque ",g,161
-Lipids,Acides gras (lipides),666,18:2i,"Fatty acids, polyunsaturated, 18:2i, linoleic, octadecadienoic","acides gras polyinsaturés, 18:2i, linoléique, octadécadiénoïque",g,164
-Lipids,Acides gras (lipides),669,"18:2t,t","Fatty acids, polyunsaturated, 18:2t,t , octadecadienenoic","acides gras polyinsaturés, 18:2t,t, octadécadiénoïque",g,163
-Lipids,Acides gras (lipides),670,18:2cla,"Fatty acids, polyunsaturated, conjugated, 18:2 cla, linoleic, octadecadienoic","acides gras polyinsaturés conjugués, 18:2 cla, linoléique, octadécadiénoïque",g,129
-Lipids,Acides gras (lipides),671,24:1c,"Fatty acids, monounsaturated, 24:1c, tetracosenoic","acides gras monoinsaturés, 24:1c, tétracosénoïque",g,122
-Lipids,Acides gras (lipides),672,20:2cc,"Fatty acids, polyunsaturated, 20:2 c,c  eicosadienoic","acides gras polyinsaturés, 20:2 c,c eïcosadiénoïque",g,134
-Lipids,Acides gras (lipides),673,16:1c,"Fatty acids, monounsaturated, 16:1c, hexadecenoic","acides gras monoinsaturés, 16:1c, hexadécénoïque",g,106
-Lipids,Acides gras (lipides),674,18:1c,"Fatty acids, monounsaturated, 18:1c, octadecenoic","acides gras monoinsaturés, 18:1c, octadécénoïque",g,109
-Lipids,Acides gras (lipides),675,18:2ccn-6,"Fatty acids, polyunsaturated, 18:2 c,c n-6,  linoleic, octadecadienoic","acides gras polyinsaturés, 18:2 c,c n-6, linoléique, octadécadiénoïque",g,125
-Lipids,Acides gras (lipides),676,22:1c,"Fatty acids, monounsaturated, 22:1c, docosenoic","acides gras monoinsaturés, 22:1c, docosénoïque",g,120
-Lipids,Acides gras (lipides),685,18:3cccn-6,"Fatty acids, polyunsaturated, 18:3 c,c,c n-6, g-linolenic, octadecatrienoic","acides gras polyinsaturés, 18:3 c,c,c n-6, g-linolénique, octadécatriénoïque",g,132
-Lipids,Acides gras (lipides),687,17:01,"Fatty acids, monounsaturated, 17:1, heptadecenoic","acides gras monoinsaturés, 17:1, heptadécénoïque",g,107
-Lipids,Acides gras (lipides),689,20:3undiff,"Fatty acids, polyunsaturated, 20:3, eicosatrienoic","acides gras polyinsaturés, 20:3non différencié, eïcosatriénoïque",g,135
-Lipids,Acides gras (lipides),693,TRMO,"Fatty acids, total trans-monoenoic",acides gras trans monoénoïques totaux,g,149
-Lipids,Acides gras (lipides),695,TRPO,"Fatty acids, total trans-polyenoic",acides gras trans polyénoïques totaux,g,161
-Lipids,Acides gras (lipides),696,13:00,"Fatty acids, saturated, 13:0 tridecanoic","acides gras saturés, 13:0, tridécanoïque",g,92
-Lipids,Acides gras (lipides),697,15:01,"Fatty acids, monounsaturated, 15:1, pentadecenoic","acides gras monoinsaturés, 15:1, pentadécénoïque",g,104
-Lipids,Acides gras (lipides),851,18:3cccn-3,"Fatty acids, polyunsaturated, 18:3 c,c,c n-3  linolenic, octadecatrienoic","acides gras polyinsaturés, 18:3 c,c,c  n-3, linolénique, octadécatriénoïque",g,131
-Lipids,Acides gras (lipides),852,20:3n-3,"Fatty acids, polyunsaturated, 20:3 n-3 eicosatrienoic","acides gras polyinsaturés, 20:3 n-3,  eïcosatriénoïque",g,136
-Lipids,Acides gras (lipides),853,20:3n-6,"Fatty acids, polyunsaturated, 20:3 n-6, eicosatrienoic","acides gras polyinsaturés, 20:3 n-6",g,137
-Lipids,Acides gras (lipides),855,20:4n-6,"Fatty acids, polyunsaturated, 20:4 n-6, arachidonic","acides gras polyinsaturés, 20:4 n-6, arachidonique, eicosatétraénoïque",g,139
-Lipids,Acides gras (lipides),856,18:3i,"Fatty acids, polyunsaturated, 18:3i, linolenic, octadecatrienoic","acides gras polyinsaturés, 18:3i, linolénique, octadécatriénoïque",g,165
-Lipids,Acides gras (lipides),857,21:05,"Fatty acids, polyunsaturated, 21:5","acides gras polyinsaturés,  21:5",g,141
-Lipids,Acides gras (lipides),858,22:4n-6,"Fatty acids, polyunsaturated, 22:4 n-6, docosatetraenoic","acides gras polyinsaturés, 22:4n-6, docosatétraénoïque",g,144
-Lipids,Acides gras (lipides),859,24:1undiff,"Fatty acids, monounsaturated,  24:1undifferentiated, tetracosenoic","acides gras monoinsaturés, 24:1non différencié, tétracosénoïque",g,121
-Lipids,Acides gras (lipides),860,12:01,"Fatty acids, monounsaturated, 12:1, lauroleic","acides gras monoinsaturés, 12:1, lauroleïque",g,102
-Lipids,Acides gras (lipides),861,22:03,"Fatty acids, polyunsaturated, 22:3,","acides gras polyinsaturés, 22:3",g,143
-Lipids,Acides gras (lipides),862,22:02,"Fatty acids, polyunsaturated, 22:2, docosadienoic","acides gras polyinsaturés, 22:2, docosadiénoïque",g,142
-Lipids,Acides gras (lipides),884,18:1 10c,"Fatty acids, monounsaturated, 18:1 10c","acides gras monoinsaturés, 18:1 10c",g,110
-Lipids,Acides gras (lipides),885,18:1 11c,"Fatty acids, monounsaturated, 18:1 11c","acides gras monoinsaturés, 18:1 11c",g,111
-Lipids,Acides gras (lipides),886,18:1 12c,"Fatty acids, monounsaturated, 18:1 12c","acides gras monoinsaturés, 18:1 12c",g,112
-Lipids,Acides gras (lipides),888,18:1 13c,"Fatty acids, monounsaturated, 18:1 13c","acides gras monoinsaturés, 18:1 13c",g,113
-Lipids,Acides gras (lipides),891,18:1 14c,"Fatty acids, monounsaturated, 18:1 14c","acides gras monoinsaturés, 18:1 14c",g,114
-Lipids,Acides gras (lipides),895,18:1 15c,"Fatty acids, monounsaturated, 18:1 15c","acides gras monoinsaturés, 18:1 15c",g,115
-Lipids,Acides gras (lipides),896,18:1 16c,"Fatty acids, monounsaturated, 18:1 16c","acides gras monoinsaturés, 18:1 16c",g,116
-Lipids,Acides gras (lipides),897,18:1 11t,"Fatty acids, monounsaturated, 18:1 11t","acides gras monoinsaturés, 18:1 11t",g,152
-Lipids,Acides gras (lipides),898,18:1 4t,"Fatty acids, monounsaturated, 18:1 4t","acides gras monoinsaturés, 18:1 4t",g,153
-Lipids,Acides gras (lipides),899,18:1 5t,"Fatty acids, monounsaturated, 18:1 5t","acides gras monoinsaturés, 18:1 5t",g,154
-Lipids,Acides gras (lipides),904,18:1 6t-8t,"Fatty acids, monounsaturated, 18:1 6t-8t","acides gras monoinsaturés, 18:1 6t-8t",g,155
-Lipids,Acides gras (lipides),905,18:1 10t,"Fatty acids, monounsaturated, 18:1 10t","acides gras monoinsaturés, 18:1 10t",g,156
-Lipids,Acides gras (lipides),906,18:1 12t,"Fatty acids, monounsaturated, 18:1 12t","acides gras monoinsaturés, 18:1 12t",g,157
-Lipids,Acides gras (lipides),907,18:1 13t,"Fatty acids, monounsaturated, 18:1 13t + 14t + 6c-8c","acides gras monoinsaturés, 18:1 13t+14t+6c-8c",g,158
-Lipids,Acides gras (lipides),908,18:1 16t,"Fatty acids, monounsaturated, 18:1 16t","acides gras monoinsaturés, 18:1 16t",g,159
-Lipids,Acides gras (lipides),909,20:1 5c,"Fatty acids, monounsaturated, 20:1 5c","acides gras monoinsaturés, 20:1 5c",g,118
-Lipids,Acides gras (lipides),910,18:2 9c13c,"Fatty acids, polyunsaturated, 18:2 9c,13c","acides gras polyinsaturés, 18:2 9c,13c",g,126
-Lipids,Acides gras (lipides),911,18:2 9c14c,"Fatty acids, polyunsaturated, 18:2 9c,14c","acides gras polyinsaturés, 18:2 9c,14c",g,127
-Lipids,Acides gras (lipides),912,18:2 9c15c,"Fatty acids, polyunsaturated, 18:2 9c,15c","acides gras polyinsaturés, 18:2 9c,15c",g,128
-Lipids,Acides gras (lipides),913,22:5n-6,"Fatty acids, polyunsaturated, 22:5n-6","acides gras polyinsaturés,  22:5n-6",g,146
-Other components,Autres composants,1001,INUL,Fructans (inulin),fructanes (inuline),g,173
+﻿Nutrient_Group_EN,Nutrient_Group_FR,Nutrient_Code,Nutrient_Symbol,Nutrient_Name_EN,Nutrient_Name_FR,Nutrient unit,Display order for web tool (do not publish this info),Nutrient (unit)_EN,Nutrient (unit)_FR
+Proximates,Constituants proximaux,203,PROT,Protein,Protéines,g,3,Protein (g),Protéines (g)
+Proximates,Constituants proximaux,204,FAT,Fat (total lipids),Gras (lipides totaux),g,4,Fat (total lipids) (g),Gras (lipides totaux) (g)
+Proximates,Constituants proximaux,205,CARB,"Carbohydrate, total (by difference)",Glucides totaux (par différence),g,5,"Carbohydrate, total (by difference) (g)",Glucides totaux (par différence) (g)
+Proximates,Constituants proximaux,207,ASH,"Ash, total","Cendres, totales",g,2,"Ash, total (g)","Cendres, totales (g)"
+Proximates,Constituants proximaux,208,KCAL,Energy (kilocalories),Énergie (kilocalories),kCal,7,Energy (kCal),Énergie (kCal)
+Carbohydrates,Glucides,210,SUCR,Sucrose,Sucrose,g,14,Sucrose (g),Sucrose (g)
+Carbohydrates,Glucides,211,GLUC,Glucose,Glucose,g,11,Glucose (g),Glucose (g)
+Carbohydrates,Glucides,212,FRUC,Fructose,Fructose,g,12,Fructose (g),Fructose (g)
+Carbohydrates,Glucides,213,LACT,Lactose,Lactose,g,15,Lactose (g),Lactose (g)
+Carbohydrates,Glucides,214,MALT,Maltose,Maltose,g,16,Maltose (g),Maltose (g)
+Proximates,Constituants proximaux,221,ALCO,Alcohol,Alcool,g,6,Alcohol (g),Alcool (g)
+Proximates,Constituants proximaux,255,H2O,Moisture,Humidité (eau),g,1,Moisture (g),Humidité (eau) (g)
+Carbohydrates,Glucides,260,MANN,Mannitol,Mannitol,g,18,Mannitol (g),Mannitol (g)
+Carbohydrates,Glucides,261,SORB,Sorbitol,Sorbitol,g,17,Sorbitol (g),Sorbitol (g)
+Other components,Autres composants,262,CAFF,Caffeine,Caféine,mg,170,Caffeine (mg),Caféine (mg)
+Other components,Autres composants,263,THBR,Theobromine,Théobromine,mg,171,Theobromine (mg),Théobromine (mg)
+Proximates,Constituants proximaux,268,KJ,Energy (kilojoules),Énergie (kilojoules),kJ,8,Energy (kJ),Énergie (kJ)
+Carbohydrates,Glucides,269,TSUG,"Sugars, total",Sucres totaux,g,10,"Sugars, total (g)",Sucres totaux (g)
+Carbohydrates,Glucides,287,GAL,Galactose,Galactose,g,13,Galactose (g),Galactose (g)
+Carbohydrates,Glucides,291,TDF,"Fibre, total dietary",Fibres alimentaires totales,g,9,"Fibre, total dietary (g)",Fibres alimentaires totales (g)
+Minerals,Minéraux,301,CA,Calcium,Calcium,mg,19,Calcium (mg),Calcium (mg)
+Minerals,Minéraux,303,FE,Iron,Iron,mg,20,Iron (mg),Iron (mg)
+Minerals,Minéraux,304,MG,Magnesium,Magnésium,mg,21,Magnesium (mg),Magnésium (mg)
+Minerals,Minéraux,305,P,Phosphorus,Phosphorus,mg,22,Phosphorus (mg),Phosphorus (mg)
+Minerals,Minéraux,306,K,Potassium,Potassium,mg,23,Potassium (mg),Potassium (mg)
+Minerals,Minéraux,307,NA,Sodium,Sodium,mg,24,Sodium (mg),Sodium (mg)
+Minerals,Minéraux,309,ZN,Zinc,Zinc,mg,25,Zinc (mg),Zinc (mg)
+Minerals,Minéraux,312,CU,Copper,Cuivre,mg,26,Copper (mg),Cuivre (mg)
+Minerals,Minéraux,315,MN,Manganese,Manganèse,mg,27,Manganese (mg),Manganèse (mg)
+Minerals,Minéraux,317,SE,Selenium,Sélénium,μg,28,Selenium (μg),Sélénium (μg)
+Vitamins and other components,Vitamines et autres composants,319,RT-µg,Retinol,Rétinol,µg,47,Retinol (µg),Rétinol (µg)
+Vitamins and other components,Vitamines et autres composants,320,RAE,Retinol activity equivalents,Équivalents d'activité du rétinol,µg,44,Retinol activity equivalents (µg),Équivalents d'activité du rétinol (µg)
+Vitamins and other components,Vitamines et autres composants,321,BC-µg,Beta carotene,Bêta-carotène,µg,46,Beta carotene (µg),Bêta-carotène (µg)
+Vitamins and other components,Vitamines et autres composants,322,AC-µg,Alpha carotene,Alpha-carotène,µg,45,Alpha carotene (µg),Alpha-carotène (µg)
+Vitamins and other components,Vitamines et autres composants,323,ATMG,Alpha-tocopherol,Alpha-tocophérol,mg,51,Alpha-tocopherol (mg),Alpha-tocophérol (mg)
+Vitamins and other components,Vitamines et autres composants,324,D3+D2-IU,Vitamin D (International Units),Vitamine D (unités internationales),IU,59,Vitamin D (IU),Vitamine D (unités internationales) (IU)
+Vitamins and other components,Vitamines et autres composants,325,D2-µg,"Vitamin D2, ergocalciferol","Vitamine D2, ergocalciférol",µg,57,"Vitamin D2, ergocalciferol (µg)","Vitamine D2, ergocalciférol (µg)"
+Vitamins and other components,Vitamines et autres composants,326,D3-µg,"Vitamin D3, cholecalciferol","Vitamine D3, cholecalciférol",µg,58,"Vitamin D3, cholecalciferol (µg)","Vitamine D3, cholecalciférol (µg)"
+Vitamins and other components,Vitamines et autres composants,328,D3+D2-µg,Vitamin D (D2 + D3),Vitamine D (D2 + D3),µg,56,Vitamin D (D2 + D3) (µg),Vitamine D (D2 + D3) (µg)
+Vitamins and other components,Vitamines et autres composants,329,25(OH)D3,25-hydroxycholecalciferol,25-hydroxycholécalciférol,µg,61,25-hydroxycholecalciferol (µg),25-hydroxycholécalciférol (µg)
+Vitamins and other components,Vitamines et autres composants,330,25(OH)D2,25-hydroxyergocalciferol,25-hydroxyergocalciférol,µg,60,25-hydroxyergocalciferol (µg),25-hydroxyergocalciférol (µg)
+Vitamins and other components,Vitamines et autres composants,334,CRYPX,Beta cryptoxanthin,Bêta-cryptoxanthine,µg,49,Beta cryptoxanthin (µg),Bêta-cryptoxanthine (µg)
+Vitamins and other components,Vitamines et autres composants,337,LYCPN,Lycopene,Lycopène,µg,48,Lycopene (µg),Lycopène (µg)
+Vitamins and other components,Vitamines et autres composants,338,LUT+ZEA,Lutein and zeaxanthin,Lutéine et zéaxanthine,µg,50,Lutein and zeaxanthin (µg),Lutéine et zéaxanthine (µg)
+Vitamins and other components,Vitamines et autres composants,341,BTMG,Beta-tocopherol,Bêta-tocophérol,mg,53,Beta-tocopherol (mg),Bêta-tocophérol (mg)
+Vitamins and other components,Vitamines et autres composants,342,GTMG,Gamma-tocopherol,Gamma-tocophérol,mg,54,Gamma-tocopherol (mg),Gamma-tocophérol (mg)
+Vitamins and other components,Vitamines et autres composants,343,DTMG,Delta-tocopherol,Delta-tocophérol,mg,55,Delta-tocopherol (mg),Delta-tocophérol (mg)
+Vitamins and other components,Vitamines et autres composants,401,VITC,Vitamin C,Vitamine C,mg,29,Vitamin C (mg),Vitamine C (mg)
+Vitamins and other components,Vitamines et autres composants,404,THIA,Thiamine,Thiamine,mg,30,Thiamine (mg),Thiamine (mg)
+Vitamins and other components,Vitamines et autres composants,405,RIBO,Riboflavin,Riboflavine,mg,31,Riboflavin (mg),Riboflavine (mg)
+Vitamins and other components,Vitamines et autres composants,406,N-MG,Niacin (nicotinic acid) preformed,Niacine (acide nicotinique) préformée,mg,32,Niacin (nicotinic acid) preformed (mg),Niacine (acide nicotinique) préformée (mg)
+Vitamins and other components,Vitamines et autres composants,409,N-NE,Total niacin equivalent,équivalent en niacine totale,NE,33,Total niacin equivalent (NE),équivalent en niacine totale (NE)
+Vitamins and other components,Vitamines et autres composants,410,PANT,Pantothenic acid,Acide pantothénique,mg,34,Pantothenic acid (mg),Acide pantothénique (mg)
+Vitamins and other components,Vitamines et autres composants,415,B6,Vitamin B-6,Vitamine B-6,mg,35,Vitamin B-6 (mg),Vitamine B-6 (mg)
+Vitamins and other components,Vitamines et autres composants,416,BIOT,Biotin,Biotine,µg,62,Biotin (µg),Biotine (µg)
+Vitamins and other components,Vitamines et autres composants,417,FOLA,Total folacin,Folacine totale,µg,36,Total folacin (µg),Folacine totale (µg)
+Vitamins and other components,Vitamines et autres composants,418,B12,Vitamin B-12,Vitamine B-12,µg,42,Vitamin B-12 (µg),Vitamine B-12 (µg)
+Vitamins and other components,Vitamines et autres composants,421,CHOLN,"Choline, total","Choline, totale",mg,40,"Choline, total (mg)","Choline, totale (mg)"
+Vitamins and other components,Vitamines et autres composants,428,MK4,Vitamin K (menaquinone-4),Vitamine K (ménaquinone-4),µg,65,Vitamin K (menaquinone-4) (µg),Vitamine K (ménaquinone-4) (µg)
+Vitamins and other components,Vitamines et autres composants,429,VITK1D,Vitamin K (dihydrophylloquinone),Vitamine K (dihydrophylloquinone),µg,64,Vitamin K (dihydrophylloquinone) (µg),Vitamine K (dihydrophylloquinone) (µg)
+Vitamins and other components,Vitamines et autres composants,430,VITK,Vitamin K (phylloquinone),Vitamine K (phylloquinone),µg,63,Vitamin K (phylloquinone) (µg),Vitamine K (phylloquinone) (µg)
+Vitamins and other components,Vitamines et autres composants,431,FOAC,Folic acid,Acide folique,µg,37,Folic acid (µg),Acide folique (µg)
+Vitamins and other components,Vitamines et autres composants,432,FOLN,Naturally occurring folate,Folates naturellement présents,µg,38,Naturally occurring folate (µg),Folates naturellement présents (µg)
+Vitamins and other components,Vitamines et autres composants,435,DFE,Dietary folate equivalents,Équivalents de folate alimentaire (ÉFA),µg,39,Dietary folate equivalents (µg),Équivalents de folate alimentaire (ÉFA) (µg)
+Vitamins and other components,Vitamines et autres composants,454,BETN,Betaine,Bétaine,mg,41,Betaine (mg),Bétaine (mg)
+Amino Acids,Acides aminés,501,TRP,Tryptophan,Tryptophane,g,66,Tryptophan (g),Tryptophane (g)
+Amino Acids,Acides aminés,502,THR,Threonine,Thréonine,g,67,Threonine (g),Thréonine (g)
+Amino Acids,Acides aminés,503,ISO,Isoleucine,Isoleucine,g,68,Isoleucine (g),Isoleucine (g)
+Amino Acids,Acides aminés,504,LEU,Leucine,Leucine,g,69,Leucine (g),Leucine (g)
+Amino Acids,Acides aminés,505,LYS,Lysine,Lysine,g,70,Lysine (g),Lysine (g)
+Amino Acids,Acides aminés,506,MET,Methionine,Méthionine,g,71,Methionine (g),Méthionine (g)
+Amino Acids,Acides aminés,507,CYS,Cystine,Cystine,g,72,Cystine (g),Cystine (g)
+Amino Acids,Acides aminés,508,PHE,Phenylalanine,Phénylalanine,g,73,Phenylalanine (g),Phénylalanine (g)
+Amino Acids,Acides aminés,509,TYR,Tyrosine,Tyrosine,g,74,Tyrosine (g),Tyrosine (g)
+Amino Acids,Acides aminés,510,VAL,Valine,Valine,g,75,Valine (g),Valine (g)
+Amino Acids,Acides aminés,511,ARG,Arginine,Arginine,g,76,Arginine (g),Arginine (g)
+Amino Acids,Acides aminés,512,HIS,Histidine,Histidine,g,77,Histidine (g),Histidine (g)
+Amino Acids,Acides aminés,513,ALA,Alanine,Alanine,g,78,Alanine (g),Alanine (g)
+Amino Acids,Acides aminés,514,ASP,Aspartic acid,Acide aspartique,g,79,Aspartic acid (g),Acide aspartique (g)
+Amino Acids,Acides aminés,515,GLU,Glutamic acid,Acide glutamique,g,80,Glutamic acid (g),Acide glutamique (g)
+Amino Acids,Acides aminés,516,GLY,Glycine,Glycine,g,81,Glycine (g),Glycine (g)
+Amino Acids,Acides aminés,517,PRO,Proline,Proline,g,82,Proline (g),Proline (g)
+Amino Acids,Acides aminés,518,SER,Serine,Serine,g,83,Serine (g),Serine (g)
+Amino Acids,Acides aminés,521,HYP,Hydroxyproline,Hydroxyproline,g,84,Hydroxyproline (g),Hydroxyproline (g)
+Other components,Autres composants,550,ASPA,Aspartame,Aspartame,mg,172,Aspartame (mg),Aspartame (mg)
+Vitamins and other components,Vitamines et autres composants,573,ATMG-A,"Alpha-tocopherol, added","Alpha-tocophérol, ajouté",mg,52,"Alpha-tocopherol, added (mg)","Alpha-tocophérol, ajouté (mg)"
+Vitamins and other components,Vitamines et autres composants,578,B12-A,"Vitamin B-12, added","Vitamine B-12, ajoutée",µg,43,"Vitamin B-12, added (µg)","Vitamine B-12, ajoutée (µg)"
+Lipids,Acides gras (lipides),601,CHOL,Cholesterol,Cholestérol,mg,85,Cholesterol (mg),Cholestérol (mg)
+Lipids,Acides gras (lipides),605,TRFA,"Fatty acids, trans, total",acides gras trans totaux,g,148,"trans fatty acids, total (g)",acides gras trans totaux (g)
+Lipids,Acides gras (lipides),606,TSAT,"Fatty acids, saturated, total",acides gras saturés totaux,g,86,"saturated fatty acids, total (g)",acides gras saturés totaux (g)
+Lipids,Acides gras (lipides),607,4:00,"Fatty acids, saturated, 4:0, butanoic","acides gras saturés 4:0, butanoïque",g,87,4:0 (g),4:0 (g)
+Lipids,Acides gras (lipides),608,6:00,"Fatty acids, saturated, 6:0, hexanoic","acides gras saturés 6:0, hexanoïque",g,88,6:0 (g),6:0 (g)
+Lipids,Acides gras (lipides),609,8:00,"Fatty acids, saturated, 8:0, octanoic","acides gras saturés 8:0, octanoïque",g,89,8:0 (g),8:0 (g)
+Lipids,Acides gras (lipides),610,10:00,"Fatty acids, saturated, 10:0, decanoic","acides gras saturés 10:0, décanoïque",g,90,10:0 (g),10:0 (g)
+Lipids,Acides gras (lipides),611,12:00,"Fatty acids, saturated, 12:0, dodecanoic","acides gras saturés 12:0, dodécanoïque",g,91,12:0 (g),12:0 (g)
+Lipids,Acides gras (lipides),612,14:00,"Fatty acids, saturated, 14:0, tetradecanoic","acides gras saturés 14:0, tétradécanoïque",g,93,14:0 (g),14:0 (g)
+Lipids,Acides gras (lipides),613,16:00,"Fatty acids, saturated, 16:0, hexadecanoic","acides gras saturés 16:0, hexadécanoïque",g,95,16:0 (g),16:0 (g)
+Lipids,Acides gras (lipides),614,18:00,"Fatty acids, saturated, 18:0, octadecanoic","acides gras saturés 18:0, octadécanoïque",g,97,18:0 (g),18:0 (g)
+Lipids,Acides gras (lipides),615,20:00,"Fatty acids, saturated, 20:0, eicosanoic","acides gras saturés 20:0, eïcosanoïque",g,98,20:0 (g),20:0 (g)
+Lipids,Acides gras (lipides),617,18:1undiff,"Fatty acids, monounsaturated, 18:1undifferentiated, octadecenoic","acides gras monoinsaturés, 18:1non différencié, octadécénoïque",g,108,18:1undiff (g),18:1non différencié (g)
+Lipids,Acides gras (lipides),618,18:2undiff,"Fatty acids, polyunsaturated, 18:2undifferentiated, linoleic, octadecadienoic","acides gras polyinsaturés, 18:2non différencié, linoléique, octadécadiénoïque",g,124,18:2undiff (g),18:2non différencié (g)
+Lipids,Acides gras (lipides),619,18:3undiff,"Fatty acids, polyunsaturated, 18:3undifferentiated, linolenic, octadecatrienoic","acides gras polyinsaturés, 18:3non différencié, linolénique, octadécatriénoïque",g,130,18:3undiff (g),18:3non différencié (g)
+Lipids,Acides gras (lipides),620,20:4undiff,"Fatty acids, polyunsaturated, 20:4, eicosatetraenoic","acides gras polyinsaturés, 20:4, arachidonique eïcosatétraénoïque",g,138,20:4 (g),20:4 (g)
+Lipids,Acides gras (lipides),621,22:6n-3DHA,"Fatty acids, polyunsaturated, 22:6 n-3, docosahexaenoic (DHA)","acides gras polyinsaturés,  22:6 n-3, docosahexaénoïque (DHA)",g,147,22:6 n-3 (DHA) (g),22:6 n-3 (DHA) (g)
+Lipids,Acides gras (lipides),624,22:00,"Fatty acids, saturated, 22:0, docosanoic","acides gras saturés, 22:0, docosanoïque",g,99,22:0 (g),22:0 (g)
+Lipids,Acides gras (lipides),625,14:01,"Fatty acids, monounsaturated, 14:1, tetradecenoic","acides gras monoinsaturés, 14:1, tétradécénoïque",g,103,14:1 (g),14:1 (g)
+Lipids,Acides gras (lipides),626,16:1undiff,"Fatty acids, monounsaturated, 16:1undifferentiated, hexadecenoic","acides gras monoinsaturés, 16:1non différencié, hexadécénoïque",g,105,16:1undiff (g),16:1non différencié (g)
+Lipids,Acides gras (lipides),627,18:04,"Fatty acids, polyunsaturated, 18:4, octadecatetraenoic","acides gras polyinsaturés, 18:4, octadécatétraénoïque",g,133,18:4 (g),18:4 (g)
+Lipids,Acides gras (lipides),628,20:01,"Fatty acids, monounsaturated, 20:1, eicosenoic","acides gras monoinsaturés, 20:1, eïcosénoïque",g,117,20:1 (g),20:1 (g)
+Lipids,Acides gras (lipides),629,20:5n-3EPA,"Fatty acids, polyunsaturated, 20:5 n-3, eicosapentaenoic (EPA)","acides gras polyinsaturés, 20:5 n-3, eïcosapentaénoïque (EPA)",g,140,20:5 n-3 (EPA) (g),20:5 n-3 (EPA) (g)
+Lipids,Acides gras (lipides),630,22:1undiff,"Fatty acids, monounsaturated, 22:1undifferentiated, docosenoic","acides gras monoinsaturés, 22:1non différencié, docosénoïque",g,119,22:1undiff (g),22:1non différencié (g)
+Lipids,Acides gras (lipides),631,22:5n-3DPA,"Fatty acids, polyunsaturated, 22:5 n-3, docosapentaenoic (DPA)","acides gras polyinsaturés, 22:5 n-3, docosapentaénoïque (DPA)",g,145,22:5 n-3 (DPA) (g),22:5 n-3 (DPA) (g)
+Lipids,Acides gras (lipides),636,TPST,Total plant sterol,stérols végétaux totaux,mg,166,Total plant sterol (mg),stérols végétaux totaux (mg)
+Lipids,Acides gras (lipides),638,STIG,Stigmasterol,stigmastérol,mg,167,Stigmasterol (mg),stigmastérol (mg)
+Lipids,Acides gras (lipides),639,CAMSTR,Campesterol,campéstérol,mg,168,Campesterol (mg),campéstérol (mg)
+Lipids,Acides gras (lipides),641,SITSTR,Beta-sitosterol,bêta-sitostérol,mg,169,Beta-sitosterol (mg),bêta-sitostérol (mg)
+Lipids,Acides gras (lipides),645,MUFA,"Fatty acids, monounsaturated, total",acides gras monoinsaturés totaux,g,101,"monounsaturated fatty acids, total (g)",acides gras monoinsaturés totaux (g)
+Lipids,Acides gras (lipides),646,PUFA,"Fatty acids, polyunsaturated, total",acides gras polyinsaturés totaux,g,123,"polyunsaturated fatty acids,total (g)",acides gras polyinsaturés totaux (g)
+Lipids,Acides gras (lipides),652,15:00,"Fatty acids, saturated, 15:0, pentadecanoic","acides gras saturés, 15:0, pentadécanoïque",g,94,15:0 (g),15:0 (g)
+Lipids,Acides gras (lipides),653,17:00,"Fatty acids, saturated, 17:0, heptadecanoic","acides gras saturés, 17:0, heptadécanoïque",g,96,17:0 (g),17:0 (g)
+Lipids,Acides gras (lipides),654,24:00:00,"Fatty acids, saturated, 24:0, tetracosanoic","acides gras saturés, 24:0, tétrasanoïque",g,100,24:0 (g),24:0 (g)
+Lipids,Acides gras (lipides),662,16:1t,"Fatty acids, monounsaturated, 16:1t, hexadecenoic","acides gras monoinsaturés, 16:1t, hexadécénoïque",g,150,16:1t (g),16:1t (g)
+Lipids,Acides gras (lipides),663,18:1t,"Fatty acids, monounsaturated, 18:1t, octadecenoic","acides gras monoinsaturés, 18:1t, octadécénoïque",g,151,18:1t (g),18:1t (g)
+Lipids,Acides gras (lipides),664,22:1t,"Fatty acids, monounsaturated, 22:1t, docosenoic","acides gras monoinsaturés, 22:1t, docosénoïque",g,160,22:1t (g),22:1t (g)
+Lipids,Acides gras (lipides),665,18:2t,"Fatty acids, polyunsaturated, 18:2t not further defined, linoleic, octadecadienoic","acides gras polyinsaturés, 18:2t non défini plus précisément, linoléique, octadécadiénoïque ",g,161,18:2t (g),18:2t (g)
+Lipids,Acides gras (lipides),666,18:2i,"Fatty acids, polyunsaturated, 18:2i, linoleic, octadecadienoic","acides gras polyinsaturés, 18:2i, linoléique, octadécadiénoïque",g,164,18:2i (g),18:2i (g)
+Lipids,Acides gras (lipides),669,"18:2t,t","Fatty acids, polyunsaturated, 18:2t,t , octadecadienenoic","acides gras polyinsaturés, 18:2t,t, octadécadiénoïque",g,163,"18:2t,t (g)","18:2t,t (g)"
+Lipids,Acides gras (lipides),670,18:2cla,"Fatty acids, polyunsaturated, conjugated, 18:2 cla, linoleic, octadecadienoic","acides gras polyinsaturés conjugués, 18:2 cla, linoléique, octadécadiénoïque",g,129,18:2 cla (g),18:2 cla (g)
+Lipids,Acides gras (lipides),671,24:1c,"Fatty acids, monounsaturated, 24:1c, tetracosenoic","acides gras monoinsaturés, 24:1c, tétracosénoïque",g,122,24:1c (g),24:1c (g)
+Lipids,Acides gras (lipides),672,20:2cc,"Fatty acids, polyunsaturated, 20:2 c,c  eicosadienoic","acides gras polyinsaturés, 20:2 c,c eïcosadiénoïque",g,134,"20:2 c,c (g)","20:2 c,c (g)"
+Lipids,Acides gras (lipides),673,16:1c,"Fatty acids, monounsaturated, 16:1c, hexadecenoic","acides gras monoinsaturés, 16:1c, hexadécénoïque",g,106,16:1c (g),16:1c (g)
+Lipids,Acides gras (lipides),674,18:1c,"Fatty acids, monounsaturated, 18:1c, octadecenoic","acides gras monoinsaturés, 18:1c, octadécénoïque",g,109,18:1c (g),18:1c (g)
+Lipids,Acides gras (lipides),675,18:2ccn-6,"Fatty acids, polyunsaturated, 18:2 c,c n-6,  linoleic, octadecadienoic","acides gras polyinsaturés, 18:2 c,c n-6, linoléique, octadécadiénoïque",g,125,"18:2 c,c n-6 (g)","18:2 c,c n-6 (g)"
+Lipids,Acides gras (lipides),676,22:1c,"Fatty acids, monounsaturated, 22:1c, docosenoic","acides gras monoinsaturés, 22:1c, docosénoïque",g,120,22:1c (g),22:1c (g)
+Lipids,Acides gras (lipides),685,18:3cccn-6,"Fatty acids, polyunsaturated, 18:3 c,c,c n-6, g-linolenic, octadecatrienoic","acides gras polyinsaturés, 18:3 c,c,c n-6, g-linolénique, octadécatriénoïque",g,132,"18:3 c,c,c n-6 (g)","18:3 c,c,c n-6 (g)"
+Lipids,Acides gras (lipides),687,17:01,"Fatty acids, monounsaturated, 17:1, heptadecenoic","acides gras monoinsaturés, 17:1, heptadécénoïque",g,107,17:1 (g),17:1 (g)
+Lipids,Acides gras (lipides),689,20:3undiff,"Fatty acids, polyunsaturated, 20:3, eicosatrienoic","acides gras polyinsaturés, 20:3non différencié, eïcosatriénoïque",g,135,20:3 (g),20:3 (g)
+Lipids,Acides gras (lipides),693,TRMO,"Fatty acids, total trans-monoenoic",acides gras trans monoénoïques totaux,g,149,total trans-monoenoic fatty acids (g),acides gras trans monoénoïques totaux (g)
+Lipids,Acides gras (lipides),695,TRPO,"Fatty acids, total trans-polyenoic",acides gras trans polyénoïques totaux,g,161,total trans-polyenoic fatty acids (g),acides gras trans polyénoïques totaux (g)
+Lipids,Acides gras (lipides),696,13:00,"Fatty acids, saturated, 13:0 tridecanoic","acides gras saturés, 13:0, tridécanoïque",g,92,13:0 (g),13:0 (g)
+Lipids,Acides gras (lipides),697,15:01,"Fatty acids, monounsaturated, 15:1, pentadecenoic","acides gras monoinsaturés, 15:1, pentadécénoïque",g,104,15:1 (g),15:1 (g)
+Lipids,Acides gras (lipides),851,18:3cccn-3,"Fatty acids, polyunsaturated, 18:3 c,c,c n-3  linolenic, octadecatrienoic","acides gras polyinsaturés, 18:3 c,c,c  n-3, linolénique, octadécatriénoïque",g,131,"18:3 c,c,c n-3 (g)","18:3 c,c,c n-3 (g)"
+Lipids,Acides gras (lipides),852,20:3n-3,"Fatty acids, polyunsaturated, 20:3 n-3 eicosatrienoic","acides gras polyinsaturés, 20:3 n-3,  eïcosatriénoïque",g,136,20:3 n-3 (g),20:3 n-3 (g)
+Lipids,Acides gras (lipides),853,20:3n-6,"Fatty acids, polyunsaturated, 20:3 n-6, eicosatrienoic","acides gras polyinsaturés, 20:3 n-6",g,137,20:3 n-6 (g),20:3 n-6 (g)
+Lipids,Acides gras (lipides),855,20:4n-6,"Fatty acids, polyunsaturated, 20:4 n-6, arachidonic","acides gras polyinsaturés, 20:4 n-6, arachidonique, eicosatétraénoïque",g,139,20:4 n-6 (g),20:4 n-6 (g)
+Lipids,Acides gras (lipides),856,18:3i,"Fatty acids, polyunsaturated, 18:3i, linolenic, octadecatrienoic","acides gras polyinsaturés, 18:3i, linolénique, octadécatriénoïque",g,165,18:3i (g),18:3i (g)
+Lipids,Acides gras (lipides),857,21:05,"Fatty acids, polyunsaturated, 21:5","acides gras polyinsaturés,  21:5",g,141,21:5 (g),21:5 (g)
+Lipids,Acides gras (lipides),858,22:4n-6,"Fatty acids, polyunsaturated, 22:4 n-6, docosatetraenoic","acides gras polyinsaturés, 22:4n-6, docosatétraénoïque",g,144,22:4 n-6 (g),22:4 n-6 (g)
+Lipids,Acides gras (lipides),859,24:1undiff,"Fatty acids, monounsaturated,  24:1undifferentiated, tetracosenoic","acides gras monoinsaturés, 24:1non différencié, tétracosénoïque",g,121,24:1undiff (g), 24:1non différencié (g)
+Lipids,Acides gras (lipides),860,12:01,"Fatty acids, monounsaturated, 12:1, lauroleic","acides gras monoinsaturés, 12:1, lauroleïque",g,102,12:1 (g),12:1 (g)
+Lipids,Acides gras (lipides),861,22:03,"Fatty acids, polyunsaturated, 22:3,","acides gras polyinsaturés, 22:3",g,143,22:3 (g),22:3 (g)
+Lipids,Acides gras (lipides),862,22:02,"Fatty acids, polyunsaturated, 22:2, docosadienoic","acides gras polyinsaturés, 22:2, docosadiénoïque",g,142,22:2 (g),22:2 (g)
+Lipids,Acides gras (lipides),884,18:1 10c,"Fatty acids, monounsaturated, 18:1 10c","acides gras monoinsaturés, 18:1 10c",g,110,18:1 10c (g),18:1 10c (g)
+Lipids,Acides gras (lipides),885,18:1 11c,"Fatty acids, monounsaturated, 18:1 11c","acides gras monoinsaturés, 18:1 11c",g,111,18:1 11c (g),18:1 11c (g)
+Lipids,Acides gras (lipides),886,18:1 12c,"Fatty acids, monounsaturated, 18:1 12c","acides gras monoinsaturés, 18:1 12c",g,112,18:1 12c (g),18:1 12c (g)
+Lipids,Acides gras (lipides),888,18:1 13c,"Fatty acids, monounsaturated, 18:1 13c","acides gras monoinsaturés, 18:1 13c",g,113,18:1 13c (g),18:1 13c (g)
+Lipids,Acides gras (lipides),891,18:1 14c,"Fatty acids, monounsaturated, 18:1 14c","acides gras monoinsaturés, 18:1 14c",g,114,18:1 14c (g),18:1 14c (g)
+Lipids,Acides gras (lipides),895,18:1 15c,"Fatty acids, monounsaturated, 18:1 15c","acides gras monoinsaturés, 18:1 15c",g,115,18:1 15c (g),18:1 15c (g)
+Lipids,Acides gras (lipides),896,18:1 16c,"Fatty acids, monounsaturated, 18:1 16c","acides gras monoinsaturés, 18:1 16c",g,116,18:1 16c (g),18:1 16c (g)
+Lipids,Acides gras (lipides),897,18:1 11t,"Fatty acids, monounsaturated, 18:1 11t","acides gras monoinsaturés, 18:1 11t",g,152,18:1 11t (g),18:1 11t (g)
+Lipids,Acides gras (lipides),898,18:1 4t,"Fatty acids, monounsaturated, 18:1 4t","acides gras monoinsaturés, 18:1 4t",g,153,18:1 4t (g),18:1 4t (g)
+Lipids,Acides gras (lipides),899,18:1 5t,"Fatty acids, monounsaturated, 18:1 5t","acides gras monoinsaturés, 18:1 5t",g,154,18:1 5t (g),18:1 5t (g)
+Lipids,Acides gras (lipides),904,18:1 6t-8t,"Fatty acids, monounsaturated, 18:1 6t-8t","acides gras monoinsaturés, 18:1 6t-8t",g,155,18:1 6t-8t (g),18:1 6t-8t (g)
+Lipids,Acides gras (lipides),905,18:1 10t,"Fatty acids, monounsaturated, 18:1 10t","acides gras monoinsaturés, 18:1 10t",g,156,18:1 10t (g),18:1 10t (g)
+Lipids,Acides gras (lipides),906,18:1 12t,"Fatty acids, monounsaturated, 18:1 12t","acides gras monoinsaturés, 18:1 12t",g,157,18:1 12t (g),18:1 12t (g)
+Lipids,Acides gras (lipides),907,18:1 13t,"Fatty acids, monounsaturated, 18:1 13t + 14t + 6c-8c","acides gras monoinsaturés, 18:1 13t+14t+6c-8c",g,158,18:1 13t + 14t + 6c-8c (g),18:1 13t + 14t + 6c-8c (g)
+Lipids,Acides gras (lipides),908,18:1 16t,"Fatty acids, monounsaturated, 18:1 16t","acides gras monoinsaturés, 18:1 16t",g,159,18:1 16t (g),18:1 16t (g)
+Lipids,Acides gras (lipides),909,20:1 5c,"Fatty acids, monounsaturated, 20:1 5c","acides gras monoinsaturés, 20:1 5c",g,118,20:1 5c (g),20:1 5c (g)
+Lipids,Acides gras (lipides),910,18:2 9c13c,"Fatty acids, polyunsaturated, 18:2 9c,13c","acides gras polyinsaturés, 18:2 9c,13c",g,126,"18:2 9c,13c (g)","18:2 9c,13c (g)"
+Lipids,Acides gras (lipides),911,18:2 9c14c,"Fatty acids, polyunsaturated, 18:2 9c,14c","acides gras polyinsaturés, 18:2 9c,14c",g,127,"18:2 9c,14c (g)","18:2 9c,14c (g)"
+Lipids,Acides gras (lipides),912,18:2 9c15c,"Fatty acids, polyunsaturated, 18:2 9c,15c","acides gras polyinsaturés, 18:2 9c,15c",g,128,"18:2 9c,15c (g)","18:2 9c,15c (g)"
+Lipids,Acides gras (lipides),913,22:5n-6,"Fatty acids, polyunsaturated, 22:5n-6","acides gras polyinsaturés,  22:5n-6",g,146,22:5n-6 (g),22:5n-6 (g)
+Other components,Autres composants,1001,INUL,Fructans (inulin),fructanes (inuline),g,173,Fructans (inulin) (g),fructanes (inuline) (g)
