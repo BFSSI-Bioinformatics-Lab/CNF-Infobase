@@ -43,9 +43,10 @@ export class Translation {
     //
     // Note:
     //  See https://www.i18next.com/translation-function/formatting for more formatting
-    static translateNum(numStr, decimalPlaces = 1) {
+    static translateNum(numStr, decimalPlaces = 1, emptyStr = "-") {
         let num = Number(numStr);
         if (Number.isNaN(num)) return numStr;
+        if (numStr === "") return emptyStr;
 
         let translateArgs = {num}
         if (decimalPlaces) {
