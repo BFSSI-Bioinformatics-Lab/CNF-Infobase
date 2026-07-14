@@ -113,7 +113,22 @@ export class Model {
     // tokenizeFoodDescription(foodDescription): Split the food description name into different tokens
     tokenizeFoodDescription(foodDescription) {
         if (foodDescription === "") return [];
-        return foodDescription.toLowerCase().split(" ");
+        
+        const result = foodDescription.toLowerCase().split(",");
+        let resultLen = result.length;
+        let i = 0;
+
+        while (i < resultLen) {
+            const keywords = result[i].trim().split(" ");
+            const keywordsLen = keywords.length;
+
+            result.splice(i, 1, ...keywords);
+
+            i += keywordsLen;
+            resultLen += keywordsLen - 1;
+        }
+
+        return result;
     }
 
     async loadFoodTable(foodNameTable, foodGroupTable) {
