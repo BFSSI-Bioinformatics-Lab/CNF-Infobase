@@ -17,6 +17,7 @@ export class CompareByNutrient extends BasePage {
 
         this.htmlElements = {};
         this.maxNutrientsCount = 3;
+        this.searchTable;
     }
 
     updateHTMLElements() {
@@ -62,6 +63,7 @@ export class CompareByNutrient extends BasePage {
     clearSearch() {
         this.model.clearSearchInputs(this.searchOpt);
         this.syncInputs();
+        this.updateSearchTable("", true);
     }
 
     // submitSearch(): Submits the search inputs to retrieve the search results in the search table
@@ -93,8 +95,8 @@ export class CompareByNutrient extends BasePage {
         });
     }
 
-    // updateSearchTable(selectFood, searchTxt): Updates the search table
-    updateSearchTable(searchTxt = null) {
+    // updateSearchTable(selectFood, resetSort): Updates the search table
+    updateSearchTable(searchTxt = null, resetSort = false) {
         const tableData = this.model.getCompareNutrientTableData(this.searchOpt);
         let searchTable = this.htmlElements.searchTable;
         if (tableData === undefined) return;
@@ -121,7 +123,8 @@ export class CompareByNutrient extends BasePage {
                                             columnInfo: tableColInfo, 
                                             data: tableData.data, 
                                             searchTxt: (searchTxt !== null) ? searchTxt : undefined, 
-                                            destroyExisting: true});
+                                            destroyExisting: true,
+                                            order: (resetSort) ? [] : null});
         return dataTable;
     }
 

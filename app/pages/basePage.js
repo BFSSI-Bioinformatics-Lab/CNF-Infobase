@@ -18,7 +18,7 @@ export class BasePage {
     // updateTable(data, selector): Updates the data in the table
     // Note:
     // - based off Jquery's Datatables: https://datatables.net/
-    updateTable({selector, columnInfo, data, dataTableAtts = {}, destroyExisting = false, searchTxt} = {}) {
+    updateTable({selector, columnInfo, data, dataTableAtts = {}, destroyExisting = false, searchTxt, order = null} = {}) {
         let dataTable;
 
         const dataTableTranslations = Translation.translate("dataTable", { returnObjects: true });
@@ -50,6 +50,11 @@ export class BasePage {
         }
 
         dataTable.rows.add(data);
+
+        if (order !== null) {
+            dataTable.order(order);
+        }
+
         dataTable.draw();
         return dataTable;
     }
@@ -282,8 +287,8 @@ export class BaseSearchPage extends BasePage {
         });
     }
 
-    // updateSearchTable(selectFood, searchTxt): Updates the search table
-    updateSearchTable(selectFood = false, searchTxt = null) {
+    // updateSearchTable(selectFood, searchTxt, resetSort): Updates the search table
+    updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {
 
     }
 
@@ -294,7 +299,7 @@ export class BaseSearchPage extends BasePage {
         this.syncInputs();
         this.hideFoodNutrientStats();
 
-        this.updateSearchTable(false, "");
+        this.updateSearchTable(false, "", true);
     }
 
     // syncInputs: Synchronizes the page's inputs with the inputs the user has previously entered
