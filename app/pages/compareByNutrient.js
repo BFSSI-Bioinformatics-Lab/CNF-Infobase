@@ -158,7 +158,7 @@ export class CompareByNutrient extends BasePage {
                                                                placeholder: Translation.translate("MultiNutrientPlaceholder"),
                                                                noResultsText: Translation.translate("multiselectAutoComplete.noResultsText")});
 
-        this.syncInputs();
+        this.clearSearch();
     }
 
     loadPage() {

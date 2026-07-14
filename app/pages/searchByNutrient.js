@@ -98,7 +98,7 @@ export class SearchByNutrientPage extends BaseSearchPage {
                                                                placeholder: Translation.translate("MultiNutrientPlaceholder"),
                                                                noResultsText: Translation.translate("multiselectAutoComplete.noResultsText")});
 
-        this.syncInputs();
+        this.clearSearch();
 
         const selectedFoodCodes = this.model.selectedFoodCodes[this.searchOpt];
         if (selectedFoodCodes === undefined || selectedFoodCodes.length == 0) return;
