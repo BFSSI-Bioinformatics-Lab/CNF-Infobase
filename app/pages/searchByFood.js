@@ -45,7 +45,7 @@ export class SearchByFoodPage extends BaseSearchPage {
         elements.foodCodeInput.on("keydown", () => {this.submitSearchKeyboardListener()});
     }
 
-    updateSearchTable(selectFood = false, searchTxt = null) {
+    updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {
         const tableData = (selectFood) ? this.model.getFoodSearchSelectedData(this.searchOpt) : this.model.getFoodSearchTableData(this.searchOpt);
         let searchTable = this.htmlElements.searchTable;
 
@@ -72,7 +72,8 @@ export class SearchByFoodPage extends BaseSearchPage {
                     [1, "asc"]
                 ]
             }},
-            searchTxt: (searchTxt !== null) ? searchTxt : undefined
+            searchTxt: (searchTxt !== null) ? searchTxt : undefined,
+            order: (resetSort) ? [] : null
         });
         return dataTable;
     }

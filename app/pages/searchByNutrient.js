@@ -36,7 +36,7 @@ export class SearchByNutrientPage extends BaseSearchPage {
         elements.resetSearchButton.html(Translation.translate("FoodSearchResetButton"));
     }
 
-    updateSearchTable(selectFood = false, searchTxt = null) {
+    updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {
         const tableData = (selectFood) ? this.model.getNutrientSearchSelectedData(this.searchOpt) : this.model.getNutrientSearchTableData(this.searchOpt);
         let searchTable = this.htmlElements.searchTable;
 
@@ -50,7 +50,7 @@ export class SearchByNutrientPage extends BaseSearchPage {
             tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
         }
 
-        const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, columnInfo: tableColInfo, data: tableData, searchTxt: (searchTxt !== null) ? searchTxt : undefined});
+        const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, columnInfo: tableColInfo, data: tableData, searchTxt: (searchTxt !== null) ? searchTxt : undefined, order: (resetSort) ? [] : null});
         return dataTable;
     }
 
