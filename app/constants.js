@@ -172,7 +172,7 @@ const LangEN = {
         MultiNutrientPlaceholder: "Search and select nutrients",
         MultiNutrientInputTitle: "Nutrients",
 
-        FoodSearchButton: "Food Search",
+        FoodSearchButton: "Search",
         FoodSearchResetButton: "Reset",
 
         NoneSelected: "None Selected",
@@ -191,7 +191,7 @@ const LangEN = {
                 [DataCols.FoodCode]: "Food Code",
                 [DataCols.FoodGroupDescription]: "Food Group",
                 [DataCols.FoodDescription]: "Food Name",
-                [DataCols.NutrientAmount]: "Nutrient Amount g"
+                [DataCols.NutrientAmount]: "Nutrient Amount per 100g"
             },
             [SearchOpts.CompareNutrients]: {
                 [DataCols.FoodCode]: "Food Code",
@@ -529,7 +529,7 @@ const LangFR = {
         MultiNutrientPlaceholder: "Rechercher et sélectionner les éléments nutritifs",
         MultiNutrientInputTitle: "Éléments nutritifs",
 
-        FoodSearchButton: "Recherche de l'Aliment",
+        FoodSearchButton: "Recherche",
         FoodSearchResetButton: "Réinitialiser",
 
         NoneSelected: "Aucune Sélectionnée",
@@ -548,7 +548,7 @@ const LangFR = {
                 [DataCols.FoodCode]: "Code de l'Aliment",
                 [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
                 [DataCols.FoodDescription]: "Nom de l'Aliment",
-                [DataCols.NutrientAmount]: "Valeur nutritive g"
+                [DataCols.NutrientAmount]: "Valeur nutritive pour 100 g"
             },
             [SearchOpts.CompareNutrients]: {
                 [DataCols.FoodCode]: "Code de l'Aliment",
