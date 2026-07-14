@@ -207,9 +207,8 @@ const LangEN = {
             ServingRefuseTitle: `Refuse`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
             ServingRefuseListItem: `{{ measureName }} {{ convertedMeasure }} %`,
-            NutrientTableTitle: `List of nutrient data`,
+            NutrientTableTitle: `List of nutrient data of {{ foodName }}`,
             DefaultNutrientMeasure: `Value per 100 g of edible portion`,
-            OverrideTitle: "Overrides",
 
             TableCols: {
                 [DataCols.NutrientName]: `Nutrient Name`,
@@ -566,9 +565,8 @@ const LangFR = {
             ServingRefuseTitle: `Portion Non Comestible`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
             ServingRefuseListItem: `{{ measureName }} {{ convertedMeasure }} %`,
-            NutrientTableTitle: `Liste des valeurs nutritives`,
+            NutrientTableTitle: `Liste des valeurs nutritives pour {{ foodName }}`,
             DefaultNutrientMeasure: `Valeur pour 100 g de portion comestible`,
-            OverrideTitle: REMPLACER_MOI,
 
             TableCols: {
                 [DataCols.NutrientName]: `Nom de l'élément nutritif`,
