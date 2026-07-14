@@ -201,12 +201,8 @@ export class BaseSearchPage extends BasePage {
             servingSizeCheckList: d3.select(".servingSizeContainer ul"),
             refuseListContainer: d3.select(".servingRefuseContainer"),
 
-            nutrientStatsShowUnitContainer: d3.select("#nutrientStatsShowUnitContainer"),
-            nutrientStatsShowExtraDetailsContainer: d3.select("#nutrientStatsShowExtraDetailsContainer"),
-            nutrientStatsShowUnitsCheckbox: d3.select("#nutrientStatsShowUnit"),
-            nutrientStatsShowExtraDetailsCheckbox: d3.select("#nutrientStatsShowExtraDetails"),
-
-            nutrientStatCSVDownloadBtn: d3.select("#nutrientCSVDownload")
+            nutrientStatCSVDownloadBtn: d3.select("#nutrientCSVDownload"),
+            nutrientTableTitle: d3.select("#nutrientTableTitle")
         };
 
         elements.refuseList = elements.refuseListContainer.select("ul")
@@ -216,14 +212,10 @@ export class BaseSearchPage extends BasePage {
 
     // updateStaticText: Updates text for the search page
     updateStaticText() {
-        d3.select("#nutrientTableTitle").html(Translation.translate("FoodNutrientStats.NutrientTableTitle"));
         d3.select("#foodSearchInstructions").html(Translation.translate("SearchTableInstructions"));
 
         this.htmlElements.foodResultCard.select(".cardDetails .card-title").html(Translation.translate("FoodNutrientStats.ServingTitle"));
         this.htmlElements.refuseListContainer.select("h5").html(Translation.translate("FoodNutrientStats.ServingRefuseTitle"));
-
-        this.htmlElements.nutrientStatsShowUnitContainer.select("label").html(Translation.translate("FoodNutrientStats.ShowUnits"));
-        this.htmlElements.nutrientStatsShowExtraDetailsContainer.select("label").html(Translation.translate("FoodNutrientStats.ShowExtraDetails"));
 
         this.htmlElements.nutrientStatCSVDownloadBtn.html(Translation.translate("CSVDownload.ButtonTitle"));
     }
@@ -473,8 +465,12 @@ export class BaseSearchPage extends BasePage {
         if (statsEmpty) return;
 
         const foodResultCard = this.htmlElements.foodResultCard;
-        foodResultCard.select(".cardHeader .card-title").html(stats.food[Translation.getDataCol(TableCols.FoodDescription)]);
+        const foodName = stats.food[Translation.getDataCol(TableCols.FoodDescription)];
+
+        foodResultCard.select(".cardHeader .card-title").html(foodName);
         foodResultCard.select(".cardHeader .card-subtitle").html(Translation.translate("FoodNutrientStats.SubTitle", { foodCode: foodCode }));
+        
+        this.htmlElements.nutrientTableTitle.html(Translation.translate("FoodNutrientStats.NutrientTableTitle", { foodName }));
 
         this.htmlElements.servingSizeCheckList.selectAll("*").remove();
         this.htmlElements.refuseList.selectAll("*").remove();
@@ -536,9 +532,6 @@ export class BaseSearchPage extends BasePage {
             }
 
             dataTable.columns.adjust().draw(false); 
-
-            self.htmlElements.nutrientStatsShowExtraDetailsCheckbox.property("checked", showExtraDetails);
-            self.htmlElements.nutrientStatsShowUnitsCheckbox.property("checked", showUnits);
         });
 
         return dataTable;
