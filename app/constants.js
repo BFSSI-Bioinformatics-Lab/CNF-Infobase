@@ -98,7 +98,6 @@ export const CompNutrientSearchTableCols = [
 // The columns to display in the Nutrient table
 export const NutrientTableCols = [
     DataCols.NutrientNameWithUnit,
-    DataCols.NutrientShortUnit,
     DataCols.NutrientNoOfObservations,
     DataCols.NutrientStdErr,
     DataCols.NutrientDataSrc

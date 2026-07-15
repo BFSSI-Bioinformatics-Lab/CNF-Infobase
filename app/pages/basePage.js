@@ -323,12 +323,10 @@ export class BaseSearchPage extends BasePage {
 
         let tableColInfo = [{data: DataCols.NutrientOrder, visible: false}];
         tableColInfo.push(...NutrientTableCols.map((tableAtt) => {
-            const isUnit = tableAtt == TableCols.NutrientShortUnit;
             const isExtraCol = NutrientTableExtraCols.has(tableAtt);
 
-            const visible = ((isUnit && this.model.showFoodNutrientsUnitCol(this.searchOpt)) || 
-                             (isExtraCol && this.model.showFoodNutrientsExtraCols(this.searchOpt)) || 
-                             (!isUnit && !isExtraCol));
+            const visible = ((isExtraCol && this.model.showFoodNutrientsExtraColsFromSearchOpt(this.searchOpt)) || 
+                             !isExtraCol);
 
             return {title: translations[tableAtt], data: Translation.getDataCol(tableAtt), name: tableAtt, orderable: false, visible };
         }));
@@ -408,18 +406,6 @@ export class BaseSearchPage extends BasePage {
             dataTable.column(`${tableAtt}:name`).visible(show); 
         }
 
-        if (!updateDatable) return;
-
-        if (dataTable.rowGroup) {
-            dataTable.rowGroup().draw();
-        }
-
-        dataTable.columns.adjust().draw(false); 
-    }
-
-    // updateNutrientTableUnitCol(dataTable, show, updateDataTable): Updates the nutrient table to hide/show the unit column
-    updateNutrientTableUnitCol(dataTable, show, updateDatable = false) {
-        dataTable.column(`${TableCols.NutrientShortUnit}:name`).visible(show); 
         if (!updateDatable) return;
 
         if (dataTable.rowGroup) {
@@ -526,12 +512,10 @@ export class BaseSearchPage extends BasePage {
             nutrientStatsInputs[NutrientStatAtts.ShowExtraDetails] = null;
             nutrientStatsInputs[NutrientStatAtts.ShowUnit] = null;
 
-            let showExtraDetails = self.model.showFoodNutrientsExtraCols(self.searchOpt);
-            let showUnits = self.model.showFoodNutrientsUnitCol(self.searchOpt);
+            let showExtraDetails = self.model.showFoodNutrientsExtraColsFromSearchOpt(self.searchOpt);
 
             self.updateNutrientTableConvCols(dataTable, measureConvInd, this.checked);
             self.updateNutrientTableExtraCols(dataTable, showExtraDetails);
-            self.updateNutrientTableUnitCol(dataTable, showUnits);
 
             if (dataTable.rowGroup) {
                 dataTable.rowGroup().draw();
