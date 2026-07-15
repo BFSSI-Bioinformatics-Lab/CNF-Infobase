@@ -163,6 +163,7 @@ const LangEN = {
         </p>`,
 
         SearchCriteriaTitle: "Search Criteria",
+        SearchTableTitle: "Search Results",
         FoodNameInputTitle: "Food Name",
         FoodAltNameInputTitle: "Food Common Name",
         FoodGroupInputTitle: "Food Group",
@@ -522,6 +523,7 @@ const LangFR = {
         </p>`,
 
         SearchCriteriaTitle: "Critères de Recherche",
+        SearchTableTitle: "Résultats de Recherche",
         FoodNameInputTitle: "Nom de l'Aliment",
         FoodAltNameInputTitle: REMPLACER_MOI,
         FoodGroupInputTitle: "Groupe de l'Aliment",
