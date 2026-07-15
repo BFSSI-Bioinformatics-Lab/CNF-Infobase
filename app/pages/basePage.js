@@ -201,7 +201,8 @@ export class BaseSearchPage extends BasePage {
             servingSizeCheckList: d3.select(".servingSizeContainer ul"),
             refuseListContainer: d3.select(".servingRefuseContainer"),
 
-            nutrientStatCSVDownloadBtn: d3.select("#nutrientCSVDownload"),
+            nutrientStatsDownloadBtn: d3.select("#nutrientCSVDownload"),
+            nutrientStatCSVDownloadAllBtn: d3.select("#allNutrientCSVDownload"),
             nutrientTableTitle: d3.select("#nutrientTableTitle")
         };
 
@@ -217,7 +218,8 @@ export class BaseSearchPage extends BasePage {
         this.htmlElements.foodResultCard.select(".cardDetails .card-title").html(Translation.translate("FoodNutrientStats.ServingTitle"));
         this.htmlElements.refuseListContainer.select("h5").html(Translation.translate("FoodNutrientStats.ServingRefuseTitle"));
 
-        this.htmlElements.nutrientStatCSVDownloadBtn.html(Translation.translate("CSVDownload.ButtonTitle"));
+        this.htmlElements.nutrientStatCSVDownloadAllBtn.html(Translation.translate("CSVDownload.DownloadAllNutrientButtonTitle"));
+        this.htmlElements.nutrientStatsDownloadBtn.html(Translation.translate("CSVDownload.DownloadNutrientButtonTitle"));
     }
 
     // setupListeners(): Setups all the initial listeners
@@ -235,8 +237,12 @@ export class BaseSearchPage extends BasePage {
             this.clearSearch();
         });
 
-        elements.nutrientStatCSVDownloadBtn.on("click", () => {
+        elements.nutrientStatsDownloadBtn.on("click", () => {
             this.model.downloadNutrientCSV(this.searchOpt);
+        });
+
+        elements.nutrientStatCSVDownloadAllBtn.on("click", () => {
+            this.model.downloadAllNutrientCSV(this.searchOpt);
         });
     }
 
