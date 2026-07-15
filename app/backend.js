@@ -25,7 +25,7 @@ export class Model {
 
         this.searchedNutrientData;
         this.webSearchedNutrientTable;
-        this.csvSearchedNutrientTable;
+        this.csvSearchedAllNutrientTable;
     }
 
     clearSearchInputs(searchOpt) {
@@ -606,7 +606,7 @@ export class Model {
         return nutrientTable;
     }
 
-    getFoodMeasureWeightConv(foodCode) {
+    getFoodMeasureWeightConv(foodCode, measureCodes = null) {
         let measureWeightConv = this.getRowsById(this.measureConvTable, DataCols.FoodCode, foodCode);
         if (measureWeightConv == undefined) return;
 
@@ -617,6 +617,10 @@ export class Model {
             [TableCols.MeasureWeightConvId]: Model.getMeasureWeigthConvId(DataCols.FoodCode, MeasureTypeCodes.Default, DefaultMeasureCode),
             [DataCols.MeasureWeight]: 100
         });
+
+        if (measureCodes !== null) {
+            measureWeightConv = measureWeightConv.filter((row) => measureCodes.has(row[DataCols.MeasureCode]));
+        }
 
         return measureWeightConv;
     }
@@ -716,7 +720,7 @@ export class Model {
         this.webSearchedNutrientTable = this.convertNutrientAmounts(nutrients, measureWeightConv);
         this.webSearchedNutrientTable = this.formatNutrientTable(this.webSearchedNutrientTable, measureWeightConv.length);
 
-        this.csvSearchedNutrientTable = this.getNutrientCSVDownload(food, this.webSearchedNutrientTable, measureWeightConv);
+        this.csvSearchedAllNutrientTable = this.getNutrientCSVDownload(food, this.webSearchedNutrientTable, measureWeightConv);
 
         this.searchedNutrientData = {measureWeightConv, food, nutrients};
         return this.searchedNutrientData;
@@ -756,8 +760,8 @@ export class Model {
         return nutrientStatInputs[NutrientStatAtts.MeasureCodesSelected].has(DefaultMeasureCode);
     }
 
-    // downloadNutrientCSV(searchOpt): Downloads the CSV for the nutrient table
-    downloadNutrientCSV(searchOpt) {
+    // downloadAllNutrientCSV(searchOpt): Downloads the CSV for all the serving sizes in the nutrient table
+    downloadAllNutrientCSV(searchOpt) {
         const selectedFoodCodes = this.selectedFoodCodes[searchOpt];
         if (selectedFoodCodes === undefined ||  selectedFoodCodes.length == 0) return;
 
@@ -766,8 +770,32 @@ export class Model {
         if (food == undefined) return;
 
         const foodName = food[Translation.getDataCol(DataCols.FoodDescription)];
-        const csvFileName = Translation.translate("CSVDownload.FileName", {foodName});
+        const csvFileName = Translation.translate("CSVDownload.AllNutrientFileName", {foodName});
         
-        TableTools.downloadCSV({csvContent: this.csvSearchedNutrientTable, fileName: csvFileName});
+        TableTools.downloadCSV({csvContent: this.csvSearchedAllNutrientTable, fileName: csvFileName});
+    }
+
+    // downloadNutrientCSV(searchOpt): Downloads the CSV for the selected serving sizes in the nutrient table
+    downloadNutrientCSV(searchOpt) {
+        const selectedFoodCodes = this.selectedFoodCodes[searchOpt];
+        if (selectedFoodCodes === undefined ||  selectedFoodCodes.length == 0) return;
+
+        const nutrientStatsInputs = this.nutrientStatsInputs[searchOpt];
+        if (nutrientStatsInputs === undefined) return;
+
+        const measureCodesSelected = nutrientStatsInputs[NutrientStatAtts.MeasureCodesSelected];
+        if (measureCodesSelected == undefined) return;
+
+        const foodCode = selectedFoodCodes[0];
+        let food = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
+        if (food == undefined) return;
+
+        const foodName = food[Translation.getDataCol(DataCols.FoodDescription)];
+        const csvFileName = Translation.translate("CSVDownload.NutrientFileName", {foodName});
+
+        let measureWeightConv = this.getFoodMeasureWeightConv(foodCode, measureCodesSelected); 
+
+        const csvTable = this.getNutrientCSVDownload(food, this.webSearchedNutrientTable, measureWeightConv);
+        TableTools.downloadCSV({csvContent: csvTable, fileName: csvFileName});
     }
 }
