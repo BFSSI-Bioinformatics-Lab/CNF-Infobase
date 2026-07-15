@@ -79,6 +79,16 @@ export class DictTools {
 }
 
 
+// SetTools: Helper class for sets
+export class SetTools {
+
+    // getFirst(set): Retreives the first element from a set
+    static getFirst(set) {
+        return set.values().next().value;
+    }
+}
+
+
 export class TextTools {
     // buildAhoCorasickDFA(keywords): Builds the DFA for AhoCorasick
     static buildAhoCorasickDFA(keywords) {

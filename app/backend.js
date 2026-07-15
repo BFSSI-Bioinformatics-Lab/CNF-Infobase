@@ -1,5 +1,5 @@
-import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols } from "./constants.js";
-import { Translation, TableTools, TextTools } from "./tools.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols, NutrientTableExtraCols } from "./constants.js";
+import { Translation, TableTools, TextTools, SetTools } from "./tools.js";
 
 
 export class Model {
@@ -625,13 +625,22 @@ export class Model {
         return measureWeightConv;
     }
 
-    getNutrientCSVDownload(food, webSearchedNutrientTable, measureWeightConv) {
+    getNutrientCSVDownload(food, webSearchedNutrientTable, measureWeightConv, nutrientStatsInputs = null) {
         let result = [];
 
         // retrieve the table columns and their translations
         const nutrientColTranslations = Translation.translate("FoodNutrientStats.TableCols", { returnObjects: true });
-        const tableAtts = NutrientTableCols.map((col) => Translation.getDataCol(col));
-        const tableColDisplay = NutrientTableCols.map((col) => nutrientColTranslations[col]);
+
+        let nutrientTableCols = NutrientTableCols;
+        if (nutrientStatsInputs !== null) {
+            nutrientTableCols = nutrientTableCols.filter((tableCol) => {
+                const isExtraCol = NutrientTableExtraCols.has(tableCol);
+                return ((isExtraCol && this.showFoodNutrientsExtraCols(nutrientStatsInputs)) || !isExtraCol);
+            });
+        }
+
+        const tableAtts = nutrientTableCols.map((col) => Translation.getDataCol(col));
+        const tableColDisplay = nutrientTableCols.map((col) => nutrientColTranslations[col]);
 
         const measureTableAtts = [];
         const measureColDisplay = [];
@@ -736,8 +745,14 @@ export class Model {
         return result;
     }
 
-    showFoodNutrientsExtraCols(searchOpt) {
+    showFoodNutrientsExtraColsFromSearchOpt(searchOpt) {
         const nutrientStatInputs = this.nutrientStatsInputs[searchOpt];
+        if (nutrientStatInputs == undefined) return false;
+
+        return this.showFoodNutrientsExtraCols(nutrientStatInputs);
+    }
+
+    showFoodNutrientsExtraCols(nutrientStatInputs) {
         if (nutrientStatInputs == undefined) return false;
 
         const showExtraColsOverride = nutrientStatInputs[NutrientStatAtts.ShowExtraDetails];
@@ -745,7 +760,8 @@ export class Model {
             return showExtraColsOverride;
         }
 
-        return nutrientStatInputs[NutrientStatAtts.MeasureCodesSelected].size < 2;
+        const measureCodesSelected = nutrientStatInputs[NutrientStatAtts.MeasureCodesSelected];
+        return (measureCodesSelected.size == 0 || (measureCodesSelected.size == 1 && SetTools.getFirst(measureCodesSelected) == DefaultMeasureCode)); 
     }
 
     showFoodNutrientsUnitCol(searchOpt) {
@@ -793,9 +809,10 @@ export class Model {
         const foodName = food[Translation.getDataCol(DataCols.FoodDescription)];
         const csvFileName = Translation.translate("CSVDownload.NutrientFileName", {foodName});
 
-        let measureWeightConv = this.getFoodMeasureWeightConv(foodCode, measureCodesSelected); 
+        let measureWeightConv = this.getFoodMeasureWeightConv(foodCode, measureCodesSelected);
 
-        const csvTable = this.getNutrientCSVDownload(food, this.webSearchedNutrientTable, measureWeightConv);
+        const nutrientStatInputs = this.nutrientStatsInputs[searchOpt];
+        const csvTable = this.getNutrientCSVDownload(food, this.webSearchedNutrientTable, measureWeightConv, nutrientStatInputs);
         TableTools.downloadCSV({csvContent: csvTable, fileName: csvFileName});
     }
 }
