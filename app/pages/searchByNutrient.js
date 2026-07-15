@@ -28,6 +28,7 @@ export class SearchByNutrientPage extends BaseSearchPage {
         const elements = this.htmlElements;
 
         d3.select("#searchTitle").html(Translation.translate("SearchCriteriaTitle"));
+        d3.select("#searchResultTitle").html(Translation.translate("SearchTableTitle"));
 
         elements.foodGroupInputContainer.select("label").html(Translation.translate("FoodGroupInputTitle"));
         elements.nutrientInputContainer.select("label").html(Translation.translate("NutrientInputTitle"))
