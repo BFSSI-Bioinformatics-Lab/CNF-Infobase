@@ -644,6 +644,8 @@ export class Model {
 
         const measureTableAtts = [];
         const measureColDisplay = [];
+        let defaultMeasureTableAtt = null;
+        let defaultMeasureColDisplay = null;
         const measureConvLen = measureWeightConv.length;
 
         for (let i = 0; i < measureConvLen; ++i) {
@@ -656,12 +658,26 @@ export class Model {
                 convertedMeasure: Translation.translateNum(measureConv[TableCols.MeasureWeight], undefined)
             });
 
-            measureTableAtts.push(dataCol);
-            measureColDisplay.push(currentMeasureDisplay);
+            const measureCode = measureConv[DataCols.MeasureCode];
+            if (measureCode == DefaultMeasureCode) {
+                defaultMeasureTableAtt = dataCol;
+                defaultMeasureColDisplay = currentMeasureDisplay;
+            } else {
+                measureTableAtts.push(dataCol);
+                measureColDisplay.push(currentMeasureDisplay);
+            }
         }
 
-        tableAtts.splice(1, 0, ...measureTableAtts);
-        tableColDisplay.splice(1, 0, ...measureColDisplay);
+        if (defaultMeasureTableAtt !== null) {
+            tableAtts.splice(1, 0, defaultMeasureTableAtt);
+        }
+
+        if (defaultMeasureColDisplay !== null) {
+            tableColDisplay.splice(1, 0, defaultMeasureColDisplay);
+        }
+
+        tableAtts.push(...measureTableAtts);
+        tableColDisplay.push(...measureColDisplay);
 
         const tableAttsLen = tableAtts.length;
 
