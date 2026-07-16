@@ -225,10 +225,12 @@ const LangEN = {
         },
 
         CSVDownload: {
+            DownloadSearchButtonTitle: "Download filtered data",
             DownloadNutrientButtonTitle: "Download displayed data",
             DownloadAllNutrientButtonTitle: "Download all data",
-            AllNutrientFileName: `Nutrient Profile - {{ foodName }}.csv`,
-            NutrientFileName: `Nutrient Profile - {{ foodName }}.csv`,
+            SearchFileName: `Search Profile`,
+            AllNutrientFileName: `Nutrient Profile - {{ foodName }}`,
+            NutrientFileName: `Nutrient Profile - {{ foodName }}`,
             Date: `Date: {{ date }}`
         },
 
@@ -584,10 +586,12 @@ const LangFR = {
         },
 
         CSVDownload: {
+            DownloadSearchButtonTitle: "Télécharger les données filtrées",
             DownloadNutrientButtonTitle: "Télécharger les données affichées",
             DownloadAllNutrientButtonTitle: "Télécharger toutes les données",
-            AllNutrientFileName: `Nutrient Profile - {{ foodName }}.csv`,
-            NutrientFileName: `Nutrient Profile - {{ foodName }}.csv`,
+            SearchFileName: `Profil de Recherche`,
+            AllNutrientFileName: `Profil Nutritionnel - {{ foodName }}`,
+            NutrientFileName: `Profil Nutritionnel - {{ foodName }}`,
             Date: `Date : {{ date }}`
         },
 

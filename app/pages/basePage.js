@@ -196,8 +196,10 @@ export class BaseSearchPage extends BasePage {
         const elements = {
             searchButton: d3.select("#searchButton"),
             resetSearchButton: d3.select("#resetButton"),
+
             foodResultContainer: d3.select(".foodResultContainer"),
             foodResultCard: d3.select("#foodResultCard"),
+            searchCSVDownloadBtn: d3.select("#searchCSVDownload"),
             servingSizeCheckList: d3.select(".servingSizeContainer ul"),
             refuseListContainer: d3.select(".servingRefuseContainer"),
 
@@ -217,6 +219,7 @@ export class BaseSearchPage extends BasePage {
 
         this.htmlElements.foodResultCard.select(".cardDetails .card-title").html(Translation.translate("FoodNutrientStats.ServingTitle"));
         this.htmlElements.refuseListContainer.select("h5").html(Translation.translate("FoodNutrientStats.ServingRefuseTitle"));
+        this.htmlElements.searchCSVDownloadBtn.html(Translation.translate("CSVDownload.DownloadSearchButtonTitle"))
 
         this.htmlElements.nutrientStatCSVDownloadAllBtn.html(Translation.translate("CSVDownload.DownloadAllNutrientButtonTitle"));
         this.htmlElements.nutrientStatsDownloadBtn.html(Translation.translate("CSVDownload.DownloadNutrientButtonTitle"));
@@ -243,6 +246,10 @@ export class BaseSearchPage extends BasePage {
 
         elements.nutrientStatCSVDownloadAllBtn.on("click", () => {
             this.model.downloadAllNutrientCSV(this.searchOpt);
+        });
+
+        elements.searchCSVDownloadBtn.on("click", () => {
+            this.model.downloadSearchCSV();
         });
     }
 

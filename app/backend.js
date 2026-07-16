@@ -23,6 +23,7 @@ export class Model {
         this.nutrientTable;
         this.nutrientNameTable;
 
+        this.searchResultData;
         this.searchedNutrientData;
         this.webSearchedNutrientTable;
         this.csvSearchedAllNutrientTable;
@@ -456,7 +457,9 @@ export class Model {
     // getFoodSearchTableData(searchOpt): Retrieves the food search data for the searched inputs 
     getFoodSearchTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
-        return this.filterFoodSearchTable(inputs[SearchAtts.FoodName], "", inputs[SearchAtts.FoodGroup], inputs[SearchAtts.FoodCode]);
+        const result = this.filterFoodSearchTable(inputs[SearchAtts.FoodName], "", inputs[SearchAtts.FoodGroup], inputs[SearchAtts.FoodCode]);
+        this.searchResultData = this.getSearchCSVDownload(searchOpt, {data: result});
+        return result;
     }
 
     // getFoodSearchSelectedData(searchOpt): Retrieves the food search data for the selected foods
@@ -477,9 +480,11 @@ export class Model {
     // getNutrientSearchTableData(searchOpt): Retrieves the nutrient search data for the searched inputs
     getNutrientSearchTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
-        let result = this.filterNutrientSearchTable(inputs[SearchAtts.Nutrient], inputs[SearchAtts.FoodGroup], "");
+        const result = this.filterNutrientSearchTable(inputs[SearchAtts.Nutrient], inputs[SearchAtts.FoodGroup], "");
         this.formatNutrientSearchTable(result);
-        return result
+
+        this.searchResultData = this.getSearchCSVDownload(searchOpt, {data: result});
+        return result;
     }
 
     // getNutrientSearchSelectedData(searchOpt): Retrieves the nutrient search data for the selected food
@@ -506,7 +511,11 @@ export class Model {
         const nutrientNameData = this.getRowsByIds(this.nutrientNameTable, DataCols.NutrientCode, nutrientCodes);
         const nutrientColNames = {};
 
-        if (result.length == 0) return {data: [], nutrientNames: nutrientNameData};
+        if (result.length == 0) {
+            result = {data: [], nutrientNames: nutrientNameData};
+            this.searchResultData = this.getSearchCSVDownload(searchOpt, result);
+            return result;
+        };
 
         for (const nutrientCode of nutrientCodes) {
             nutrientColNames[nutrientCode] = Model.getCompareNutrientAmtColName(nutrientCode);
@@ -553,7 +562,9 @@ export class Model {
             result.push(row);
         }
 
-        return {data: result, nutrientNames: nutrientNameData};
+        result = {data: result, nutrientNames: nutrientNameData};
+        this.searchResultData = this.getSearchCSVDownload(searchOpt, result);
+        return result;
     }
 
     static getConvertedNutrientColName(ind) {
@@ -623,6 +634,55 @@ export class Model {
         }
 
         return measureWeightConv;
+    }
+
+    getSearchCSVDownload(searchOpt, searchTable) {
+        let translations = Translation.translate(`SearchTableCols`,{ returnObjects: true });
+        translations = translations[searchOpt];
+        if (translations === undefined) return null;
+
+        let tableAtts = [];
+        let tableColDisplay = [];
+
+        for (const tableCol in translations) {
+            tableAtts.push(Translation.getDataCol(tableCol));
+            tableColDisplay.push(translations[tableCol]);
+        }
+
+        if (searchOpt == SearchOpts.CompareNutrients) {
+            const nutrientNameData = searchTable.nutrientNames;
+            for (const nutrientNameDatum of nutrientNameData) {
+                const nutrientCode = nutrientNameDatum[DataCols.NutrientCode];
+                const nutrientName = nutrientNameDatum[Translation.getDataCol(DataCols.NutrientName)];
+
+                const dataCol = Model.getCompareNutrientAmtColName(nutrientCode);
+                const colName = Translation.translate("SearchTableCols.ElementNutrientAmount", { returnObjects: true, element: nutrientName});
+
+                tableAtts.push(dataCol);
+                tableColDisplay.push(colName);
+            }
+        }
+
+        const headerRow = [];
+        let result = [headerRow];
+
+        for (const display of tableColDisplay) {
+            headerRow.push(display);
+        }
+
+        const tableData = searchTable.data;
+        for (const row of tableData) {
+            const currentRow = [];
+
+            for (const tableAtt of tableAtts) {
+                currentRow.push(row[tableAtt]);
+            }
+
+            result.push(currentRow);
+        }
+
+        result = TableTools.createCSVContent(result);
+        return result;
     }
 
     getNutrientCSVDownload(food, webSearchedNutrientTable, measureWeightConv, nutrientStatsInputs = null) {
@@ -790,6 +850,12 @@ export class Model {
         }
 
         return nutrientStatInputs[NutrientStatAtts.MeasureCodesSelected].has(DefaultMeasureCode);
+    }
+
+    // downloadSearchCSV(): Downloads the CSV for the search table
+    downloadSearchCSV() {
+        const csvFileName = Translation.translate("CSVDownload.SearchFileName");
+        TableTools.downloadCSV({csvContent: this.searchResultData, fileName: csvFileName});
     }
 
     // downloadAllNutrientCSV(searchOpt): Downloads the CSV for all the serving sizes in the nutrient table

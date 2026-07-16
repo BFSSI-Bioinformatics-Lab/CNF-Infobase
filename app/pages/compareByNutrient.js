@@ -26,7 +26,8 @@ export class CompareByNutrient extends BasePage {
             resetSearchButton: d3.select("#resetButton"),
             foodGroupInputContainer: d3.select("#foodGroupInputContainer"),
             multiNutrientInputContainer: d3.select("#nutrientInputContainer"),
-            searchTable: $(this.htmlSelectors.foodSearchTable)
+            searchTable: $(this.htmlSelectors.foodSearchTable),
+            searchCSVDownloadBtn: d3.select("#searchCSVDownload"),
         };
 
         this.htmlElements = elements;
@@ -38,6 +39,7 @@ export class CompareByNutrient extends BasePage {
 
         d3.select("#searchTitle").html(Translation.translate("SearchCriteriaTitle"));
         d3.select("#searchResultTitle").html(Translation.translate("SearchTableTitle"));
+        elements.searchCSVDownloadBtn.html(Translation.translate("CSVDownload.DownloadSearchButtonTitle"))
 
         elements.foodGroupInputContainer.select("label").html(Translation.translate("FoodGroupInputTitle"));
         elements.multiNutrientInputContainer.select("label").html(Translation.translate("MultiNutrientInputTitle"));
@@ -58,6 +60,9 @@ export class CompareByNutrient extends BasePage {
             this.clearSearch();
         });
 
+        elements.searchCSVDownloadBtn.on("click", () => {
+            this.model.downloadSearchCSV();
+        });
     }
 
     // clearSearch(): Clears the search inputs of the page
