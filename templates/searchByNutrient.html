@@ -9,26 +9,22 @@ Purpose: Defines the page for searching by nutrients
         <h3 id="searchTitle"></h3>
 
         <fieldset class="pb-5">
-            <div class="searchInputContainer row justify-content-center">
-                <div class="col-12 col-lg-8">
-                    <div class="d-flex flex-column flex-md-row justify-content-md-between mb-3 gap-5">
-                        <div class="form-group dropdownInputContainer" id="nutrientInputContainer">
-                            <label for="nutrientInput"></label>
-                            <select id="nutrientInput" multiple>
-                            </select>
-                        </div>
+            <div class="searchInputContainer d-flex flex-column flex-lg-row gap-5 justify-content-around mrgn-bttm-lg">
+                <div class="form-group dropdownInputContainer" id="nutrientInputContainer">
+                    <label for="nutrientInput"></label>
+                    <select id="nutrientInput" multiple>
+                    </select>
+                </div>
 
-                        <div class="form-group dropdownInputContainer" id="foodGroupInputContainer">
-                            <label for="foodGroupInput"></label>
-                            <select class="singleOptSelect" multiple data-actions-box="true" data-max-options="1" data-container="body" id="foodGroupInput">
-                            </select>
-                        </div>
-                    </div>
+                <div class="form-group dropdownInputContainer" id="foodGroupInputContainer">
+                    <label for="foodGroupInput"></label>
+                    <select class="singleOptSelect" multiple data-actions-box="true" data-max-options="1" data-container="body" id="foodGroupInput">
+                    </select>
+                </div>
 
-                    <div class="d-flex gap-5">
-                        <input type="submit" class="btn btn-primary" id="searchButton">
-                        <button type="button" class="btn btn-danger" id="resetButton"></button>
-                    </div>
+                <div class="d-flex align-items-center gap-3">
+                    <input type="submit" class="btn btn-primary" id="searchButton">
+                    <button type="button" class="btn btn-danger" id="resetButton"></button>
                 </div>
             </div>
         </fieldset>
