@@ -162,6 +162,8 @@ const LangEN = {
             Alternatively, you can search by the unique four digit Canadian Nutrient File (CNF) food code.
         </p>`,
 
+        BackToTop: "Back to top",
+
         SearchCriteriaTitle: "Search Criteria",
         SearchTableTitle: "Search Results",
         FoodNameInputTitle: "Food Name",
@@ -523,6 +525,8 @@ const LangFR = {
         <p class="mrgn-tp-lg">
             Vous pouvez également effectuer une recherche par le code d'aliment du Fichier canadien sur les éléments nutritifs (FCÉN) de 4 chiffres.
         </p>`,
+
+        BackToTop: "Haut de la page",
 
         SearchCriteriaTitle: "Critères de Recherche",
         SearchTableTitle: "Résultats de Recherche",
