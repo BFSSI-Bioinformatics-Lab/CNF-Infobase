@@ -224,7 +224,7 @@
     font-size: 16px;
 }
 
-.dataTable tr:hover td {
+.dataTable.clickableTable tr:hover td {
     filter: brightness(0.8);
     cursor: pointer;
 }

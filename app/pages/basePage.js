@@ -223,6 +223,11 @@ export class BaseSearchPage extends BasePage {
 
         this.htmlElements.nutrientStatCSVDownloadAllBtn.html(Translation.translate("CSVDownload.DownloadAllNutrientButtonTitle"));
         this.htmlElements.nutrientStatsDownloadBtn.html(Translation.translate("CSVDownload.DownloadNutrientButtonTitle"));
+
+        d3.selectAll(".toTopBtnText").each((data, ind, nodes) => {
+            const textNode = d3.select(nodes[ind]);
+            textNode.html(Translation.translate("BackToTop")); 
+        });
     }
 
     // setupListeners(): Setups all the initial listeners

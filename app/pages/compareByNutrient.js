@@ -46,6 +46,11 @@ export class CompareByNutrient extends BasePage {
 
         elements.searchButton.attr("value", Translation.translate("FoodSearchButton"));
         elements.resetSearchButton.html(Translation.translate("FoodSearchResetButton"));
+
+        d3.selectAll(".toTopBtnText").each((data, ind, nodes) => {
+            const textNode = d3.select(nodes[ind]);
+            textNode.html(Translation.translate("BackToTop")); 
+        });
     }
 
     // setupListeners(): Setups all the initial listeners
