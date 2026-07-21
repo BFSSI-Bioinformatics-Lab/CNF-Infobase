@@ -167,6 +167,13 @@ export class BasePage {
 
         return result;
     }
+
+    scrollToElement(nodeElement) {
+        nodeElement.scrollIntoView({ 
+            behavior: "smooth",
+            block: "start"
+        });
+    }
 }
 
 
@@ -194,6 +201,7 @@ export class BaseSearchPage extends BasePage {
     // updateHtmlElements(): Updates the common HTML elements for the search page
     updateHTMLElements() {
         const elements = {
+            searchContainer: d3.select("#searchSection"),
             searchButton: d3.select("#searchButton"),
             resetSearchButton: d3.select("#resetButton"),
 
@@ -325,6 +333,7 @@ export class BaseSearchPage extends BasePage {
     
     // submitSearch(): Submits the search inputs to retrieve the search results in the search table
     submitSearch() {
+        this.scrollToElement(this.htmlElements.searchContainer.node());
         const inputs = this.model.searchInputs[this.searchOpt]; 
         this.updateSearchTable(false, inputs[SearchAtts.FilterHelper]);
     }

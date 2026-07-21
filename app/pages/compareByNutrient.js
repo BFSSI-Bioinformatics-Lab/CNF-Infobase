@@ -22,6 +22,7 @@ export class CompareByNutrient extends BasePage {
 
     updateHTMLElements() {
         const elements = {
+            searchContainer: d3.select("#searchSection"),
             searchButton: d3.select("#searchButton"),
             resetSearchButton: d3.select("#resetButton"),
             foodGroupInputContainer: d3.select("#foodGroupInputContainer"),
@@ -81,6 +82,8 @@ export class CompareByNutrient extends BasePage {
     submitSearch() {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt]; 
+
+        this.scrollToElement(elements.searchContainer.node());
 
         const foodGroups = $(this.htmlSelectors.foodGroupInput).selectpicker('val');
         inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
