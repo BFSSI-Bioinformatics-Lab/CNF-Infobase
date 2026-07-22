@@ -19,8 +19,10 @@ export class SearchByNutrientPage extends BaseSearchPage {
         elements.foodGroupInputContainer = d3.select("#foodGroupInputContainer");
         elements.nutrientInputContainer = d3.select("#nutrientInputContainer");
 
+        elements.foodGroupInput = d3.select(this.htmlSelectors.foodGroupInput);
+        elements.nutrientInput = d3.select(this.htmlSelectors.nutrientInput);
+
         elements.searchTable = $(this.htmlSelectors.foodSearchTable);
-        elements.nutrientInput = null;
     }
 
     updateStaticText() {
@@ -59,10 +61,10 @@ export class SearchByNutrientPage extends BaseSearchPage {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt]; 
 
-        const foodGroups = $(this.htmlSelectors.foodGroupInput).selectpicker('val');
+        const foodGroups = [elements.foodGroupInput.property("value")];
         inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
 
-        const nutrients = elements.nutrientInput.getValue(true);
+        const nutrients = [elements.nutrientInput.property("value")]
         inputs[SearchAtts.Nutrient] = (nutrients.length == 0) ? "" : nutrients;
 
         inputs[SearchAtts.FilterHelper] = this.searchTable.search();
@@ -74,10 +76,8 @@ export class SearchByNutrientPage extends BaseSearchPage {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt];
 
-        $(this.htmlSelectors.foodGroupInput).selectpicker('val', [inputs[SearchAtts.FoodGroup]]);
-
-        elements.nutrientInput.removeActiveItems();
-        elements.nutrientInput.setChoiceByValue(inputs[SearchAtts.Nutrient]);
+        elements.foodGroupInput.property("value", inputs[SearchAtts.FoodGroup]);
+        elements.nutrientInput.property("value", inputs[SearchAtts.Nutrient]);
     }
 
     loadPageInputs() {
@@ -88,16 +88,11 @@ export class SearchByNutrientPage extends BaseSearchPage {
         // add in the food groups and nutrient dropdowns
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
                                    selections: selections[SearchAtts.FoodGroup], 
-                                   inputs: new Set([inputs[SearchAtts.FoodGroup]]),
-                                   noneSelectedText: Translation.translate("NoneSelected")});
+                                   inputs: new Set([inputs[SearchAtts.FoodGroup]])});
 
-        elements.nutrientInput = this.setupAutoCompleteSelect({elementSelector: this.htmlSelectors.nutrientInput, 
-                                                               selections: selections[SearchAtts.Nutrient], 
-                                                               inputs: new Set([inputs[SearchAtts.Nutrient]]),
-                                                               maxItemCount: 1,
-                                                               maxItemText: (maxItemCount) => Translation.translate("multiselectAutoComplete.canOnlySelectOne"),
-                                                               placeholder: Translation.translate("MultiNutrientPlaceholder"),
-                                                               noResultsText: Translation.translate("multiselectAutoComplete.noResultsText")});
+        this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.nutrientInput, 
+                                selections: selections[SearchAtts.Nutrient], 
+                                inputs: new Set([inputs[SearchAtts.Nutrient]])});
 
         this.clearSearch();
 

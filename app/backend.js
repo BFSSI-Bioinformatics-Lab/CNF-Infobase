@@ -253,6 +253,8 @@ export class Model {
         this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = nutrients;
         this.searchSelections[SearchOpts.CompareNutrients][SearchAtts.Nutrient] = structuredClone(nutrients);
 
+        this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.Nutrient].push({text: "", value: null});
+
         // join the different parts of the nutrients
         nutrientNameTable = TableTools.dataLeftJoinById(nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
         this.nutrientTable = TableTools.dataLeftJoinById(nutrientAmtTable, nutrientNameTable, DataCols.NutrientCode, DataCols.NutrientCode);
@@ -813,6 +815,7 @@ export class Model {
 
     getFoodGroups() {
         let result = this.foodGroupTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodGroupDescription)], value: row[DataCols.FoodGroupCode]}});
+        result.push({text: "", value: null});
         return result;
     }
 

@@ -77,8 +77,36 @@ export class BasePage {
         checkboxLabel.html(checkboxText);
     }
 
-    // updateDropdownSelect(dropdownSelector, selections, inputs, onChange, translations): Updates the selections for the dropdown select widget
-    updateDropdownSelect({dropdownSelector, selections, inputs, onChange = undefined, noneSelectedText = ""} = {}) {
+    // updateDropdownSelect(dropdownSelector, selections, input, onChange): Update the selections for the dropdown select widget
+    updateDropdownSelect({dropdownSelector, selections, input, onChange = undefined} = {}) {
+        let dropdown = d3.select(dropdownSelector);
+
+        const selectionIsArr = Array.isArray(selections);
+        const orderedSelections = selectionIsArr ? selections : Array.from(selections);
+
+        if (selectionIsArr) {
+            orderedSelections.sort((a, b) => a.text.localeCompare(b.text));
+        } else {
+            orderedSelections.sort();
+        }
+
+        dropdown.html("")
+            .selectAll("option")
+            .data(orderedSelections)
+            .enter()
+            .append("option")
+            .attr("value", (d) => selectionIsArr ? d.value : null)
+            .text((d) => selectionIsArr ? d.text : d);
+        
+        if (onChange !== undefined) {
+            dropdown.on("change", function (val, ind) {
+                onChange(val);
+            });
+        }
+    }
+
+    // updateMultiSelect(dropdownSelector, selections, inputs, onChange, translations): Updates the selections for the multi-select dropdown select widget
+    updateMultiSelect({dropdownSelector, selections, inputs, onChange = undefined, noneSelectedText = ""} = {}) {
         // destroy the select picker, so that when adding the new selections
         //  to the dropdown, the dropdown will not fire extra events
         let dropdown = $(dropdownSelector);
