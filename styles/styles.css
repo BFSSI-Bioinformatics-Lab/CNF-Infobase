@@ -329,6 +329,17 @@ tr.dtrg-group th .dtrg-sticky-text {
 }
 
 /* =================================================== */
+/* =============== Regular Select ==================== */
+
+.singleOptSelect:hover {
+    cursor: pointer;
+}
+
+.singleOptSelect {
+    width: 220px;
+}
+
+/* =================================================== */
 /* =============== MultiSelect ======================= */
 
 /* Force the inner list container to take up full horizontal space */

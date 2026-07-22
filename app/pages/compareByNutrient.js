@@ -27,6 +27,7 @@ export class CompareByNutrient extends BasePage {
             resetSearchButton: d3.select("#resetButton"),
             foodGroupInputContainer: d3.select("#foodGroupInputContainer"),
             multiNutrientInputContainer: d3.select("#nutrientInputContainer"),
+            foodGroupInput: d3.select(this.htmlSelectors.foodGroupInput),
             searchTable: $(this.htmlSelectors.foodSearchTable),
             searchCSVDownloadBtn: d3.select("#searchCSVDownload"),
         };
@@ -85,7 +86,7 @@ export class CompareByNutrient extends BasePage {
 
         this.scrollToElement(elements.searchContainer.node());
 
-        const foodGroups = $(this.htmlSelectors.foodGroupInput).selectpicker('val');
+        const foodGroups = [elements.foodGroupInput.property("value")];
         inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
 
         const nutrients = elements.nutrientInput.getValue(true);
@@ -146,7 +147,7 @@ export class CompareByNutrient extends BasePage {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt];
 
-        $(this.htmlSelectors.foodGroupInput).selectpicker('val', [inputs[SearchAtts.FoodGroup]]);
+        elements.foodGroupInput.property("value", inputs[SearchAtts.FoodGroup]);
 
         elements.nutrientInput.removeActiveItems();
         elements.nutrientInput.setChoiceByValue(inputs[SearchAtts.Nutrient]);
@@ -159,9 +160,8 @@ export class CompareByNutrient extends BasePage {
 
         // add in the food groups and nutrient dropdowns
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
-                                   selections: selections[SearchAtts.FoodGroup], 
-                                   inputs: new Set([inputs[SearchAtts.FoodGroup]]),
-                                   noneSelectedText: Translation.translate("NoneSelected")});
+                                selections: selections[SearchAtts.FoodGroup], 
+                                inputs: new Set([inputs[SearchAtts.FoodGroup]])});
 
 
         elements.nutrientInput = this.setupAutoCompleteSelect({elementSelector: this.htmlSelectors.nutrientInput, 

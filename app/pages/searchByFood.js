@@ -20,6 +20,7 @@ export class SearchByFoodPage extends BaseSearchPage {
 
         elements.foodNameInput = elements.foodNameInputContainer.select("input");
         elements.foodCodeInput = elements.foodCodeInputContainer.select("input");
+        elements.foodGroupInput = d3.select(this.htmlSelectors.foodGroupInput);
 
         elements.searchTable = $(this.htmlSelectors.foodSearchTable);
     }
@@ -86,7 +87,7 @@ export class SearchByFoodPage extends BaseSearchPage {
         inputs[SearchAtts.FoodName] = elements.foodNameInput.property("value");
         inputs[SearchAtts.FoodCode] = elements.foodCodeInput.property("value");
 
-        const foodGroups = $(this.htmlSelectors.foodGroupInput).selectpicker('val');
+        const foodGroups = [elements.foodGroupInput.property("value")];
         inputs[SearchAtts.FoodGroup] = (foodGroups.length == 0) ? "" : foodGroups[0];
 
         inputs[SearchAtts.FilterHelper] = this.searchTable.search();
@@ -99,7 +100,7 @@ export class SearchByFoodPage extends BaseSearchPage {
         const inputs = this.model.searchInputs[this.searchOpt];
 
         elements.foodNameInput.property("value", inputs[SearchAtts.FoodName]);
-        $(this.htmlSelectors.foodGroupInput).selectpicker('val', [inputs[SearchAtts.FoodGroup]]);
+        elements.foodGroupInput.property("value", inputs[SearchAtts.FoodGroup]);
         elements.foodCodeInput.property("value", inputs[SearchAtts.FoodCode]);
     }
 
@@ -110,8 +111,7 @@ export class SearchByFoodPage extends BaseSearchPage {
         // add in the food groups
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
                                    selections: selections[SearchAtts.FoodGroup], 
-                                   inputs: new Set([inputs[SearchAtts.FoodGroup]]),
-                                   noneSelectedText: Translation.translate("NoneSelected")});
+                                   inputs: new Set([inputs[SearchAtts.FoodGroup]])});
 
         this.clearSearch();
 
