@@ -205,7 +205,7 @@ export class BasePage {
 }
 
 
-// BaseSearchPage: Base class for searches foods based on some inputs
+// BaseSearchPage: Base class to search foods based on some inputs
 export class BaseSearchPage extends BasePage {
     constructor(model, app, searchOpt) {
         super(model, app);
@@ -574,6 +574,128 @@ export class BaseSearchPage extends BasePage {
         });
 
         return dataTable;
+    }
+
+    loadPage() {
+        super.loadPage();
+        this.updateHTMLElements();
+        this.updateStaticText();
+        this.setupListeners();
+        this.loadPageInputs();
+        this.setupSearchTable();
+    }
+}
+
+
+// BaseComparePage: 
+export class BaseComparePage extends BasePage {
+    constructor(model, app, searchOpt) {
+        super(model, app);
+        this.searchOpt = searchOpt;
+
+        this.htmlSelectors = {
+            foodSearchTable: '#foodSearchTable'
+        }
+
+        this.htmlElements = {};
+        this.searchTable;
+    }
+
+    updateHTMLElements() {
+        const elements = {
+            searchContainer: d3.select("#searchSection"),
+            searchButton: d3.select("#searchButton"),
+            resetSearchButton: d3.select("#resetButton"),
+            searchTable: $(this.htmlSelectors.foodSearchTable),
+            searchCSVDownloadBtn: d3.select("#searchCSVDownload"),
+        };
+
+        this.htmlElements = elements;
+    }
+
+    // updateStaticText: Updates text for the search page
+    updateStaticText() {
+        const elements = this.htmlElements;
+
+        d3.select("#searchTitle").html(Translation.translate("SearchCriteriaTitle"));
+        d3.select("#searchResultTitle").html(Translation.translate("SearchTableTitle"));
+        elements.searchCSVDownloadBtn.html(Translation.translate("CSVDownload.DownloadSearchButtonTitle"))
+
+        elements.searchButton.attr("value", Translation.translate("FoodSearchButton"));
+        elements.resetSearchButton.html(Translation.translate("FoodSearchResetButton"));
+
+        d3.selectAll(".toTopBtnText").each((data, ind, nodes) => {
+            const textNode = d3.select(nodes[ind]);
+            textNode.html(Translation.translate("BackToTop")); 
+        });
+    }
+
+    // setupListeners(): Setups all the initial listeners
+    setupListeners() {
+        const elements = this.htmlElements;
+
+        elements.searchButton.on("click", () => { 
+            this.submitSearch();
+        });
+
+        elements.resetSearchButton.on("click", () => {
+            this.clearSearch();
+        });
+
+        elements.searchCSVDownloadBtn.on("click", () => {
+            this.model.downloadSearchCSV();
+        });
+    }
+
+    // clearSearch(): Clears the search inputs of the page
+    clearSearch() {
+        this.model.clearSearchInputs(this.searchOpt);
+        this.syncInputs();
+        this.updateSearchTable("", true);
+    }
+
+    // getInputs(): Retrieves the values of the input widgets to the backend
+    getInputs() {
+
+    }
+
+    // submitSearch(): Submits the search inputs to retrieve the search results in the search table
+    submitSearch() {
+        const elements = this.htmlElements;
+        const inputs = this.model.searchInputs[this.searchOpt]; 
+
+        this.scrollToElement(elements.searchContainer.node());
+        this.getInputs();
+
+        inputs[SearchAtts.FilterHelper] = this.searchTable.search();
+        this.updateSearchTable(inputs[SearchAtts.FilterHelper]);
+    }
+
+    // setupSearchTable(): Setup the search table
+    setupSearchTable() {
+        const inputs = this.model.searchInputs[this.searchOpt]; 
+
+        this.searchTable = this.updateSearchTable(inputs[SearchAtts.FilterHelper]);
+        if (this.searchTable === undefined) return;
+
+        const self = this;
+
+        this.searchTable.on('search.dt', function() {
+            self.model.searchInputs[self.searchOpt][SearchAtts.FilterHelper] = self.searchTable.search();
+        });
+    }
+
+    // updateSearchTable(selectFood, resetSort): Updates the search table
+    updateSearchTable(searchTxt = null, resetSort = false) {
+
+    }
+
+    syncInputs() {
+
+    }
+
+    loadPageInputs() {
+
     }
 
     loadPage() {

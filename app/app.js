@@ -4,6 +4,7 @@ import { Model } from "./backend.js";
 import { SearchByFoodPage } from "./pages/searchByFood.js";
 import { SearchByNutrientPage } from "./pages/searchByNutrient.js";
 import { CompareByNutrient } from "./pages/compareByNutrient.js";
+import { CompareByFood } from "./pages/compareByFood.js";
 
 
 
@@ -13,7 +14,8 @@ class App {
         this.searchPages = {
             [SearchOpts.SearchByFood]: new SearchByFoodPage(model, this),
             [SearchOpts.SearchByNutrient]: new SearchByNutrientPage(model, this),
-            [SearchOpts.CompareNutrients]: new CompareByNutrient(model, this)
+            [SearchOpts.CompareNutrients]: new CompareByNutrient(model, this),
+            [SearchOpts.CompareFoods]: new CompareByFood(model, this)
         }
     }
 
@@ -91,7 +93,7 @@ class App {
         }
 
         $("#searchPage").load(PageSrc[searchOpt], function() {
-            if (searchOpt == SearchOpts.SearchByFood || searchOpt == SearchOpts.SearchByNutrient || searchOpt == SearchOpts.CompareNutrients) {
+            if (searchOpt == SearchOpts.SearchByFood || searchOpt == SearchOpts.SearchByNutrient || searchOpt == SearchOpts.CompareNutrients || searchOpt == SearchOpts.CompareFoods) {
                 self.searchPages[searchOpt].loadPage();
             }
         });

@@ -19,6 +19,7 @@ export class Model {
 
         this.foodTable;
         this.foodGroupTable;
+        this.foodNameTable;
         this.measureConvTable;
         this.nutrientTable;
         this.nutrientNameTable;
@@ -63,6 +64,9 @@ export class Model {
                 [SearchAtts.FoodGroup]: "",
                 [SearchAtts.Nutrient]: [],
                 [SearchAtts.FilterHelper]: ""
+            },
+            [SearchOpts.CompareFoods]: {
+                [SearchAtts.FoodName]: []
             }
         };
     }
@@ -79,6 +83,9 @@ export class Model {
             [SearchOpts.CompareNutrients]: {
                 [SearchAtts.FoodGroup]: [],
                 [SearchAtts.Nutrient]: []
+            },
+            [SearchOpts.CompareFoods]: {
+                [SearchAtts.FoodName]: []
             }
         }
     }
@@ -132,16 +139,22 @@ export class Model {
         return result;
     }
 
-    async loadFoodTable(foodNameTable, foodGroupTable) {
-        this.foodGroupTable = foodGroupTable;
+    setupFoodNameTableIndices() {
+        const foodNameTableData = this.foodNameTable.data;
+        const foodCodeIndex = {};
+        const getFoodCodeVal = (row) => row[DataCols.FoodCode];
 
-        // setup the food group selections
-        const foodGroups = this.getFoodGroups();
-        this.searchSelections[SearchOpts.SearchByFood][SearchAtts.FoodGroup] = foodGroups;
-        this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.FoodGroup] = structuredClone(foodGroups);
-        this.searchSelections[SearchOpts.CompareNutrients][SearchAtts.FoodGroup] = structuredClone(foodGroups);
+        const foodNameTableIndices = {[DataCols.FoodCode]: foodCodeIndex};
+        this.foodNameTable.indices = foodNameTableIndices;
 
-        this.foodTable = TableTools.dataLeftJoinById(foodNameTable, foodGroupTable, DataCols.FoodGroupCode, DataCols.FoodGroupCode);
+        const foodNameTableLen = foodNameTableData.length;
+        for (let i = 0; i < foodNameTableLen; ++i) {
+            const row = foodNameTableData[i];
+            this.addIndexVal(row, i, foodCodeIndex, getFoodCodeVal);
+        }
+    }
+
+    setupFoodTableIndices() {
         const foodTableData = this.foodTable.data;
         
         const foodCodeIndex = {};
@@ -162,6 +175,26 @@ export class Model {
             row[Translation.getDataCol(TableCols.FoodDescriptionTokens)] = this.tokenizeFoodDescription(row[Translation.getDataCol(DataCols.FoodDescription)]);
             row[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)] = this.tokenizeFoodDescription(row[Translation.getDataCol(DataCols.FoodAltDescription)]);
         }
+    }
+
+    async loadFoodTable(foodNameTable, foodGroupTable) {
+        this.foodGroupTable = foodGroupTable;
+        this.foodNameTable = foodNameTable;
+
+        // setup the food group selections
+        const foodGroups = this.getFoodGroups();
+        this.searchSelections[SearchOpts.SearchByFood][SearchAtts.FoodGroup] = foodGroups;
+        this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.FoodGroup] = structuredClone(foodGroups);
+        this.searchSelections[SearchOpts.CompareNutrients][SearchAtts.FoodGroup] = structuredClone(foodGroups);
+
+        // setup the food name selections
+        const foodNames = this.getFoodNames();
+        this.searchSelections[SearchOpts.CompareFoods][SearchAtts.FoodName] = foodNames;
+
+        this.foodTable = TableTools.dataLeftJoinById(foodNameTable, foodGroupTable, DataCols.FoodGroupCode, DataCols.FoodGroupCode);
+
+        this.setupFoodTableIndices();
+        this.setupFoodNameTableIndices();
     }
 
     static getMeasureWeigthConvId(foodCode, measureTypeCode, measureCode) {
@@ -456,6 +489,20 @@ export class Model {
         return result;
     }
 
+    filterCompareFoodTable(foodCodes) {
+        let result = this.nutrientTable.data;
+        const foodCodesEmpty = foodCodes.length <= 0;
+
+        if (!foodCodesEmpty) {
+            foodCodes = new Set(foodCodes);
+            result = result.filter((row) => foodCodes.has(row[DataCols.FoodCode]));
+        } else {
+            return [];
+        }
+
+        return result;
+    }
+
     // getFoodSearchTableData(searchOpt): Retrieves the food search data for the searched inputs 
     getFoodSearchTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
@@ -500,8 +547,69 @@ export class Model {
         return result;
     }
 
-    formatCompareNutrientTable(compareNutrientTable) {
+    getCompareFoodTableData(searchOpt) {
+        const inputs = this.searchInputs[searchOpt];
+        let result = this.filterCompareFoodTable(inputs[SearchAtts.FoodName]);
 
+        // get the data for the foods
+        const foodCodes = inputs[SearchAtts.FoodName];
+        const foodNameData = this.getRowsByIds(this.foodNameTable, DataCols.FoodCode, foodCodes);
+        const foodColNames = {};
+
+        if (result.length == 0) {
+            result = {data: [], foodNames: foodNameData};
+            this.searchResultData = this.getSearchCSVDownload(searchOpt, result);
+            return result;
+        };
+
+        for (const foodCode of foodCodes) {
+            foodColNames[foodCode] = Model.getCompareFoodAmtColName(foodCode);
+        }
+
+        // group the data by nutrient
+        const groupedResult = d3.nest()
+            .key((row) => row[DataCols.NutrientCode])
+            .key((row) => row[DataCols.FoodCode])
+            .object(result);
+
+        result.length = 0;
+        const nutrientNameCol = Translation.getDataCol(DataCols.NutrientName);
+        const nutrientGroupNameCol = Translation.getDataCol(DataCols.NutrientGroup);
+
+        for (const foodCode in groupedResult) {
+            const currentFoodData = groupedResult[foodCode];
+            const currentFoods = Object.keys(currentFoodData);
+            const nutrientRow = currentFoodData[currentFoods[0]][0];
+            let rowError = false;
+
+            const row = {
+                [DataCols.NutrientCode]: nutrientRow[DataCols.FoodCode],
+                [nutrientNameCol]: nutrientRow[nutrientNameCol],
+                [nutrientGroupNameCol]: nutrientRow[nutrientGroupNameCol],
+                [DataCols.NutrientOrder]: nutrientRow[DataCols.NutrientOrder]
+            };
+
+            for (const foodCode of foodCodes) {
+                const foodColName = foodColNames[foodCode];
+                const foodRows = currentFoodData[foodCode];
+
+                if (foodRows == undefined) {
+                    row[foodColName] = Translation.translateNum("");
+                    continue;
+                }
+
+                const foodRow = foodRows[0];
+                const foodDecimalPlace = foodRow[DataCols.NutrientDecimalPlace];
+                row[foodColName] = Translation.translateNum(foodRow[DataCols.NutrientAmount], foodDecimalPlace);
+            }
+
+            if (rowError) continue;
+            result.push(row);
+        }
+
+        result = {data: result, foodNames: foodNameData};
+        this.searchResultData = this.getSearchCSVDownload(searchOpt, result);
+        return result;
     }
 
     getCompareNutrientTableData(searchOpt) {
@@ -570,11 +678,15 @@ export class Model {
     }
 
     static getConvertedNutrientColName(ind) {
-        return `${TableCols.ConvertedNutrientAmount}${ind}`
+        return `${TableCols.ConvertedNutrientAmount}${ind}`;
     }
 
     static getCompareNutrientAmtColName(nutrientCode) {
-        return `${TableCols.CompareNutrient}${nutrientCode}`
+        return `${TableCols.CompareNutrient}${nutrientCode}`;
+    }
+
+    static getCompareFoodAmtColName(foodCode) {
+        return `${TableCols.CompareFood}${foodCode}`;
     }
 
     convertNutrientAmounts(nutrientTable, measureWeightConv) {
@@ -659,6 +771,18 @@ export class Model {
 
                 const dataCol = Model.getCompareNutrientAmtColName(nutrientCode);
                 const colName = Translation.translate("SearchTableCols.ElementNutrientAmount", { returnObjects: true, element: nutrientName});
+
+                tableAtts.push(dataCol);
+                tableColDisplay.push(colName);
+            }
+        } else if (searchOpt == SearchOpts.CompareFoods) {
+            const foodNameData = searchTable.foodNames;
+            for (const foodNameDatum of foodNameData) {
+                const foodCode = foodNameDatum[DataCols.FoodCode];
+                const foodName = foodNameDatum[Translation.getDataCol(DataCols.FoodDescription)];
+
+                const dataCol = Model.getCompareFoodAmtColName(foodCode);
+                const colName = Translation.translate("SearchTableCols.ElementNutrientAmount", { returnObjects: true, element: foodName});
 
                 tableAtts.push(dataCol);
                 tableColDisplay.push(colName);
@@ -816,6 +940,11 @@ export class Model {
     getFoodGroups() {
         let result = this.foodGroupTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodGroupDescription)], value: row[DataCols.FoodGroupCode]}});
         result.push({text: "", value: null});
+        return result;
+    }
+
+    getFoodNames() {
+        let result = this.foodNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodDescription)], value: row[DataCols.FoodCode]}});
         return result;
     }
 
