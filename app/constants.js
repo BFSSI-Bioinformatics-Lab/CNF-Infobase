@@ -45,11 +45,12 @@ export const DataCols = {
 export const TableCols = {...DataCols,
     ConvertedNutrientAmount: "Nutrient_Converted_",
     CompareNutrient: "Nutrient_Compare_",
+    CompareFood: "Food_Compare_",
     MeasureWeightConvId: "Meausre_Weight_Conversion_Id",
     FoodNameOrder: "Food Name Order",
     FoodAltNameOrder: "Food Alt Name Order",
     FoodDescriptionTokens: "Food_Description_Tokens_",
-    FoodAltDescriptionTokens: "Food_Alt_Description_Tokens_"
+    FoodAltDescriptionTokens: "Food_Alt_Description_Tokens_",
 };
 
 // Columns with translations
@@ -93,6 +94,11 @@ export const CompNutrientSearchTableCols = [
     DataCols.FoodCode,
     DataCols.FoodDescription,
     DataCols.FoodGroupDescription
+];
+
+// The columns to display in the "Compare by Foods" search table
+export const CompFoodSearchTableCols = [
+    DataCols.NutrientName
 ];
 
 // The columns to display in the Nutrient table
@@ -172,7 +178,9 @@ const LangEN = {
         FoodCodeInputTitle: "Food Code",
         NutrientInputTitle: "Nutrient",
         MultiNutrientPlaceholder: "Search and select nutrients",
+        MultiFoodsPlaceholder: "Search and select foods",
         MultiNutrientInputTitle: "Nutrients",
+        MultiFoodInputTitle: "Foods",
 
         FoodSearchButton: "Search",
         FoodSearchResetButton: "Reset",
@@ -199,6 +207,10 @@ const LangEN = {
                 [DataCols.FoodCode]: "Food Code",
                 [DataCols.FoodGroupDescription]: "Food Group",
                 [DataCols.FoodDescription]: "Food Name"
+            },
+            [SearchOpts.CompareFoods]: {
+                [DataCols.NutrientName]: "Nutrient Name",
+                [DataCols.NutrientGroup]: "Nutrient Group"
             },
             ElementNutrientAmount: `{{ element }} (g)`
         },
@@ -536,7 +548,9 @@ const LangFR = {
         FoodCodeInputTitle: "Code de l'Aliment",
         NutrientInputTitle: "Élément nutritif",
         MultiNutrientPlaceholder: "Rechercher et sélectionner les éléments nutritifs",
+        MultiFoodsPlaceholder: "Rechercher et sélectionner les aliments",
         MultiNutrientInputTitle: "Éléments nutritifs",
+        MultiFoodInputTitle: "Les Aliments",
 
         FoodSearchButton: "Recherche",
         FoodSearchResetButton: "Réinitialiser",
@@ -563,6 +577,10 @@ const LangFR = {
                 [DataCols.FoodCode]: "Code de l'Aliment",
                 [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
                 [DataCols.FoodDescription]: "Nom de l'Aliment"
+            },
+            [SearchOpts.CompareFoods]: {
+                [DataCols.NutrientName]: "Nom de l'élément nutritif",
+                [DataCols.NutrientGroup]: "Groupe de l'élément nutritif"
             },
 
             ElementNutrientAmount: `{{ element }} (g)`

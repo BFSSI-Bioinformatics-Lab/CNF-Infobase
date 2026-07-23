@@ -5,5 +5,44 @@ Purpose: Defines the page for comparing foods
 -------------------------------------------------->
 
 <div class="mrgn-tp-lg">
-    <h2>REPLACE ME: COMPARE FOODS</h2>
+    <div class="container foodTableContainer" id="searchSection">
+        <h3 id="searchTitle"></h3>
+
+        <fieldset class="pb-5">
+            <div class="searchInputContainer d-flex flex-column flex-lg-row gap-5 justify-content-around mrgn-bttm-lg">
+                <div class="form-group dropdownInputContainer" id="foodInputContainer">
+                    <label for="foodInput"></label>
+                    <select id="foodInput" multiple>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <input type="submit" class="btn btn-primary" id="searchButton">
+                    <button type="button" class="btn btn-danger" id="resetButton"></button>
+                </div>
+            </div>
+        </fieldset>
+        
+        <div class="mrgn-tp-xl">
+            <h3 id="searchResultTitle" class="border-bottom pb-4"></h3>
+
+            <div>
+                <h4 id="foodSearchInstructions" class="text-muted"></h4>
+
+                <div class="mrgn-tp-lg">
+                    <button class="btn btn-primary" id="searchCSVDownload"></button>
+                </div>
+                <div class="tableContainer">
+                    <table id="foodSearchTable"></table>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-right mrgn-tp-lg">
+            <a href="#top">
+                <span class="toTopBtnText"></span>
+                <span class="glyphicon glyphicon-chevron-up"></span>
+            </a>
+        </div>
+    </div>
 </div>
