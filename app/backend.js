@@ -522,7 +522,7 @@ export class Model {
     formatNutrientSearchTable(nutrientSearchTable) {
         for (const row of nutrientSearchTable) {
             const nutrientDecimalPlace = row[DataCols.NutrientDecimalPlace];
-            row[DataCols.NutrientAmount] = Translation.translateNum(row[DataCols.NutrientAmount], nutrientDecimalPlace);
+            row[TableCols.NutrientAmountView] = Translation.translateNum(row[DataCols.NutrientAmount], nutrientDecimalPlace);
         }
     }
 
@@ -547,6 +547,7 @@ export class Model {
         return result;
     }
 
+    // getCompareFoodTableData(searchOpt): Retrieves the search data for the compare by foods page
     getCompareFoodTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
         let result = this.filterCompareFoodTable(inputs[SearchAtts.FoodName]);
@@ -612,6 +613,7 @@ export class Model {
         return result;
     }
 
+    // getCompareNutrientTableData(searchOpt): Retrieves the search data for the compare by nutrient page
     getCompareNutrientTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
         let result = this.filterCompareNutrientTable(inputs[SearchAtts.Nutrient], inputs[SearchAtts.FoodGroup]);
@@ -718,10 +720,10 @@ export class Model {
         for (const row of nutrientTable) {
             const nutrientDecimalPlace = row[DataCols.NutrientDecimalPlace];
 
-            row[DataCols.FoodCode] = Number(row[DataCols.FoodCode]);
-            row[DataCols.NutrientAmount] = Translation.translateNum(row[DataCols.NutrientAmount], nutrientDecimalPlace);
-            row[DataCols.NutrientNoOfObservations] = Translation.translateNum(row[DataCols.NutrientNoOfObservations], 0);
-            row[DataCols.NutrientStdErr] = Translation.translateNum(row[DataCols.NutrientStdErr], nutrientDecimalPlace);
+            row[TableCols.FoodCodeView] = Number(row[DataCols.FoodCode]);
+            row[TableCols.NutrientAmountView] = Translation.translateNum(row[DataCols.NutrientAmount], nutrientDecimalPlace);
+            row[TableCols.NutrientNoOfObservationsView] = Translation.translateNum(row[DataCols.NutrientNoOfObservations], 0);
+            row[TableCols.NutrientStdErrView] = Translation.translateNum(row[DataCols.NutrientStdErr], nutrientDecimalPlace);
 
             for (const convCol of convColNames) {
                 row[convCol] = Translation.translateNum(row[convCol], nutrientDecimalPlace);

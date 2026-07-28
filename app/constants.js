@@ -51,6 +51,11 @@ export const TableCols = {...DataCols,
     FoodAltNameOrder: "Food Alt Name Order",
     FoodDescriptionTokens: "Food_Description_Tokens_",
     FoodAltDescriptionTokens: "Food_Alt_Description_Tokens_",
+
+    FoodCodeView: "Food_Code_View",
+    NutrientAmountView: "Nutrient_Amount_View",
+    NutrientNoOfObservationsView: "Observations_View",
+    NutrientStdErrView: "STD_Error_View"
 };
 
 // Columns with translations
@@ -86,7 +91,7 @@ export const NutrientSearchTableCols = [
     DataCols.FoodCode,
     DataCols.FoodGroupDescription,
     DataCols.FoodDescription,
-    DataCols.NutrientAmount
+    TableCols.NutrientAmountView
 ];
 
 // The columns to display in the "Compare by Nutrients" search table
@@ -104,15 +109,15 @@ export const CompFoodSearchTableCols = [
 // The columns to display in the Nutrient table
 export const NutrientTableCols = [
     DataCols.NutrientNameWithUnit,
-    DataCols.NutrientNoOfObservations,
-    DataCols.NutrientStdErr,
+    TableCols.NutrientNoOfObservationsView,
+    TableCols.NutrientStdErrView,
     DataCols.NutrientDataSrc
 ]
 
 // The extra columns in the Nutrient table that the user can choose to display
 export const NutrientTableExtraCols = new Set([
-    DataCols.NutrientNoOfObservations,
-    DataCols.NutrientStdErr,
+    TableCols.NutrientNoOfObservationsView,
+    TableCols.NutrientStdErrView,
     DataCols.NutrientDataSrc
 ]);
 
@@ -201,7 +206,7 @@ const LangEN = {
                 [DataCols.FoodCode]: "Food Code",
                 [DataCols.FoodGroupDescription]: "Food Group",
                 [DataCols.FoodDescription]: "Food Name",
-                [DataCols.NutrientAmount]: "Nutrient Amount per 100g"
+                [TableCols.NutrientAmountView]: "Nutrient Amount per 100g"
             },
             [SearchOpts.CompareNutrients]: {
                 [DataCols.FoodCode]: "Food Code",
@@ -227,8 +232,8 @@ const LangEN = {
             TableCols: {
                 [DataCols.NutrientName]: `Nutrient Name`,
                 [DataCols.NutrientShortUnit]: `Unit`,
-                [DataCols.NutrientNoOfObservations]: `Number of obser­vations`,
-                [DataCols.NutrientStdErr]: `Standard error`,
+                [TableCols.NutrientNoOfObservationsView]: `Number of obser­vations`,
+                [TableCols.NutrientStdErrView]: `Standard error`,
                 [DataCols.NutrientDataSrc]: `Data source`
             },
 
@@ -571,7 +576,7 @@ const LangFR = {
                 [DataCols.FoodCode]: "Code de l'Aliment",
                 [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
                 [DataCols.FoodDescription]: "Nom de l'Aliment",
-                [DataCols.NutrientAmount]: "Valeur nutritive pour 100 g"
+                [TableCols.NutrientAmountView]: "Valeur nutritive pour 100 g"
             },
             [SearchOpts.CompareNutrients]: {
                 [DataCols.FoodCode]: "Code de l'Aliment",
@@ -598,8 +603,8 @@ const LangFR = {
             TableCols: {
                 [DataCols.NutrientName]: `Nom de l'élément nutritif`,
                 [DataCols.NutrientShortUnit]: `Unité`,
-                [DataCols.NutrientNoOfObservations]: `Nombre d'obser­vations`,
-                [DataCols.NutrientStdErr]: `Écart-type`,
+                [TableCols.NutrientNoOfObservationsView]: `Nombre d'obser­vations`,
+                [TableCols.NutrientStdErrView]: `Écart-type`,
                 [DataCols.NutrientDataSrc]: `Source des données`
             },
 
