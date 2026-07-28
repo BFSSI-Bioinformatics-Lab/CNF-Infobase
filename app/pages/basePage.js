@@ -150,11 +150,11 @@ export class BasePage {
     }
 
     setupAutoCompleteSelect({elementSelector, selections, inputs, onChange = undefined, maxItemCount = undefined, 
-                             maxItemText = undefined, placeholder = undefined, noResultsText = undefined}) {
+                             maxItemText = undefined, placeholder = undefined, noResultsText = undefined, selectAtts = {}} = {}) {
         const element = d3.select(elementSelector);
         const hasPlaceholder = placeholder !== undefined;
 
-        const choicesOpts = {
+        let choicesOpts = {
             removeItemButton: true,
             searchEnabled: true,
             placeholder: hasPlaceholder,
@@ -175,6 +175,7 @@ export class BasePage {
         }
 
         choicesOpts.allowHTML = true;
+        choicesOpts = DictTools.combine([choicesOpts, selectAtts]);
         const result = new Choices(element.node(), choicesOpts);
 
         result.setChoices(selections, 'value', 'text', true);
