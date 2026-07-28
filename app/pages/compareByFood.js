@@ -125,13 +125,22 @@ export class CompareByFood extends BaseComparePage {
         const inputs = this.model.searchInputs[this.searchOpt];
         const selections = this.model.searchSelections[this.searchOpt];
 
+        const foodNameSelections = selections[SearchAtts.FoodName];
         elements.foodInput = this.setupAutoCompleteSelect({elementSelector: this.htmlSelectors.foodInput, 
-                                                               selections: selections[SearchAtts.FoodName], 
-                                                               inputs: new Set([inputs[SearchAtts.FoodName]]),
-                                                               maxItemCount: this.maxFoodsCount,
-                                                               maxItemText: (maxItemCount) => Translation.translate("multiselectAutoComplete.maxItemText", {maxItemCount: this.maxFoodsCount}),
-                                                               placeholder: Translation.translate("MultiFoodsPlaceholder"),
-                                                               noResultsText: Translation.translate("multiselectAutoComplete.noResultsText")});
+                                                            selections: foodNameSelections, 
+                                                            inputs: new Set([inputs[SearchAtts.FoodName]]),
+                                                            maxItemCount: this.maxFoodsCount,
+                                                            maxItemText: (maxItemCount) => Translation.translate("multiselectAutoComplete.maxItemText", {maxItemCount: this.maxFoodsCount}),
+                                                            placeholder: Translation.translate("MultiFoodsPlaceholder"),
+                                                            noResultsText: Translation.translate("multiselectAutoComplete.noResultsText"),
+                                                            selectAtts: {
+                                                                searchResultLimit: foodNameSelections.length,
+                                                                
+                                                                // fuzzy matching engine
+                                                                fuseOptions: {
+                                                                    threshold: 0.15 // range of 0-1, 0 = exact match
+                                                                }
+                                                             }});
 
         this.clearSearch();
     } 

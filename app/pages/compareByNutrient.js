@@ -114,14 +114,23 @@ export class CompareByNutrient extends BaseComparePage {
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
                                 selections: selections[SearchAtts.FoodGroup], 
                                 inputs: new Set([inputs[SearchAtts.FoodGroup]])});
-
+        
+        const nutrientSelections = selections[SearchAtts.Nutrient];
         elements.nutrientInput = this.setupAutoCompleteSelect({elementSelector: this.htmlSelectors.nutrientInput, 
-                                                               selections: selections[SearchAtts.Nutrient], 
+                                                               selections: nutrientSelections, 
                                                                inputs: new Set([inputs[SearchAtts.Nutrient]]),
                                                                maxItemCount: this.maxNutrientsCount,
                                                                maxItemText: (maxItemCount) => Translation.translate("multiselectAutoComplete.maxItemText", {maxItemCount: this.maxNutrientsCount}),
                                                                placeholder: Translation.translate("MultiNutrientPlaceholder"),
-                                                               noResultsText: Translation.translate("multiselectAutoComplete.noResultsText")});
+                                                               noResultsText: Translation.translate("multiselectAutoComplete.noResultsText"),
+                                                               selectAtts: {
+                                                                    searchResultLimit: nutrientSelections.length,
+
+                                                                    // fuzzy matching engine
+                                                                    fuseOptions: {
+                                                                        threshold: 0.15 // range of 0-1, 0 = exact match
+                                                                    }
+                                                               }});
 
         this.clearSearch();
     }
