@@ -70,8 +70,9 @@ export const HiddenMeasureCodes = new Set([
     "750" // Total Refuse
 ]);
 
-// Special Measure Code for 100g of Edible portions (the default measurement)
-export const DefaultMeasureCode = 0;
+export const DefaultMeasureCode = 0; // Special Measure Code for 100g of Edible portions (the default measurement)
+export const DefaultMeasureTypeCode = 0; // Special Measure Type Code for 100g of Edible portions (the default measurement)
+export const RAMeasureTypeCode = 24; // Measure Type Code for RA portions
 
 // Some specific needed Measure Type Codes
 export const MeasureTypeCodes = {

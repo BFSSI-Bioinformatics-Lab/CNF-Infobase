@@ -500,7 +500,7 @@ export class BaseSearchPage extends BasePage {
         const self = this;
 
         const foodResultContainer = this.htmlElements.foodResultContainer;
-        const stats = this.model.getFoodNutrientStats(foodCode);
+        const stats = this.model.getFoodNutrientStats(foodCode, this.searchOpt);
         const statsEmpty = stats === undefined;
 
         foodResultContainer.classed("d-none", statsEmpty);
