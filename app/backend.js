@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols, NutrientTableExtraCols } from "./constants.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols, NutrientTableExtraCols, DefaultMeasureTypeCode, RAMeasureTypeCode } from "./constants.js";
 import { Translation, TableTools, TextTools, SetTools } from "./tools.js";
 
 
@@ -758,6 +758,7 @@ export class Model {
         // add in a dummy measure for the default 100g of edible portions
         measureWeightConv.unshift({
             [DataCols.MeasureCode]: DefaultMeasureCode,
+            [DataCols.MeasureTypeCode]: DefaultMeasureTypeCode,
             [Translation.getDataCol(DataCols.MeasureDescription)]: Translation.translate("FoodNutrientStats.DefaultNutrientMeasure"),
             [TableCols.MeasureWeightConvId]: Model.getMeasureWeigthConvId(DataCols.FoodCode, MeasureTypeCodes.Default, DefaultMeasureCode),
             [DataCols.MeasureWeight]: 100
@@ -767,7 +768,17 @@ export class Model {
             measureWeightConv = measureWeightConv.filter((row) => measureCodes.has(row[DataCols.MeasureCode]));
         }
 
-        return measureWeightConv;
+        const result = {};
+        for (const conv of measureWeightConv) {
+            const measureName = conv[Translation.getDataCol(DataCols.MeasureDescription)];
+            const currentConv = result[measureName];
+
+            if (currentConv == undefined || currentConv[DataCols.MeasureTypeCode] != RAMeasureTypeCode) {
+                result[measureName] = conv;
+            }
+        }
+
+        return Object.values(result);
     }
 
     getSearchCSVDownload(searchOpt, searchTable) {
@@ -937,8 +948,8 @@ export class Model {
         return result;
     }
 
-    // getFoodNutrientStats(): Retrives the nutrient data for the selected foods
-    getFoodNutrientStats(foodCode) {
+    // getFoodNutrientStats(foodCode, searchOpt): Retrives the nutrient data for the selected foods
+    getFoodNutrientStats(foodCode, searchOpt) {
         let food = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
         if (food == undefined) return;
 
@@ -948,6 +959,20 @@ export class Model {
         const nutrients = this.getRowsById(this.nutrientTable, DataCols.FoodCode, foodCode);
         if (nutrients == undefined) return;
 
+        // set the default selected nutrient
+        if (searchOpt == SearchOpts.SearchByNutrient) {
+            const selectedMeasureCodes = this.nutrientStatsInputs[searchOpt][NutrientStatAtts.MeasureCodesSelected];
+            selectedMeasureCodes.clear();
+
+            let raMeasureCodes = measureWeightConv.filter((conv) => conv[DataCols.MeasureTypeCode] == RAMeasureTypeCode);
+            if (raMeasureCodes.length == 0) {
+                selectedMeasureCodes.add(DefaultMeasureCode);
+            } else {
+                selectedMeasureCodes.add(raMeasureCodes[0][DataCols.MeasureCode]);
+            }
+        }
+        
+        // format the data
         this.webSearchedNutrientTable = this.convertNutrientAmounts(nutrients, measureWeightConv);
         this.webSearchedNutrientTable = this.formatNutrientTable(this.webSearchedNutrientTable, measureWeightConv.length);
 
