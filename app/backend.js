@@ -311,10 +311,7 @@ export class Model {
                nutrientAmtTable, 
                nutrientNameTable, 
                nutrientSrcTable,
-               nutrientGroupTable,
-               raMeasureTypeTable,
-               raMeasureNameTable,
-               raMeasureWeightConvTable] = await Promise.all([this.loadCSV(`data/Food_Name.csv`), 
+               nutrientGroupTable] = await Promise.all([this.loadCSV(`data/Food_Name.csv`), 
                            this.loadCSV(`data/CNF_Food_Group.csv`), 
                            this.loadCSV(`data/Measure_Type.csv`),
                            this.loadCSV(`data/Measure_Name.csv`),
@@ -322,22 +319,7 @@ export class Model {
                            this.loadCSV(`data/Nutrient_Amount.csv`),
                            this.loadCSV(`data/Nutrient_Name.csv`),
                            this.loadCSV(`data/Nutrient_Source.csv`),
-                           this.loadCSV(`data/Nutrients and grouping_CNF_2026.csv`),
-                           this.loadCSV(`data/Measure_Type_RA for Health Infobase.csv`),
-                           this.loadCSV(`data/Measure_Name_RA for Health Infobase.csv`),
-                           this.loadCSV(`data/Measure_Weight_Conversion_RA for Health Infobase.csv`)]);
-        
-        measureTypeTable.data.push(...(raMeasureTypeTable.data));
-        raMeasureTypeTable.columns.length = 0;
-        raMeasureTypeTable.data.length = 0;
-
-        measureNameTable.data.push(...(raMeasureNameTable.data));
-        raMeasureNameTable.columns.length = 0;
-        raMeasureNameTable.data.length = 0;
-
-        measureWeightConvTable.data.push(...(raMeasureWeightConvTable.data));
-        raMeasureWeightConvTable.columns.length = 0;
-        raMeasureWeightConvTable.data.length = 0;
+                           this.loadCSV(`data/Nutrients and grouping_CNF_2026.csv`)]);
 
         await Promise.all([this.loadFoodTable(foodNameTable, foodGroupTable),
                            this.loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable),
