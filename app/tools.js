@@ -79,16 +79,93 @@ export class DictTools {
 }
 
 
-// SetTools: Helper class for sets
+// SetTools: Helper class for setss
+//     This class is mostly used to deal with compatibility issues with older browsers
+//     since some of Javascript's Set functions are only recently implemented in 2023-2024
 export class SetTools {
 
     // getFirst(set): Retreives the first element from a set
     static getFirst(set) {
         return set.values().next().value;
     }
+
+    // difference(sets, newCopy): Computes the set difference of set1 - set2
+    // Note:
+    //  If 'newCopy' is set to false, the result for the set difference is stored
+    //      at the first set of 'sets'
+    static difference(sets, newCopy = false) {
+        if (sets.length < 1) return new Set();
+        const result = newCopy ? new Set(sets[0]) : sets[0];
+
+        for (let i = 1; i < sets.length; ++i) {
+            const currentSet = sets[i];
+            for (const element of currentSet) {
+                result.delete(element);
+            }
+        }
+
+        return result;
+    }
+
+    // intersection(set1, set2): Computes the set intersection of set1 ∩ set2
+    static intersection(set1, set2) { 
+        const result = new Set(); 
+        for (let element of set2) { 
+            if (set1.has(element)) { 
+                result.add(element); 
+            } 
+        } 
+
+        return result; 
+    }
+
+    // union(set1, set2, neweCopy): Computes the union of set1 U set2
+    static union(set1, set2, newCopy = false) {
+        const result = newCopy ? new Set(set1) : set1;
+        for (const element of set2) {
+            result.add(element);
+        }
+
+        return result;
+    }
+
+    // filter(set, predicate, newCopy): filters a set
+    static filter(set, predicate, newCopy = false) {
+        const result = newCopy ? new Set() : set;
+        for (const element of set) {
+            const inFilter = predicate(element);
+            if (newCopy && inFilter) {
+                result.add(element);
+            } else if (!newCopy && !inFilter) {
+                result.delete(element);
+            }
+        }
+
+        return result;
+    }
 }
 
 
+// ListTools: Helper class for Lists
+export class ListTools {
+
+    // getUnique(lst, getId): Retrieves the unique elemtns in the list
+    static getUnique(lst, getId) {
+        const seen = new Set();
+        return lst.filter(item => {
+            const id = getId(item);
+
+            if (!seen.has(id)) {
+                seen.add(id);
+                return true;
+            }
+            return false;
+        });
+    }
+}
+
+
+// TextTools: Helper class for text
 export class TextTools {
     // buildAhoCorasickDFA(keywords): Builds the DFA for AhoCorasick
     static buildAhoCorasickDFA(keywords) {

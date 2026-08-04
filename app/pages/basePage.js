@@ -18,7 +18,7 @@ export class BasePage {
     // updateTable(data, selector): Updates the data in the table
     // Note:
     // - based off Jquery's Datatables: https://datatables.net/
-    updateTable({selector, columnInfo, data, dataTableAtts = {}, destroyExisting = false, searchTxt, order = null} = {}) {
+    updateTable({selector, columnInfo, data, dataTableAtts = {}, destroyExisting = false, searchTxt, order = null, columnNameUpdates = null} = {}) {
         let dataTable;
 
         const dataTableTranslations = Translation.translate("dataTable", { returnObjects: true });
@@ -45,6 +45,16 @@ export class BasePage {
         }
 
         dataTable.clear();
+
+        if (columnNameUpdates !== null) {
+            dataTable.columns().every(function(index) {
+                const newName = columnNameUpdates[index];
+                if (newName !== undefined) {
+                    $(this.header()).text(newName);
+                }
+            });
+        }
+
         if (searchTxt !== undefined) {
             dataTable.search(searchTxt);
         }

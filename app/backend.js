@@ -1,5 +1,5 @@
 import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols, NutrientTableExtraCols, DefaultMeasureTypeCode, RAMeasureTypeCode } from "./constants.js";
-import { Translation, TableTools, TextTools, SetTools } from "./tools.js";
+import { Translation, TableTools, TextTools, SetTools, ListTools } from "./tools.js";
 
 
 export class Model {
@@ -166,7 +166,7 @@ export class Model {
             const row = foodTableData[i];
             const indexVal = row[DataCols.FoodCode]
             this.assertFoodCodeIndUnique(foodCodeIndex, indexVal);
-            foodCodeIndex[indexVal] = [i];
+            foodCodeIndex[indexVal] = new Set([i]);
 
             row[TableCols.FoodNameOrder] = Infinity;
             row[TableCols.FoodAltNameOrder] = Infinity;
@@ -210,29 +210,47 @@ export class Model {
         const indexBucket = indices[indexVal];
 
         if (indexBucket === undefined) {
-            indices[indexVal] = [rowInd];
+            indices[indexVal] = new Set([rowInd]);
         } else {
-            indexBucket.push(rowInd);
+            indexBucket.add(rowInd);
         }
     }
 
     async loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable) {
         this.measureConvTable = TableTools.dataLeftJoinById(measureWeightConvTable, measureTypeTable, DataCols.MeasureTypeCode, DataCols.MeasureTypeCode);
         this.measureConvTable = TableTools.dataLeftJoinById(this.measureConvTable, measureNameTable, DataCols.MeasureCode, DataCols.MeasureCode);
+
+        // there are duplicate rows in the original data that needs to be filtered out
+        this.measureConvTable.data = ListTools.getUnique(this.measureConvTable.data, (row) => {
+            const result = Model.getMeasureWeightConvIdFromRow(row);
+            row[TableCols.MeasureWeightConvId] = result;
+            return result;
+        });
+
         const measureConvTableData = this.measureConvTable.data;
 
         const foodCodeIndex = {};
+        const measureTypeCodeIndex = {};
+        const measureCodeIndex = {};
         const getFoodCodeVal = (row) => row[DataCols.FoodCode];
+        const getMeasureTypeCodeVal = (row) => row[DataCols.MeasureTypeCode];
+        const getMeasureCodeVal = (row) => row[DataCols.MeasureCode];
 
-        const indices = {[DataCols.FoodCode]: foodCodeIndex};
+        const indices = {
+            [DataCols.FoodCode]: foodCodeIndex, 
+            [DataCols.MeasureTypeCode]: measureTypeCodeIndex,
+            [DataCols.MeasureCode]: measureCodeIndex
+        };
+
         this.measureConvTable.indices = indices;
 
         const measureWeightConvTableLen = measureConvTableData.length;
 
         for (let i = 0; i < measureWeightConvTableLen; ++i) {
             const row = measureConvTableData[i];
-            row[TableCols.MeasureWeightConvId] = Model.getMeasureWeightConvIdFromRow(row);
             this.addIndexVal(row, i, foodCodeIndex, getFoodCodeVal);
+            this.addIndexVal(row, i, measureTypeCodeIndex, getMeasureTypeCodeVal);
+            this.addIndexVal(row, i, measureCodeIndex, getMeasureCodeVal);
         }
     }
 
@@ -328,28 +346,49 @@ export class Model {
 
     getRowById(table, indexName, id) {
         const rowInds = table.indices[indexName][id];
-        if (rowInds === undefined) return;
-        return table.data[rowInds[0]];
+        if (rowInds === undefined || rowInds.size == 0) return;
+        return table.data[SetTools.getFirst(rowInds)];
     }
 
     getRowsById(table, indexName, id) {
         const rowInds = table.indices[indexName][id];
         if (rowInds === undefined) return;
-        return rowInds.map((ind) => table.data[ind]);
+        return [...rowInds].map((ind) => table.data[ind]);
     }
 
     getRowsByIds(table, indexName, ids) {
         const indices = table.indices[indexName];
         ids = new Set(ids);
-        let result = [];
+        let result = new Set();
 
         for (const id of ids) {
             const rowInds = indices[id];
             if (rowInds === undefined) continue;
-            result.push(...rowInds);
+            SetTools.union(result, rowInds);
         }
 
-        return result.map((ind) => table.data[ind]);
+        return [...result].map((ind) => table.data[ind]);
+    }
+
+    getRowsByManyIds(table, indexData) {
+        let result = null;
+
+        for (const indexName in indexData) {
+            const currentResult = new Set();
+            const indices = table.indices[indexName];
+            let ids = new Set(indexData[indexName]);
+
+            for (const id of ids) {
+                const rowInds = indices[id];
+                if (rowInds === undefined) continue;
+
+                SetTools.union(currentResult, rowInds);
+            }
+
+            result = (result === null) ? currentResult : SetTools.intersection(result, currentResult);
+        }
+
+        return [...result].map((ind) => table.data[ind]);
     }
 
     findAllExactKeywords(tokens, ahoCorasickDFA) {
@@ -522,29 +561,64 @@ export class Model {
     formatNutrientSearchTable(nutrientSearchTable) {
         for (const row of nutrientSearchTable) {
             const nutrientDecimalPlace = row[DataCols.NutrientDecimalPlace];
-            row[TableCols.NutrientAmountView] = Translation.translateNum(row[DataCols.NutrientAmount], nutrientDecimalPlace);
+            row[TableCols.WeightView] = Translation.translateNum(row[DataCols.NutrientAmount], nutrientDecimalPlace);
+
+            const conversionRate = row[DataCols.MeasureWeight];
+            const nutrientAmount = row[DataCols.NutrientAmount] * conversionRate / 100;
+            row[TableCols.NutrientAmountView] = Translation.translateNum(nutrientAmount, nutrientDecimalPlace);
         }
+    }
+
+    getDefaultNutrientSearchNutrientData() {
+        return {
+            [Translation.getDataCol(DataCols.NutrientName)]: Translation.translate("SearchTableCols.DefaultNutrientAmount"),
+            [DataCols.NutrientUnitShort]: Translation.translate("SearchTableCols.DefaultNutrientUnit")
+        };
+    }
+
+    getNutrientSearchNutrientData(nutrientCode) {
+        if (nutrientCode == "") return this.getDefaultNutrientSearchNutrientData();
+
+        const result = this.getRowById(this.nutrientNameTable, DataCols.NutrientCode, nutrientCode);
+        if (result === undefined) return this.getDefaultNutrientSearchNutrientData();
+        return result;
     }
 
     // getNutrientSearchTableData(searchOpt): Retrieves the nutrient search data for the searched inputs
     getNutrientSearchTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
-        const result = this.filterNutrientSearchTable(inputs[SearchAtts.Nutrient], inputs[SearchAtts.FoodGroup], "");
-        this.formatNutrientSearchTable(result);
+        const nutrientCode = inputs[SearchAtts.Nutrient];
+        let result = this.filterNutrientSearchTable(nutrientCode, inputs[SearchAtts.FoodGroup], "");
 
+        const foodCodes = new Set(result.map((row) => row[DataCols.FoodCode]));
+        const measureWeightConv = this.getFoodsRAMeasureWeightConv(foodCodes);
+
+        result = TableTools.leftJoinById(result, measureWeightConv, DataCols.FoodCode);
+
+        this.formatNutrientSearchTable(result);
         this.searchResultData = this.getSearchCSVDownload(searchOpt, {data: result});
-        return result;
+
+        const nutrientData = this.getNutrientSearchNutrientData(nutrientCode);
+        return {data: result, nutrientData};
     }
 
     // getNutrientSearchSelectedData(searchOpt): Retrieves the nutrient search data for the selected food
     getNutrientSearchSelectedData(searchOpt) {
         const selectedFoods = this.selectedFoodCodes[searchOpt];
-        if (selectedFoods === undefined || selectedFoods.length == 0) return [];
+        const nutrientCode = inputs[SearchAtts.Nutrient];
+        const nutrientData = this.getNutrientSearchNutrientData(nutrientCode);
+
+        if (selectedFoods === undefined || selectedFoods.length == 0) return {data: [], nutrientData};
 
         const inputs = this.searchInputs[searchOpt];
-        let result = this.filterNutrientSearchTable(inputs[SearchAtts.Nutrient], "", selectedFoods[0]);
+        const selectedFood = selectedFoods[0];
+
+        let result = this.filterNutrientSearchTable(nutrientCode, "", selectedFood);
+        const measureWeightConv = this.getFoodsRAMeasureWeightConv([selectedFood]);
+        result = TableTools.leftJoinById(result, measureWeightConv, DataCols.FoodCode, DataCols.FoodCode);
+
         this.formatNutrientSearchTable(result);
-        return result;
+        return {data: result, nutrientData};
     }
 
     // getCompareFoodTableData(searchOpt): Retrieves the search data for the compare by foods page
@@ -733,19 +807,32 @@ export class Model {
         return nutrientTable;
     }
 
-    getFoodMeasureWeightConv(foodCode, measureCodes = null) {
-        let measureWeightConv = this.getRowsById(this.measureConvTable, DataCols.FoodCode, foodCode);
-        if (measureWeightConv == undefined) return;
-
-        // add in a dummy measure for the default 100g of edible portions
-        measureWeightConv.unshift({
+    // add100gMeasureWeightConv(measureWeightConv) add in a dummy measure for the default 100g of edible portions
+    add100gMeasureWeightConv(measureWeightConv, foodCode = null, toEnd = false) {
+        const result = {
             [DataCols.MeasureCode]: DefaultMeasureCode,
             [DataCols.MeasureTypeCode]: DefaultMeasureTypeCode,
             [Translation.getDataCol(DataCols.MeasureDescription)]: Translation.translate("FoodNutrientStats.DefaultNutrientMeasure"),
             [TableCols.MeasureWeightConvId]: Model.getMeasureWeigthConvId(DataCols.FoodCode, MeasureTypeCodes.Default, DefaultMeasureCode),
             [DataCols.MeasureWeight]: 100
-        });
+        }
 
+        if (foodCode !== null) {
+            result[DataCols.FoodCode] = foodCode;
+        }
+        
+        if (toEnd) {
+            measureWeightConv.push(result);
+        } else {
+            measureWeightConv.unshift(result);  
+        }
+    }
+
+    getFoodMeasureWeightConv(foodCode, measureCodes = null) {
+        let measureWeightConv = this.getRowsById(this.measureConvTable, DataCols.FoodCode, foodCode);
+        if (measureWeightConv == undefined) return;
+
+        this.add100gMeasureWeightConv(measureWeightConv);
         if (measureCodes !== null) {
             measureWeightConv = measureWeightConv.filter((row) => measureCodes.has(row[DataCols.MeasureCode]));
         }
@@ -761,6 +848,37 @@ export class Model {
         }
 
         return Object.values(result);
+    }
+
+    getFoodsRAMeasureWeightConv(foodCodes, addDefaultOnNoFound = true) {
+        let measureWeightConv = this.getRowsByManyIds(this.measureConvTable, {[DataCols.MeasureTypeCode]: [RAMeasureTypeCode], [DataCols.FoodCode]: foodCodes});
+        if (measureWeightConv == undefined) return;
+
+        let temper = this.getRowsByIds(this.measureConvTable, DataCols.FoodCode, foodCodes);
+        temper = temper.filter((row) => row[DataCols.MeasureTypeCode] == RAMeasureTypeCode);
+
+        if (!addDefaultOnNoFound) return measureWeightConv;
+
+        const seen = new Set();
+        const duplicates = measureWeightConv.filter(item => {
+            const id = `${item[DataCols.FoodCode]}_${item[DataCols.MeasureTypeCode]}`;
+
+            if (seen.has(id)) {
+                return true;
+            }
+            seen.add(id);
+            return false;
+        });
+
+        const foundRAFoodCodes = new Set(measureWeightConv.map((row) => row[DataCols.FoodCode]));
+        const missingFoodCodes = new Set(foodCodes);
+        SetTools.difference([missingFoodCodes, foundRAFoodCodes]);
+
+        for (const foodCode of missingFoodCodes) {
+            this.add100gMeasureWeightConv(measureWeightConv, foodCode, true);
+        }
+
+        return measureWeightConv;
     }
 
     getSearchCSVDownload(searchOpt, searchTable) {
