@@ -30,6 +30,7 @@ export const DataCols = {
     NutrientSrcCode: "Nutrient_Source_Code",
     NutrientName: "Nutrient_Name_",
     NutrientUnit: "Nutrient_Unit",
+    NutrientUnitShort: "Nutrient unit",
     NutrientNameWithUnit: "Nutrient (unit)_",
     NutrientShortUnit: "Nutrient unit",
     NutrientAmount: "Nutrient_Amount",
@@ -53,6 +54,7 @@ export const TableCols = {...DataCols,
     FoodAltDescriptionTokens: "Food_Alt_Description_Tokens_",
 
     FoodCodeView: "Food_Code_View",
+    WeightView: "Weight_View",
     NutrientAmountView: "Nutrient_Amount_View",
     NutrientNoOfObservationsView: "Observations_View",
     NutrientStdErrView: "STD_Error_View"
@@ -92,6 +94,8 @@ export const NutrientSearchTableCols = [
     DataCols.FoodCode,
     DataCols.FoodGroupDescription,
     DataCols.FoodDescription,
+    DataCols.MeasureDescription,
+    TableCols.WeightView,
     TableCols.NutrientAmountView
 ];
 
@@ -207,7 +211,9 @@ const LangEN = {
                 [DataCols.FoodCode]: "Food Code",
                 [DataCols.FoodGroupDescription]: "Food Group",
                 [DataCols.FoodDescription]: "Food Name",
-                [TableCols.NutrientAmountView]: "Nutrient Amount per 100g"
+                [DataCols.MeasureDescription]: "Portion",
+                [TableCols.WeightView]: "Weight g",
+                [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }}"
             },
             [SearchOpts.CompareNutrients]: {
                 [DataCols.FoodCode]: "Food Code",
@@ -218,7 +224,10 @@ const LangEN = {
                 [DataCols.NutrientName]: "Nutrient Name",
                 [DataCols.NutrientGroup]: "Nutrient Group"
             },
-            ElementNutrientAmount: `{{ element }} (g)`
+
+            ElementNutrientAmount: `{{ element }} (g)`,
+            DefaultNutrientAmount: "Nutrient Amount",
+            DefaultNutrientUnit: "g"
         },
 
         FoodNutrientStats: {
@@ -577,7 +586,9 @@ const LangFR = {
                 [DataCols.FoodCode]: "Code de l'Aliment",
                 [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
                 [DataCols.FoodDescription]: "Nom de l'Aliment",
-                [TableCols.NutrientAmountView]: "Valeur nutritive pour 100 g"
+                [DataCols.MeasureDescription]: "Portion",
+                [TableCols.WeightView]: "Poids g",
+                [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }}"
             },
             [SearchOpts.CompareNutrients]: {
                 [DataCols.FoodCode]: "Code de l'Aliment",
@@ -589,7 +600,9 @@ const LangFR = {
                 [DataCols.NutrientGroup]: "Groupe de l'élément nutritif"
             },
 
-            ElementNutrientAmount: `{{ element }} (g)`
+            ElementNutrientAmount: `{{ element }} (g)`,
+            DefaultNutrientAmount: "Valeur Nutritive",
+            DefaultNutrientUnit: "g"
         },
 
         FoodNutrientStats: {

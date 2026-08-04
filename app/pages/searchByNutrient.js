@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, NutrientSearchTableCols } from "../constants.js";
+import { SearchOpts, SearchAtts, NutrientSearchTableCols, TableCols, DataCols } from "../constants.js";
 import { Translation } from "../tools.js";
 import { BaseSearchPage } from "./basePage.js";
 
@@ -49,11 +49,22 @@ export class SearchByNutrientPage extends BaseSearchPage {
         const translations = Translation.translate(`SearchTableCols.${this.searchOpt}`,{ returnObjects: true });
         
         let tableColInfo = [];
+        const nutrientData = tableData.nutrientData;
+
         for (const tableAtt of NutrientSearchTableCols) {
-            tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
+            let title = translations[tableAtt];
+            tableColInfo.push({title: title, data: Translation.getDataCol(tableAtt)});
         }
 
-        const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, columnInfo: tableColInfo, data: tableData, searchTxt: (searchTxt !== null) ? searchTxt : undefined, order: (resetSort) ? [] : null});
+        const dataTable = this.updateTable({
+            selector: this.htmlSelectors.foodSearchTable, columnInfo: tableColInfo, 
+            data: tableData.data, 
+            searchTxt: (searchTxt !== null) ? searchTxt : undefined, 
+            order: (resetSort) ? [] : null,
+            columnNameUpdates: {[NutrientSearchTableCols.length - 1]: Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.NutrientAmountView}`, 
+                {nutrient: nutrientData[Translation.getDataCol(DataCols.NutrientName)], 
+                 unit: nutrientData[DataCols.NutrientUnitShort]})}
+        });
         return dataTable;
     }
 
