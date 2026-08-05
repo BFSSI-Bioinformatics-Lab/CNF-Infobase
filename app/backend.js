@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols, NutrientTableExtraCols, DefaultMeasureTypeCode, RAMeasureTypeCode } from "./constants.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols, NutrientTableExtraCols, DefaultMeasureTypeCode, RAMeasureTypeCode, HighlightedNutrientCodes } from "./constants.js";
 import { Translation, TableTools, TextTools, SetTools, ListTools } from "./tools.js";
 
 
@@ -28,6 +28,8 @@ export class Model {
         this.searchedNutrientData;
         this.webSearchedNutrientTable;
         this.csvSearchedAllNutrientTable;
+
+        this.highlightedNutrientNames = new Set();
     }
 
     clearSearchInputs(searchOpt) {
@@ -297,6 +299,15 @@ export class Model {
 
         this.nutrientNameTable = nutrientNameTable;
         this.nutrientNameTable = TableTools.dataLeftJoinById(this.nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
+
+        // update which nutrients should be bolded in the nutrient table
+        for (const row of this.nutrientNameTable.data) {
+            const nutrientCode = row[DataCols.NutrientCode];
+            if (HighlightedNutrientCodes.has(nutrientCode)) {
+                const nutrientNameWithUnit = row[Translation.getDataCol(DataCols.NutrientNameWithUnit)]
+                this.highlightedNutrientNames.add(nutrientNameWithUnit);
+            }
+        }
 
         let nutrients = this.getNutrients();
         nutrients.sort((a, b) => a.text.localeCompare(b.text));
@@ -605,12 +616,13 @@ export class Model {
     // getNutrientSearchSelectedData(searchOpt): Retrieves the nutrient search data for the selected food
     getNutrientSearchSelectedData(searchOpt) {
         const selectedFoods = this.selectedFoodCodes[searchOpt];
+        const inputs = this.searchInputs[searchOpt];
+
         const nutrientCode = inputs[SearchAtts.Nutrient];
         const nutrientData = this.getNutrientSearchNutrientData(nutrientCode);
 
         if (selectedFoods === undefined || selectedFoods.length == 0) return {data: [], nutrientData};
 
-        const inputs = this.searchInputs[searchOpt];
         const selectedFood = selectedFoods[0];
 
         let result = this.filterNutrientSearchTable(nutrientCode, "", selectedFood);

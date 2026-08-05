@@ -82,6 +82,17 @@ export const MeasureTypeCodes = {
     Refuse: 3
 };
 
+// Specific nutrient codes that are bolded/highlighted
+export const HighlightedNutrientCodes = new Set([
+    "605", // Trans Fatty Acids
+    "606", // Saturated Fatty Acids
+    "645", // Monounsaturated Fatty Acids,Total
+    "646", // Polyunsaturated Fatty Acids,Total
+    "693", // Total Trans-Monoenoic Fatty Acids
+    "695", // Total Trans-Polyenoic Fatty Acids
+    "636"  // Total plant sterol
+]);
+
 // The columns to display in the "Search By Food" search table
 export const FoodSearchTableCols = [
     DataCols.FoodCode,
@@ -248,6 +259,7 @@ const LangEN = {
             },
 
             ConvertedMeasureCol: `{{ measureName }} / {{ convertedMeasure }} g`,
+            ConvertedMeasureColWithoutConversion: `{{ measureName }}`,
 
             ShowUnits: "Show Units",
             ShowExtraDetails: "Show Extra Details"
