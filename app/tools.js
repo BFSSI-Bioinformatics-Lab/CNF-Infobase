@@ -63,9 +63,18 @@ export class Translation {
         return (uppercase) ? result.toUpperCase() : result;
     }
 
+    // getAltLangcode(uppercase): Retrieves the alternative language code
+    static getAltLangCode(uppercase = false) {
+        const result = Translation.translate("AltLangCode");
+        return (uppercase) ? result.toUpperCase() : result;
+    }
+
     // getDataCol(col): Retrieves the name of the column in the raw data
-    static getDataCol(col) {
-        return (LangDataCols.has(col)) ? `${col}${this.getLangCode(true)}` : col;
+    static getDataCol(col, altLang = false) {
+        if (!LangDataCols.has(col)) return col;
+        
+        const langCode = (altLang) ? this.getAltLangCode(true) : this.getLangCode(true);
+        return `${col}${langCode}`;
     }
 }
 
