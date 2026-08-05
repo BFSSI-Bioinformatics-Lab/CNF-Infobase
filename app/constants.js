@@ -196,6 +196,8 @@ const LangEN = {
 
         SearchCriteriaTitle: "Search Criteria",
         SearchTableTitle: "Search Results",
+        NutrientSearchTableTitle: "Search Results - {{ nutrientName }}",
+        CompareSearchTableTitle: "Search Results: Comparison is presented per 100g of edible portion of food",
         FoodNameInputTitle: "Food Name",
         FoodAltNameInputTitle: "Food Common Name",
         FoodGroupInputTitle: "CNF Food Group",
@@ -574,6 +576,8 @@ const LangFR = {
 
         SearchCriteriaTitle: "Critères de Recherche",
         SearchTableTitle: "Résultats de Recherche",
+        NutrientSearchTableTitle: "Résultats de Recherche - {{ nutrientName }}",
+        CompareSearchTableTitle: "Résultats de Recherche: La comparaison est présentée pour 100 g de portion comestible de l'aliment.",
         FoodNameInputTitle: "Nom de l'Aliment",
         FoodAltNameInputTitle: REMPLACER_MOI,
         FoodGroupInputTitle: "Groupe de l'Aliment FCÉN",

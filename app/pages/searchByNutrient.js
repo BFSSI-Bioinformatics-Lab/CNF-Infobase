@@ -30,7 +30,6 @@ export class SearchByNutrientPage extends BaseSearchPage {
         const elements = this.htmlElements;
 
         d3.select("#searchTitle").html(Translation.translate("SearchCriteriaTitle"));
-        d3.select("#searchResultTitle").html(Translation.translate("SearchTableTitle"));
 
         elements.foodGroupInputContainer.select("label").html(Translation.translate("FoodGroupInputTitle"));
         elements.nutrientInputContainer.select("label").html(Translation.translate("NutrientInputTitle"))
@@ -40,16 +39,25 @@ export class SearchByNutrientPage extends BaseSearchPage {
     }
 
     updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {
+        const elements = this.htmlElements;
         const tableData = (selectFood) ? this.model.getNutrientSearchSelectedData(this.searchOpt) : this.model.getNutrientSearchTableData(this.searchOpt);
         let searchTable = this.htmlElements.searchTable;
 
         searchTable.toggleClass(this.htmlNames.foodSelected, selectFood);
-        if (tableData === undefined) return;
+        if (tableData === undefined) {
+            elements.searchTableTitle.html(Translation.translate("SearchTableTitle"));
+            return;
+        }
 
         const translations = Translation.translate(`SearchTableCols.${this.searchOpt}`,{ returnObjects: true });
         
         let tableColInfo = [];
         const nutrientData = tableData.nutrientData;
+        const nutrientName = nutrientData[Translation.getDataCol(DataCols.NutrientName)];
+        const nutrientNameWithUnit = nutrientData[Translation.getDataCol(DataCols.NutrientNameWithUnit)];
+        const nutrientCode = nutrientData[DataCols.NutrientCode];
+
+        elements.searchTableTitle.html(Translation.translate((nutrientCode != "") ? "NutrientSearchTableTitle" : "SearchTableTitle", {nutrientName: nutrientNameWithUnit}));
 
         for (const tableAtt of NutrientSearchTableCols) {
             let title = translations[tableAtt];
@@ -62,7 +70,7 @@ export class SearchByNutrientPage extends BaseSearchPage {
             searchTxt: (searchTxt !== null) ? searchTxt : undefined, 
             order: (resetSort) ? [] : null,
             columnNameUpdates: {[NutrientSearchTableCols.length - 1]: Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.NutrientAmountView}`, 
-                {nutrient: nutrientData[Translation.getDataCol(DataCols.NutrientName)], 
+                {nutrient: nutrientName, 
                  unit: nutrientData[DataCols.NutrientUnitShort]})}
         });
         return dataTable;

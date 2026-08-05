@@ -584,9 +584,13 @@ export class Model {
     }
 
     getDefaultNutrientSearchNutrientData() {
+        const nutrientAmountName = Translation.translate("SearchTableCols.DefaultNutrientAmount");
+
         return {
-            [Translation.getDataCol(DataCols.NutrientName)]: Translation.translate("SearchTableCols.DefaultNutrientAmount"),
-            [DataCols.NutrientUnitShort]: Translation.translate("SearchTableCols.DefaultNutrientUnit")
+            [Translation.getDataCol(DataCols.NutrientName)]: nutrientAmountName,
+            [DataCols.NutrientUnitShort]: Translation.translate("SearchTableCols.DefaultNutrientUnit"),
+            [DataCols.NutrientCode]: "",
+            [Translation.getDataCol(DataCols.NutrientNameWithUnit)]: nutrientAmountName
         };
     }
 
