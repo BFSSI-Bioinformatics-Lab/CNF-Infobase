@@ -1,5 +1,5 @@
 import { Model } from "../backend.js";
-import { SearchOpts, SearchAtts, FoodSearchTableCols, NutrientTableCols, TableCols, DataCols, MeasureTypeCodes, KeyboardCodes, DefaultMeasureCode, NutrientTableExtraCols, NutrientStatAtts } from "../constants.js";
+import { SearchOpts, SearchAtts, FoodSearchTableCols, NutrientTableCols, TableCols, DataCols, MeasureTypeCodes, KeyboardCodes, DefaultMeasureCode, NutrientTableExtraCols, NutrientStatAtts, DefaultMeasureTypeCode } from "../constants.js";
 import { DictTools, Translation } from "../tools.js";
 
 
@@ -224,7 +224,8 @@ export class BaseSearchPage extends BasePage {
             foodSelected: "foodSelected",
             servingSizeInput: "servingSizeInput",
             servingSizeOpt: "servingSizeOpt",
-            portionValCell: "nutrientPortionValCell"
+            portionValCell: "nutrientPortionValCell",
+            highlightedNutrientCell: "highlightedNutrientCell"
         }
 
         this.htmlSelectors = {
@@ -401,9 +402,11 @@ export class BaseSearchPage extends BasePage {
         const measureTableColInfo = [];
         for (let i = 0; i < measureConvLen; ++i) {
             const measureConv = measureWeightConv[i];
-            if (measureConv[DataCols.MeasureTypeCode] == MeasureTypeCodes.Refuse) continue;
+            const measureTypeCode = measureConv[DataCols.MeasureTypeCode];
 
-            const measureColTitle = Translation.translate("FoodNutrientStats.ConvertedMeasureCol", {
+            if (measureTypeCode == MeasureTypeCodes.Refuse) continue;
+
+            const measureColTitle = Translation.translate((measureTypeCode == DefaultMeasureTypeCode) ? "FoodNutrientStats.ConvertedMeasureColWithoutConversion" : "FoodNutrientStats.ConvertedMeasureCol", {
                 measureName: Translation.translateNum(measureConv[Translation.getDataCol(TableCols.MeasureDescription)]), 
                 convertedMeasure: Translation.translateNum(measureConv[TableCols.MeasureWeight], undefined)
             });
@@ -441,7 +444,16 @@ export class BaseSearchPage extends BasePage {
                                     .append(stickyWrapper)
                             );
                     }
-                }
+                },
+                columnDefs: [
+                    {
+                        targets: 1,
+                        createdCell: (td, cellData, rowData, row, col) => {
+                            if (!this.model.highlightedNutrientNames.has(cellData)) return;
+                            $(td).addClass(this.htmlNames.highlightedNutrientCell);
+                        }
+                    }
+                ]
             }, 
             destroyExisting: true});
         return dataTable;
