@@ -179,7 +179,7 @@ export class Model {
         }
     }
 
-    async loadFoodTable(foodNameTable, foodGroupTable) {
+    async loadFoodTable(foodNameTable, foodGroupTable, foodSourceTable) {
         this.foodGroupTable = foodGroupTable;
         this.foodNameTable = foodNameTable;
 
@@ -194,6 +194,7 @@ export class Model {
         this.searchSelections[SearchOpts.CompareFoods][SearchAtts.FoodName] = foodNames;
 
         this.foodTable = TableTools.dataLeftJoinById(foodNameTable, foodGroupTable, DataCols.FoodGroupCode, DataCols.FoodGroupCode);
+        this.foodTable = TableTools.dataLeftJoinById(this.foodTable, foodSourceTable, DataCols.FoodSourceCode, DataCols.FoodSourceCode);
 
         this.setupFoodTableIndices();
         this.setupFoodNameTableIndices();
@@ -333,7 +334,8 @@ export class Model {
     // load(): Initial load of all the required data
     async load() {
         const [foodNameTable, 
-               foodGroupTable, 
+               foodGroupTable,
+               foodSourceTable,
                measureTypeTable, 
                measureNameTable, 
                measureWeightConvTable, 
@@ -342,6 +344,7 @@ export class Model {
                nutrientSrcTable,
                nutrientGroupTable] = await Promise.all([this.loadCSV(`data/Food_Name.csv`), 
                            this.loadCSV(`data/CNF_Food_Group.csv`), 
+                           this.loadCSV(`data/Food_Source.csv`),
                            this.loadCSV(`data/Measure_Type.csv`),
                            this.loadCSV(`data/Measure_Name.csv`),
                            this.loadCSV(`data/Measure_Weight_Conversion.csv`),
@@ -350,7 +353,7 @@ export class Model {
                            this.loadCSV(`data/Nutrient_Source.csv`),
                            this.loadCSV(`data/Nutrients and grouping_CNF_2026.csv`)]);
 
-        await Promise.all([this.loadFoodTable(foodNameTable, foodGroupTable),
+        await Promise.all([this.loadFoodTable(foodNameTable, foodGroupTable, foodSourceTable),
                            this.loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable),
                            this.loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable, nutrientGroupTable)]);
     }

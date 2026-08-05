@@ -477,6 +477,14 @@ tr.dtrg-group th .dtrg-sticky-text {
     padding-left: 20px;
 }
 
+#nutrientCardAltTitle {
+    margin-top: 10px !important;
+}
+
+#nutrientCardSourceText {
+    font-size: 15px;
+}
+
 .foodResultContainer {
     border-radius: var(--borderRadius);
 }

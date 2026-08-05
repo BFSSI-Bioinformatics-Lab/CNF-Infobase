@@ -529,10 +529,16 @@ export class BaseSearchPage extends BasePage {
         if (statsEmpty) return;
 
         const foodResultCard = this.htmlElements.foodResultCard;
-        const foodName = stats.food[Translation.getDataCol(TableCols.FoodDescription)];
+        const foodStats = stats.food;
 
-        foodResultCard.select(".cardHeader .card-title").html(foodName);
-        foodResultCard.select(".cardHeader .card-subtitle").html(Translation.translate("FoodNutrientStats.SubTitle", { foodCode: foodCode }));
+        const foodName = foodStats[Translation.getDataCol(TableCols.FoodDescription)];
+        const altFoodName = foodStats[Translation.getDataCol(TableCols.FoodDescription, true)];
+        const foodSource = foodStats[Translation.getDataCol(TableCols.FoodSourceDescription)];
+
+        foodResultCard.select(".cardHeader #nutrientCardTitle").html(foodName);
+        foodResultCard.select(".cardHeader #nutrientCardAltTitle").html(altFoodName);
+        foodResultCard.select(".cardHeader #nutrientCardFoodCode").html(Translation.translate("FoodNutrientStats.SubTitle", { foodCode: foodCode }));
+        foodResultCard.select(".cardHeader #nutrientCardSourceText").html(Translation.translate("FoodNutrientStats.SourceSubTitle", {foodSource: foodSource}));
         
         this.htmlElements.nutrientTableTitle.html(Translation.translate("FoodNutrientStats.NutrientTableTitle", { foodName }));
 

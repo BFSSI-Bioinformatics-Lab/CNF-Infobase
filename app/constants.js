@@ -22,6 +22,8 @@ export const DataCols = {
     FoodAltDescription: "Alternate_Description_",
     FoodGroupCode: "CNF_Food_Group_Code",
     FoodGroupDescription: "CNF_Food_Group_Description_",
+    FoodSourceCode: "Food_Source_Code",
+    FoodSourceDescription: "Food_Source_Description_",
     MeasureTypeCode: "Measure_Type_Code",
     MeasureCode: "Measure_Code",
     MeasureDescription: "Measure_Description_and_Unit_",
@@ -64,7 +66,7 @@ export const TableCols = {...DataCols,
 export const LangDataCols= new Set([DataCols.FoodDescription, DataCols.FoodGroupDescription, DataCols.MeasureDescription,
     DataCols.NutrientName, DataCols.NutrientDataSrc, DataCols.FoodAltDescription, DataCols.NutrientGroup, 
     TableCols.FoodDescriptionTokens, TableCols.FoodAltDescriptionTokens,
-    DataCols.NutrientNameWithUnit
+    DataCols.NutrientNameWithUnit, DataCols.FoodSourceDescription
 ]);
 
 // Measure codes to filter out in the app
@@ -165,6 +167,7 @@ export const KeyboardCodes = {
 const LangEN = {
     translation: {
         Number: "{{num, number}}",
+        AltLangCode: "fr",
 
         SiteName: "Canadian Nutrient File (CNF) 2026",
 
@@ -243,6 +246,7 @@ const LangEN = {
 
         FoodNutrientStats: {
             SubTitle: `Food Code: {{ foodCode }}`,
+            SourceSubTitle: `Source: {{ foodSource }}`,
             ServingTitle: `Available Serving Size(s)`,
             ServingRefuseTitle: `Refuse`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
@@ -542,6 +546,7 @@ const REMPLACER_MOI_AVEC_ARGUMENTS = `${REMPLACER_MOI} - les arguments du texte:
 const LangFR = {
     translation: {
         Number: "{{num, number}}",
+        AltLangCode: "en",
 
         SiteName: "Fichier canadien sur les éléments nutritifs (FCÉN) 2026",
 
@@ -619,6 +624,7 @@ const LangFR = {
 
         FoodNutrientStats: {
             SubTitle: `Code de l'Aliment: {{ foodCode }}`,
+            SourceSubTitle: `Source: {{ foodSource }}`,
             ServingTitle: `Taille(s) de Portion Disponible(s)`,
             ServingRefuseTitle: `Portion Non Comestible`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
