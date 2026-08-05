@@ -23,6 +23,7 @@ export class CompareByFood extends BaseComparePage {
 
         const elements = this.htmlElements;
         elements.multiFoodContainer.select("label").html(Translation.translate("MultiFoodInputTitle"));
+        elements.searchTableTitle.html(Translation.translate("CompareSearchTableTitle"));
     }
 
     setupListeners() {

@@ -244,6 +244,7 @@ export class BaseSearchPage extends BasePage {
             searchContainer: d3.select("#searchSection"),
             searchButton: d3.select("#searchButton"),
             resetSearchButton: d3.select("#resetButton"),
+            searchTableTitle: d3.select("#searchResultTitle"),
 
             foodResultContainer: d3.select(".foodResultContainer"),
             foodResultCard: d3.select("#foodResultCard"),
@@ -264,6 +265,8 @@ export class BaseSearchPage extends BasePage {
     // updateStaticText: Updates text for the search page
     updateStaticText() {
         d3.select("#foodSearchInstructions").html(Translation.translate("SearchTableInstructions"));
+
+        this.htmlElements.searchTableTitle.html(Translation.translate("SearchTableTitle"));
 
         this.htmlElements.foodResultCard.select(".cardDetails .card-title").html(Translation.translate("FoodNutrientStats.ServingTitle"));
         this.htmlElements.refuseListContainer.select("h5").html(Translation.translate("FoodNutrientStats.ServingRefuseTitle"));
@@ -637,6 +640,7 @@ export class BaseComparePage extends BasePage {
             resetSearchButton: d3.select("#resetButton"),
             searchTable: $(this.htmlSelectors.foodSearchTable),
             searchCSVDownloadBtn: d3.select("#searchCSVDownload"),
+            searchTableTitle: d3.select("#searchResultTitle")
         };
 
         this.htmlElements = elements;
@@ -647,7 +651,7 @@ export class BaseComparePage extends BasePage {
         const elements = this.htmlElements;
 
         d3.select("#searchTitle").html(Translation.translate("SearchCriteriaTitle"));
-        d3.select("#searchResultTitle").html(Translation.translate("SearchTableTitle"));
+        elements.searchTableTitle.html(Translation.translate("SearchTableTitle"));
         elements.searchCSVDownloadBtn.html(Translation.translate("CSVDownload.DownloadSearchButtonTitle"))
 
         elements.searchButton.attr("value", Translation.translate("FoodSearchButton"));

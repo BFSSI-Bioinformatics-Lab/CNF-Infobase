@@ -27,6 +27,7 @@ export class CompareByNutrient extends BaseComparePage {
         const elements = this.htmlElements;
         elements.foodGroupInputContainer.select("label").html(Translation.translate("FoodGroupInputTitle"));
         elements.multiNutrientInputContainer.select("label").html(Translation.translate("MultiNutrientInputTitle"));
+        elements.searchTableTitle.html(Translation.translate("CompareSearchTableTitle"));
     }
 
     setupListeners() {
