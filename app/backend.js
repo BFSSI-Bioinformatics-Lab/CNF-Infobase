@@ -945,6 +945,12 @@ export class Model {
         }
 
         const tableData = searchTable.data;
+
+        // sort nutrients by their nutrient order
+        if (searchOpt == SearchOpts.CompareFoods) {
+            tableData.sort((rowA, rowB) => rowA[DataCols.NutrientOrder] - rowB[DataCols.NutrientOrder]);
+        }
+
         for (const row of tableData) {
             const currentRow = [];
 
@@ -1023,6 +1029,9 @@ export class Model {
         result[0][0] = Translation.translate("SiteName");
         result[1][0] = food[Translation.getDataCol(TableCols.FoodDescription)];
         result[2][0] = Translation.translate("FoodNutrientStats.SubTitle", { foodCode: food[DataCols.FoodCode] });
+
+        // sort nutrient by their nutrient order
+        webSearchedNutrientTable.sort((rowA, rowB) => rowA[DataCols.NutrientOrder] - rowB[DataCols.NutrientOrder]);
 
         // table headings
         result.push(tableColDisplay);
