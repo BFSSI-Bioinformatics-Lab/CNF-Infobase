@@ -543,7 +543,7 @@ export class BaseSearchPage extends BasePage {
         foodResultCard.select(".cardHeader #nutrientCardFoodCode").html(Translation.translate("FoodNutrientStats.SubTitle", { foodCode: foodCode }));
         foodResultCard.select(".cardHeader #nutrientCardSourceText").html(Translation.translate("FoodNutrientStats.SourceSubTitle", {foodSource: foodSource}));
         
-        this.htmlElements.nutrientTableTitle.html(Translation.translate("FoodNutrientStats.NutrientTableTitle", { foodName }));
+        this.htmlElements.nutrientTableTitle.html(Translation.translate("FoodNutrientStats.NutrientTableTitle", { foodName, foodCode }));
 
         this.htmlElements.servingSizeCheckList.selectAll("*").remove();
         this.htmlElements.refuseList.selectAll("*").remove();

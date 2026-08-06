@@ -930,8 +930,10 @@ export class Model {
                 const foodName = foodNameDatum[Translation.getDataCol(DataCols.FoodDescription)];
 
                 const dataCol = Model.getCompareFoodAmtColName(foodCode);
+                const colName = Translation.translate("SearchTableCols.FoodName", {foodName, foodCode});
+
                 tableAtts.push(dataCol);
-                tableColDisplay.push(foodName);
+                tableColDisplay.push(colName);
             }
         }
 
