@@ -242,7 +242,8 @@ const LangEN = {
             },
 
             DefaultNutrientAmount: "Nutrient Amount",
-            DefaultNutrientUnit: "g"
+            DefaultNutrientUnit: "g",
+            FoodName: "{{ foodCode }} - {{ foodName }}"
         },
 
         FoodNutrientStats: {
@@ -252,7 +253,7 @@ const LangEN = {
             ServingRefuseTitle: `Refuse`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
             ServingRefuseListItem: `{{ measureName }} {{ convertedMeasure }} %`,
-            NutrientTableTitle: `List of nutrient data of {{ foodName }}`,
+            NutrientTableTitle: `List of nutrient data of {{ foodCode }} - {{ foodName }}`,
             DefaultNutrientMeasure: `Value per 100 g of edible portion`,
 
             TableCols: {
@@ -621,7 +622,8 @@ const LangFR = {
             },
 
             DefaultNutrientAmount: "Valeur Nutritive",
-            DefaultNutrientUnit: "g"
+            DefaultNutrientUnit: "g",
+            FoodName: "{{ foodCode }} - {{ foodName }}"
         },
 
         FoodNutrientStats: {
@@ -631,7 +633,7 @@ const LangFR = {
             ServingRefuseTitle: `Portion Non Comestible`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
             ServingRefuseListItem: `{{ measureName }} {{ convertedMeasure }} %`,
-            NutrientTableTitle: `Liste des valeurs nutritives pour {{ foodName }}`,
+            NutrientTableTitle: `Liste des valeurs nutritives pour {{ foodCode }} - {{ foodName }}`,
             DefaultNutrientMeasure: `Valeur pour 100 g de portion comestible`,
 
             TableCols: {
