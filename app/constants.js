@@ -121,7 +121,7 @@ export const CompNutrientSearchTableCols = [
 
 // The columns to display in the "Compare by Foods" search table
 export const CompFoodSearchTableCols = [
-    DataCols.NutrientName
+    DataCols.NutrientNameWithUnit
 ];
 
 // The columns to display in the Nutrient table
@@ -237,7 +237,7 @@ const LangEN = {
                 [DataCols.FoodDescription]: "Food Name"
             },
             [SearchOpts.CompareFoods]: {
-                [DataCols.NutrientName]: "Nutrient Name",
+                [DataCols.NutrientNameWithUnit]: "Nutrient Name",
                 [DataCols.NutrientGroup]: "Nutrient Group"
             },
 
@@ -617,7 +617,7 @@ const LangFR = {
                 [DataCols.FoodDescription]: "Nom de l'Aliment"
             },
             [SearchOpts.CompareFoods]: {
-                [DataCols.NutrientName]: "Nom de l'élément nutritif",
+                [DataCols.NutrientNameWithUnit]: "Nom de l'élément nutritif",
                 [DataCols.NutrientGroup]: "Groupe de l'élément nutritif"
             },
 

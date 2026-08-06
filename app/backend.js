@@ -667,7 +667,7 @@ export class Model {
             .object(result);
 
         result.length = 0;
-        const nutrientNameCol = Translation.getDataCol(DataCols.NutrientName);
+        const nutrientNameCol = Translation.getDataCol(DataCols.NutrientNameWithUnit);
         const nutrientGroupNameCol = Translation.getDataCol(DataCols.NutrientGroup);
 
         for (const foodCode in groupedResult) {

@@ -76,9 +76,7 @@ export class CompareByFood extends BaseComparePage {
             const foodName = foodNameDatum[Translation.getDataCol(DataCols.FoodDescription)];
 
             const dataCol = Model.getCompareFoodAmtColName(foodCode);
-            const colName = Translation.translate("SearchTableCols.ElementNutrientAmount", { returnObjects: true, element: foodName});
-
-            tableColInfo.push({title: colName, data: dataCol, orderable: false});
+            tableColInfo.push({title: foodName, data: dataCol, orderable: false});
         }
 
         const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, 
