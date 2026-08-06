@@ -79,12 +79,10 @@ export class CompareByNutrient extends BaseComparePage {
         const nutrientNameData = tableData.nutrientNames;
         for (const nutrientNameDatum of nutrientNameData) {
             const nutrientCode = nutrientNameDatum[DataCols.NutrientCode];
-            const nutrientName = nutrientNameDatum[Translation.getDataCol(DataCols.NutrientName)];
+            const nutrientName = nutrientNameDatum[Translation.getDataCol(DataCols.NutrientNameWithUnit)];
 
             const dataCol = Model.getCompareNutrientAmtColName(nutrientCode);
-            const colName = Translation.translate("SearchTableCols.ElementNutrientAmount", { returnObjects: true, element: nutrientName});
-
-            tableColInfo.push({title: colName, data: dataCol});
+            tableColInfo.push({title: nutrientName, data: dataCol});
         }
 
         const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, 
