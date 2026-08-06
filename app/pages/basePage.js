@@ -421,7 +421,7 @@ export class BaseSearchPage extends BasePage {
             const measureVisible = visibleMeasureCodes.has(measureCode);
 
             const dataCol = Model.getConvertedNutrientColName(i);
-            measureTableColInfo.push({title: measureColTitle, data: dataCol, name: dataCol, visible: measureVisible, orderable: false, className: this.htmlNames.portionValCell});
+            measureTableColInfo.push({title: measureColTitle, data: dataCol, name: dataCol, visible: measureVisible, orderable: false});
         }
 
         tableColInfo.splice(2, 0, ...measureTableColInfo);
