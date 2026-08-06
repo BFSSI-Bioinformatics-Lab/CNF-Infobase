@@ -917,13 +917,11 @@ export class Model {
             const nutrientNameData = searchTable.nutrientNames;
             for (const nutrientNameDatum of nutrientNameData) {
                 const nutrientCode = nutrientNameDatum[DataCols.NutrientCode];
-                const nutrientName = nutrientNameDatum[Translation.getDataCol(DataCols.NutrientName)];
+                const nutrientName = nutrientNameDatum[Translation.getDataCol(DataCols.NutrientNameWithUnit)];
 
                 const dataCol = Model.getCompareNutrientAmtColName(nutrientCode);
-                const colName = Translation.translate("SearchTableCols.ElementNutrientAmount", { returnObjects: true, element: nutrientName});
-
                 tableAtts.push(dataCol);
-                tableColDisplay.push(colName);
+                tableColDisplay.push(nutrientName);
             }
         } else if (searchOpt == SearchOpts.CompareFoods) {
             const foodNameData = searchTable.foodNames;
@@ -932,10 +930,8 @@ export class Model {
                 const foodName = foodNameDatum[Translation.getDataCol(DataCols.FoodDescription)];
 
                 const dataCol = Model.getCompareFoodAmtColName(foodCode);
-                const colName = Translation.translate("SearchTableCols.ElementNutrientAmount", { returnObjects: true, element: foodName});
-
                 tableAtts.push(dataCol);
-                tableColDisplay.push(colName);
+                tableColDisplay.push(foodName);
             }
         }
 
