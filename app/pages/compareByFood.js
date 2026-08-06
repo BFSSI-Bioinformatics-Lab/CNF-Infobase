@@ -66,7 +66,7 @@ export class CompareByFood extends BaseComparePage {
         let tableColInfo = [];
         tableColInfo.push({data: DataCols.NutrientOrder, visible: false});
         for (const tableAtt of CompFoodSearchTableCols) {
-            tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
+            tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt), orderable: false});
         }
 
         const foodNameData = tableData.foodNames;
@@ -78,7 +78,7 @@ export class CompareByFood extends BaseComparePage {
             const dataCol = Model.getCompareFoodAmtColName(foodCode);
             const colName = Translation.translate("SearchTableCols.ElementNutrientAmount", { returnObjects: true, element: foodName});
 
-            tableColInfo.push({title: colName, data: dataCol});
+            tableColInfo.push({title: colName, data: dataCol, orderable: false});
         }
 
         const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, 
