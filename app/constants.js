@@ -241,7 +241,6 @@ const LangEN = {
                 [DataCols.NutrientGroup]: "Nutrient Group"
             },
 
-            ElementNutrientAmount: `{{ element }} (g)`,
             DefaultNutrientAmount: "Nutrient Amount",
             DefaultNutrientUnit: "g"
         },
@@ -621,7 +620,6 @@ const LangFR = {
                 [DataCols.NutrientGroup]: "Groupe de l'élément nutritif"
             },
 
-            ElementNutrientAmount: `{{ element }} (g)`,
             DefaultNutrientAmount: "Valeur Nutritive",
             DefaultNutrientUnit: "g"
         },
