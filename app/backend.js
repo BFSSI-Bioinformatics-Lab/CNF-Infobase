@@ -432,6 +432,38 @@ export class Model {
         return -1;
     }
 
+    findFood(foodRow, foodNameAhoCorasickDFA) {
+        let foundFoodNameKeywordInd = this.findAllExactKeywords(foodRow[Translation.getDataCol(TableCols.FoodDescriptionTokens)], foodNameAhoCorasickDFA);
+
+        if (foundFoodNameKeywordInd == -1) {
+            foundFoodNameKeywordInd = this.findAllExactKeywords(foodRow[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)], foodNameAhoCorasickDFA);
+        }
+
+        return foundFoodNameKeywordInd;
+    }
+
+    filterFoodNameSelections(foodName, foodNameSelections) {
+        let foodNameKeywords = Array.from(new Set(foodName.trim().split(/\s+/)));
+        foodNameKeywords = foodNameKeywords.map((keyword) => keyword.toLowerCase());
+        let foodNameAhoCorasickDFA = TextTools.buildAhoCorasickDFA(foodNameKeywords);
+
+        let result = foodNameSelections.filter((selection) => {
+            const foodRow = this.getRowById(this.foodTable, DataCols.FoodCode, selection.value);
+
+            let foundFoodNameKeywordInd = this.findFood(foodRow, foodNameAhoCorasickDFA);
+            if (foundFoodNameKeywordInd == -1) {
+                selection.order = Infinity;
+                return false;
+            }
+
+            selection.order = foundFoodNameKeywordInd;
+            return true;
+        });
+
+        result.sort((a, b) => b.order - a.order);
+        return result;
+    }
+
     filterFoodSearchTable(foodName, foodAltName, foodGroupCode, foodCode) {
         let result = this.foodTable.data;
 
@@ -478,13 +510,8 @@ export class Model {
             row[TableCols.FoodAltNameOrder] = Infinity;
 
             if (foodName != "") {
-                let foundFoodNameKeywordInd = this.findAllExactKeywords(row[Translation.getDataCol(TableCols.FoodDescriptionTokens)], foodNameAhoCorasickDFA);
-
-                if (foundFoodNameKeywordInd == -1) {
-                    foundFoodNameKeywordInd = this.findAllExactKeywords(row[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)], foodNameAhoCorasickDFA);
-                    if (foundFoodNameKeywordInd == -1) return false;
-                }
-
+                let foundFoodNameKeywordInd = this.findFood(row, foodNameAhoCorasickDFA);
+                if (foundFoodNameKeywordInd == -1) return false;
                 foodNameIndex = foundFoodNameKeywordInd;
             }
 
@@ -1115,7 +1142,7 @@ export class Model {
     }
 
     getFoodNames() {
-        let result = this.foodNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodDescription)], value: row[DataCols.FoodCode]}});
+        let result = this.foodNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodDescription)], value: row[DataCols.FoodCode], order: Infinity}});
         return result;
     }
 
