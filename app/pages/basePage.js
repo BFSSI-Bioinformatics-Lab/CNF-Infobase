@@ -160,7 +160,7 @@ export class BasePage {
     }
 
     setupAutoCompleteSelect({elementSelector, selections, inputs, onChange = undefined, maxItemCount = undefined, 
-                             maxItemText = undefined, placeholder = undefined, noResultsText = undefined, selectAtts = {}} = {}) {
+                             maxItemText = undefined, placeholder = undefined, noResultsText = undefined, selectAtts = {}, searchFunc = null} = {}) {
         const element = d3.select(elementSelector);
         const hasPlaceholder = placeholder !== undefined;
 
@@ -169,7 +169,8 @@ export class BasePage {
             searchEnabled: true,
             placeholder: hasPlaceholder,
             placeholderValue: hasPlaceholder ? placeholder : "",
-            itemSelectText: ""
+            itemSelectText: "",
+            searchChoices: true 
         };
 
         if (maxItemCount !== undefined) {
@@ -196,6 +197,31 @@ export class BasePage {
 
         result.removeActiveItems();
         result.setChoiceByValue(inputs);
+
+        if (searchFunc !== null) {
+            result._searchChoices = function(searchTerm) {
+                const activeValues = result.getValue(true); 
+                const cleanTerm = (searchTerm || '').toLowerCase().trim();
+
+                if (cleanTerm === '') {
+                    result.clearChoices();
+                    result.setChoices(selections, 'value', 'text', true);
+                    if (activeValues && activeValues.length > 0) {
+                        result.setChoiceByValue(activeValues);
+                    }
+                    return;
+                }
+
+                const filteredResults = searchFunc(searchTerm, selections);
+
+                result.clearChoices();
+                result.setChoices(filteredResults, 'value', 'text', true);
+
+                if (activeValues && activeValues.length > 0) {
+                    result.setChoiceByValue(activeValues);
+                }
+            };
+        }
 
         element.on('change', function () {
             if (onChange !== undefined) {

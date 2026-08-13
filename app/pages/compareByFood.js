@@ -134,6 +134,7 @@ export class CompareByFood extends BaseComparePage {
                                                             maxItemText: (maxItemCount) => Translation.translate("multiselectAutoComplete.maxItemText", {maxItemCount: this.maxFoodsCount}),
                                                             placeholder: Translation.translate("MultiFoodsPlaceholder"),
                                                             noResultsText: Translation.translate("multiselectAutoComplete.noResultsText"),
+                                                            searchFunc: (searchTerm, selections) => this.model.filterFoodNameSelections(searchTerm, selections),
                                                             selectAtts: {
                                                                 searchResultLimit: foodNameSelections.length,
                                                                 
