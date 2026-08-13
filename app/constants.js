@@ -257,7 +257,7 @@ const LangEN = {
             DefaultNutrientMeasure: `Value per 100 g of edible portion`,
 
             TableCols: {
-                [DataCols.NutrientName]: `Nutrient Name`,
+                [DataCols.NutrientNameWithUnit]: `Nutrient Name`,
                 [DataCols.NutrientShortUnit]: `Unit`,
                 [TableCols.NutrientNoOfObservationsView]: `Number of obser­vations`,
                 [TableCols.NutrientStdErrView]: `Standard error`,
@@ -637,7 +637,7 @@ const LangFR = {
             DefaultNutrientMeasure: `Valeur pour 100 g de portion comestible`,
 
             TableCols: {
-                [DataCols.NutrientName]: `Nom de l'élément nutritif`,
+                [DataCols.NutrientNameWithUnit]: `Nom de l'élément nutritif`,
                 [DataCols.NutrientShortUnit]: `Unité`,
                 [TableCols.NutrientNoOfObservationsView]: `Nombre d'obser­vations`,
                 [TableCols.NutrientStdErrView]: `Écart-type`,
