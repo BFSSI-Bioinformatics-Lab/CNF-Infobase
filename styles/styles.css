@@ -509,6 +509,24 @@ tr.dtrg-group th .dtrg-sticky-text {
     font-weight: bold;
 }
 
+.legendDescriptionList {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 12px 24px;
+    padding: 16px;
+    align-items:first baseline;
+}
+
+.legendTerm {
+    font-weight: bold;
+    grid-column-start: 1;
+}
+
+.legendDescription {
+    margin: 0;
+    grid-column-start: 2;
+}
+
 
 /* For small phone screeens */
 @media screen and (max-width: 600px) {

@@ -192,6 +192,52 @@ const LangEN = {
             Alternatively, you can search by the unique four digit Canadian Nutrient File (CNF) food code.
         </p>`,
 
+        LegendTitle: "Legend",
+        LegendText: `
+        <dl class="legendDescriptionList">
+            <dt class="mrgn-tp-sm legendTerm">%:</dt>
+            <dd class="legendDescription">percent</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">μg:</dt>
+            <dd class="legendDescription">microgram</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">CNF:</dt>
+            <dd class="legendDescription">Canadian Nutrient File</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">cm:</dt>
+            <dd class="legendDescription">centimetre</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">dm:</dt>
+            <dd class="legendDescription">diameter</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">g:</dt>
+            <dd class="legendDescription">gram</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">IU:</dt>
+            <dd class="legendDescription">International Unit</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">kCal:</dt>
+            <dd class="legendDescription">kilocalories</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">kJ:</dt>
+            <dd class="legendDescription">kilojoules</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">l:</dt>
+            <dd class="legendDescription">litre</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">mg:</dt>
+            <dd class="legendDescription">milligram</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">ml:</dt>
+            <dd class="legendDescription">millilitre</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">mm:</dt>
+            <dd class="legendDescription">millimetre</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">NE:</dt>
+            <dd class="legendDescription">Niacin Equivalent</dd>
+        </dl>`,
+
         BackToTop: "Back to top",
 
         SearchCriteriaTitle: "Search Criteria",
@@ -571,6 +617,54 @@ const LangFR = {
         <p class="mrgn-tp-lg">
             Vous pouvez également effectuer une recherche par le code d'aliment du Fichier canadien sur les éléments nutritifs (FCÉN) de 4 chiffres.
         </p>`,
+
+        LegendTitle: "Légende",
+        LegendText: `<dl class="legendDescriptionList">
+            <dt class="mrgn-tp-sm legendTerm">%:</dt>
+            <dd class="legendDescription">pourcentage</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">μg:</dt>
+            <dd class="legendDescription">microgramme</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">cm:</dt>
+            <dd class="legendDescription">centimètre</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">dm:</dt>
+            <dd class="legendDescription">diamètre</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">ÉFA:</dt>
+            <dd class="legendDescription">Équivalents de folate alimentaire</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">EN:</dt>
+            <dd class="legendDescription">Équivalents de niacine totale</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">FCÉN:</dt>
+            <dd class="legendDescription">Fichier canadien sur les éléments nutritifs</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">g:</dt>
+            <dd class="legendDescription">gramme</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">kCal:</dt>
+            <dd class="legendDescription">kilocalories</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">kJ:</dt>
+            <dd class="legendDescription">kilojoules</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">l:</dt>
+            <dd class="legendDescription">litre</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">mg:</dt>
+            <dd class="legendDescription">milligramme</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">ml:</dt>
+            <dd class="legendDescription">millilitre</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">mm:</dt>
+            <dd class="legendDescription">millimètre</dd>
+
+            <dt class="mrgn-tp-sm legendTerm">UI:</dt>
+            <dd class="legendDescription">Unité internationale</dd>
+        </dl>`,
 
         BackToTop: "Haut de la page",
 

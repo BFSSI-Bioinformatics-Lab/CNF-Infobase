@@ -32,6 +32,9 @@ class App {
         d3.select("#searchByNutrientTab").html(Translation.translate("SearchByNutrient"));
         d3.select("#compareNutrientsTab").html(Translation.translate("CompareByNutrient"));
         d3.select("#compareFoodsTab").html(Translation.translate("CompareByFoods"));
+
+        d3.select("#legendTitle").html(Translation.translate("LegendTitle"));
+        d3.select("#legendContent").html(Translation.translate("LegendText"));
     }
 
     setupListeners() {
