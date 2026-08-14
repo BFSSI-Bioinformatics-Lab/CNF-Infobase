@@ -293,6 +293,15 @@ export class Model {
         }
     }
 
+    static getNutrientName(nutrientWithUnit) {
+        const openBracketInd = nutrientWithUnit.lastIndexOf("(");
+        if (openBracketInd == -1) return nutrientWithUnit;
+
+        let result = nutrientWithUnit.slice(0, openBracketInd);
+        result = result.trim();
+        return result;
+    }
+
     async loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable, nutrientGroupTable) {
         // add the nutrient group ordering
         const nutrientGroupData = nutrientGroupTable.data;
@@ -301,9 +310,15 @@ export class Model {
         this.nutrientNameTable = nutrientNameTable;
         this.nutrientNameTable = TableTools.dataLeftJoinById(this.nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
 
-        // update which nutrients should be bolded in the nutrient table
+        // update which nutrients should be bolded in the nutrient table and
+        //  modify the nutrient names column with the updated nutrient names
+        const nutrientNameCol = Translation.getDataCol(DataCols.NutrientName);
+        const nutrientNameWithUnitCol = Translation.getDataCol(DataCols.NutrientNameWithUnit);
+
         for (const row of this.nutrientNameTable.data) {
             const nutrientCode = row[DataCols.NutrientCode];
+            row[nutrientNameCol] = Model.getNutrientName(row[nutrientNameWithUnitCol]);
+
             if (HighlightedNutrientCodes.has(nutrientCode)) {
                 const nutrientNameWithUnit = row[Translation.getDataCol(DataCols.NutrientNameWithUnit)]
                 this.highlightedNutrientNames.add(nutrientNameWithUnit);

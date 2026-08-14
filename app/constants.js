@@ -108,8 +108,8 @@ export const NutrientSearchTableCols = [
     DataCols.FoodGroupDescription,
     DataCols.FoodDescription,
     DataCols.MeasureDescription,
-    TableCols.WeightView,
-    TableCols.NutrientAmountView
+    TableCols.NutrientAmountView,
+    TableCols.WeightView
 ];
 
 // The columns to display in the "Compare by Nutrients" search table
@@ -228,8 +228,8 @@ const LangEN = {
                 [DataCols.FoodGroupDescription]: "Food Group",
                 [DataCols.FoodDescription]: "Food Name",
                 [DataCols.MeasureDescription]: "Portion",
-                [TableCols.WeightView]: "Weight g",
-                [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }}"
+                [TableCols.WeightView]: "{{ nutrient }} {{ unit }} (per 100 g)",
+                [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }} (per portion)"
             },
             [SearchOpts.CompareNutrients]: {
                 [DataCols.FoodCode]: "Food Code",
@@ -608,8 +608,8 @@ const LangFR = {
                 [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
                 [DataCols.FoodDescription]: "Nom de l'Aliment",
                 [DataCols.MeasureDescription]: "Portion",
-                [TableCols.WeightView]: "Poids g",
-                [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }}"
+                [TableCols.WeightView]: "{{ nutrient }} {{ unit }} (par 100 g)",
+                [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }} (par portion)"
             },
             [SearchOpts.CompareNutrients]: {
                 [DataCols.FoodCode]: "Code de l'Aliment",
