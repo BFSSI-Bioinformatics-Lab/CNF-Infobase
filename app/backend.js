@@ -316,8 +316,6 @@ export class Model {
         this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = nutrients;
         this.searchSelections[SearchOpts.CompareNutrients][SearchAtts.Nutrient] = structuredClone(nutrients);
 
-        this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.Nutrient].push({text: Translation.translate("NoneSelected"), value: ""});
-
         // join the different parts of the nutrients
         nutrientNameTable = TableTools.dataLeftJoinById(nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
         this.nutrientTable = TableTools.dataLeftJoinById(nutrientAmtTable, nutrientNameTable, DataCols.NutrientCode, DataCols.NutrientCode);
