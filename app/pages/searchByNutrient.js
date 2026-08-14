@@ -111,7 +111,8 @@ export class SearchByNutrientPage extends BaseSearchPage {
 
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.nutrientInput, 
                                 selections: selections[SearchAtts.Nutrient], 
-                                inputs: new Set([inputs[SearchAtts.Nutrient]])});
+                                inputs: new Set([inputs[SearchAtts.Nutrient]]),
+                                noneOption: {value: "", text: Translation.translate("NoneSelected")}});
 
         this.clearSearch();
 

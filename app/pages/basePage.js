@@ -88,7 +88,7 @@ export class BasePage {
     }
 
     // updateDropdownSelect(dropdownSelector, selections, input, onChange): Update the selections for the dropdown select widget
-    updateDropdownSelect({dropdownSelector, selections, input, onChange = undefined} = {}) {
+    updateDropdownSelect({dropdownSelector, selections, input, onChange = undefined, noneOption = null} = {}) {
         let dropdown = d3.select(dropdownSelector);
 
         const selectionIsArr = Array.isArray(selections);
@@ -107,6 +107,14 @@ export class BasePage {
             .append("option")
             .attr("value", (d) => selectionIsArr ? d.value : null)
             .text((d) => selectionIsArr ? d.text : d);
+
+        if (noneOption !== null) {
+            dropdown.append("option")
+                .attr("value", (d) => noneOption.value)
+                .text((d) => noneOption.text)
+                .property("disabled", true)
+                .property("hidden", true);
+        }
         
         if (onChange !== undefined) {
             dropdown.on("change", function (val, ind) {
