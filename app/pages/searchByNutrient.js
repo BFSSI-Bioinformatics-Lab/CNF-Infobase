@@ -69,9 +69,14 @@ export class SearchByNutrientPage extends BaseSearchPage {
             data: tableData.data, 
             searchTxt: (searchTxt !== null) ? searchTxt : undefined, 
             order: (resetSort) ? [] : null,
-            columnNameUpdates: {[NutrientSearchTableCols.length - 1]: Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.NutrientAmountView}`, 
+            columnNameUpdates: {
+                [NutrientSearchTableCols.length - 2]: Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.NutrientAmountView}`, 
                 {nutrient: nutrientName, 
-                 unit: nutrientData[DataCols.NutrientUnitShort]})}
+                 unit: nutrientData[DataCols.NutrientUnitShort]}),
+                [NutrientSearchTableCols.length - 1]: Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.WeightView}`, 
+                {nutrient: nutrientName, 
+                 unit: nutrientData[DataCols.NutrientUnitShort]})
+            }
         });
         return dataTable;
     }
