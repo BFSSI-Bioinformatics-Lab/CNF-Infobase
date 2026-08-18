@@ -110,7 +110,16 @@ export class CompareByFood extends BaseComparePage {
                                                                     .append(stickyWrapper)
                                                             );
                                                     }
-                                                }
+                                                },
+                                                columnDefs: [
+                                                    {
+                                                        targets: 1,
+                                                        createdCell: (td, cellData, rowData, row, col) => {
+                                                            if (!this.model.highlightedNutrientNames.has(cellData)) return;
+                                                            $(td).addClass(this.htmlNames.highlightedNutrientCell);
+                                                        }
+                                                    }
+                                                ]
                                             }});
         return dataTable;
     }
