@@ -663,6 +663,10 @@ export class BaseComparePage extends BasePage {
         super(model, app);
         this.searchOpt = searchOpt;
 
+        this.htmlNames = {
+            highlightedNutrientCell: "highlightedNutrientCell"
+        }
+
         this.htmlSelectors = {
             foodSearchTable: '#foodSearchTable'
         }
