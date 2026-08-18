@@ -420,19 +420,20 @@ export class Model {
 
     findAllExactKeywords(tokens, ahoCorasickDFA) {
         let foundKeywords = {};
-        let keyword = null;
         let uniqueCount = 0;
         let foundKeywordData = null;
-        let tokenLen = 0;
+        let tokenInd = 0;
 
         for (const token of tokens) {
-            tokenLen = token.length;
             foundKeywordData = TextTools.findExactKeyword(token, ahoCorasickDFA);
-            if (foundKeywordData === null) continue;
+            if (foundKeywordData === null) {
+                tokenInd += token.length;
+                continue;
+            }
 
             const keyword = foundKeywordData.keyword;
             if (foundKeywords[keyword] === undefined) {
-                foundKeywords[keyword] = foundKeywordData.start;
+                foundKeywords[keyword] = tokenInd;
                 uniqueCount++;
             }
 
@@ -440,12 +441,73 @@ export class Model {
                 const minKeywordInd = Math.min(...Object.values(foundKeywords));
                 return minKeywordInd;
             }
+
+            tokenInd += token.length;
         }
 
         return -1;
     }
 
-    findFood(foodRow, foodNameAhoCorasickDFA) {
+    findCloseMatchKeywords(tokens, ahoCorasickDFA) {
+        let foundKeywords = {};
+        let closeMatchKeywords = {};
+        let foundKeywordsCount = 0;
+        let closeMatchKeywordsCount = 0;
+        let uniqueCount = 0;
+        let foundKeywordData = null;
+        let keyword = null;
+        let tokenInd = 0;
+
+        for (const token of tokens) {
+            foundKeywordData = TextTools.findPrefixedKeyword(token, ahoCorasickDFA);
+
+            if (foundKeywordData === null) {
+                tokenInd += token.length;
+                continue;
+            }
+
+            const keyword = foundKeywordData.keyword;
+            if (foundKeywordData.isExact) {
+                if (closeMatchKeywords[keyword] !== undefined) {
+                    foundKeywords[keyword] = tokenInd;
+                    delete closeMatchKeywords[keyword];
+                    
+                    foundKeywordsCount++;
+                    closeMatchKeywordsCount--;
+
+                } else if (foundKeywords[keyword] === undefined) {
+                    foundKeywords[keyword] = tokenInd;
+                    uniqueCount++;
+                    foundKeywordsCount++;
+                }
+            } else {
+                if (foundKeywords[keyword] === undefined && closeMatchKeywords[keyword] === undefined) {
+                    closeMatchKeywords[keyword] = tokenInd;
+                    uniqueCount++;
+                    closeMatchKeywordsCount++;
+                }
+            }
+
+            if (uniqueCount == ahoCorasickDFA.keywordCount) {
+                return {exactMatches: foundKeywords, prefixedMatches: closeMatchKeywords, exactMatchCount: foundKeywordsCount, prefixedMatchCount: closeMatchKeywordsCount};
+            }
+
+            tokenInd += token.length;
+        }
+
+        return {exactMatches: foundKeywords, prefixedMatches: closeMatchKeywords, exactMatchCount: foundKeywordsCount, prefixedMatchCount: closeMatchKeywordsCount};
+    }
+
+    findCloseFood(foodRow, foodNameAhoCorasickDFA) {
+        let matchData = this.findCloseMatchKeywords(foodRow[Translation.getDataCol(TableCols.FoodDescriptionTokens)], foodNameAhoCorasickDFA);
+        if ($.isEmptyObject(matchData.exactMatches) && $.isEmptyObject(matchData.prefixedMatches)) {
+            matchData = this.findCloseMatchKeywords(foodRow[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)], foodNameAhoCorasickDFA);
+        }
+
+        return matchData;
+    }
+
+    findExactFood(foodRow, foodNameAhoCorasickDFA) {
         let foundFoodNameKeywordInd = this.findAllExactKeywords(foodRow[Translation.getDataCol(TableCols.FoodDescriptionTokens)], foodNameAhoCorasickDFA);
 
         if (foundFoodNameKeywordInd == -1) {
@@ -458,22 +520,40 @@ export class Model {
     filterFoodNameSelections(foodName, foodNameSelections) {
         let foodNameKeywords = Array.from(new Set(foodName.trim().split(/\s+/)));
         foodNameKeywords = foodNameKeywords.map((keyword) => keyword.toLowerCase());
+
         let foodNameAhoCorasickDFA = TextTools.buildAhoCorasickDFA(foodNameKeywords);
 
         let result = foodNameSelections.filter((selection) => {
             const foodRow = this.getRowById(this.foodTable, DataCols.FoodCode, selection.value);
 
-            let foundFoodNameKeywordInd = this.findFood(foodRow, foodNameAhoCorasickDFA);
-            if (foundFoodNameKeywordInd == -1) {
-                selection.order = Infinity;
+            let matchData = this.findCloseFood(foodRow, foodNameAhoCorasickDFA);
+            if ($.isEmptyObject(matchData.exactMatches) && $.isEmptyObject(matchData.prefixedMatches)) {
+                selection.exactMatchCount = 0;
+                selection.prefixedMatchCount = 0;
+                selection.startInd = Infinity;
                 return false;
             }
 
-            selection.order = foundFoodNameKeywordInd;
+            selection.exactMatchCount = matchData.exactMatchCount;
+            selection.prefixedMatchCount = matchData.prefixedMatchCount;
+            selection.startInd = Math.min(...Object.values(matchData.exactMatches), ...Object.values(matchData.prefixedMatches));
             return true;
         });
 
-        result.sort((a, b) => b.order - a.order);
+        // Sort by:
+        //  1. # of exact matches (Descending)
+        //  2. # of prefix matches (Descending)
+        //  3. The starting keyword of the first match (Ascending)
+        //  4. The name (Alphabetical order)
+        result.sort((a, b) => {
+            return (
+                b.exactMatchCount - a.exactMatchCount ||
+                b.prefixedMatchCount - a.prefixedMatchCount ||
+                a.startInd - b.startInd ||
+                a.text.localeCompare(b.text)
+            );
+        });
+
         return result;
     }
 
@@ -523,7 +603,7 @@ export class Model {
             row[TableCols.FoodAltNameOrder] = Infinity;
 
             if (foodName != "") {
-                let foundFoodNameKeywordInd = this.findFood(row, foodNameAhoCorasickDFA);
+                let foundFoodNameKeywordInd = this.findExactFood(row, foodNameAhoCorasickDFA);
                 if (foundFoodNameKeywordInd == -1) return false;
                 foodNameIndex = foundFoodNameKeywordInd;
             }
@@ -1155,7 +1235,7 @@ export class Model {
     }
 
     getFoodNames() {
-        let result = this.foodNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodDescription)], value: row[DataCols.FoodCode], order: Infinity}});
+        let result = this.foodNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodDescription)], value: row[DataCols.FoodCode], exactMatchCount: 0, prefixedMatchCount: 0, startInd: Infinity}});
         return result;
     }
 

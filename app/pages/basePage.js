@@ -168,7 +168,8 @@ export class BasePage {
     }
 
     setupAutoCompleteSelect({elementSelector, selections, inputs, onChange = undefined, maxItemCount = undefined, 
-                             maxItemText = undefined, placeholder = undefined, noResultsText = undefined, selectAtts = {}, searchFunc = null} = {}) {
+                             maxItemText = undefined, placeholder = undefined, noResultsText = undefined, selectAtts = {}, searchFunc = null,
+                             sort = true} = {}) {
         const element = d3.select(elementSelector);
         const hasPlaceholder = placeholder !== undefined;
 
@@ -178,7 +179,8 @@ export class BasePage {
             placeholder: hasPlaceholder,
             placeholderValue: hasPlaceholder ? placeholder : "",
             itemSelectText: "",
-            searchChoices: true 
+            searchChoices: true,
+            shouldSort: sort
         };
 
         if (maxItemCount !== undefined) {
