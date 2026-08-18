@@ -177,20 +177,91 @@ const LangEN = {
         CompareByFoods: "Compare by Foods",
 
         InstructionsTitle: "Instructions",
-        InstructionsText: `
-        <p>
-            The food search is case- and accent-insensitive, and keywords used can represent complete or partial words. 
-            Keywords will be matched in any order against any part of food descriptions. If more than one keyword is used, they may be separated by a space or any of the operators 
-            'and', 'or', or 'not'. A space is equivalent to the operator 'and'. In all cases, keywords are searched both as whole words and partial words, 
-            which means that a singular keyword will also find the corresponding plural forms, and prefixed forms. 
-            Examples: a) 'fish' will also find 'Crayfish', b) 'apple raw' (or 'apple and raw') will find all the foods having both keywords anywhere in their description, 
-            but also: 'Pineapple, raw', c) 'apple or raw' will find any food having either or both keywords anywhere in the description, while 'apple 
-            not raw' will find all instances of 'apple' except where 'raw' is also present anywhere in the description.
-        </p>
+        InstructionsText: {
+            [SearchOpts.SearchByFood]: `
+            <p class="mrgn-tp-lg">
+                You can combine search criteria to narrow your results. For example, use Food Name, CNF Food Group, and Food Code together.
+            </p>
 
-        <p class="mrgn-tp-lg">
-            Alternatively, you can search by the unique four digit Canadian Nutrient File (CNF) food code.
-        </p>`,
+            <h3>Search by Food Name</h3>
+            <p>Use this search when you know all or part of a food name.</p>
+            <ul>
+                <li>Enter one or more keywords.</li>
+                <li>
+                    Searches include whole words and partial words.
+
+                    <ul>
+                        <li>Singular and plural forms may be found.</li>
+                        <li>Foods containing the keyword may also be found (for example, <i>fish</i> may return <i>Fish</i> and <i>Crayfish</i>).</li>
+                    </ul>
+                </li>
+                <li>Searches are not case-sensitive. For example, <i>apple</i>, <i>Apple</i>, and <i>APPLE</i> return the same results.</li>
+            </ul>
+
+            <h3>Search by CNF Food Group</h3>
+            <p>Use this search to find foods within one of the 23 CNF food groups.</p>
+            <ul>
+                <li>Select a food group from the list.</li>
+                <li>View all foods in that group.</li>
+            </ul>
+
+            <h3>Search by Food Code</h3>
+            <p>Use this search when you know the exact CNF food code.</p>
+            <ul>
+                <li>Enter a valid CNF food code.</li>
+                <li>The matching food will be displayed.</li>
+            </ul>
+
+            <div class="alert alert-info mrgn-tp-lg" role="alert">
+                <strong class="mrgn-bttm-md">Tip</strong>
+                <p>After your results are displayed, use the search box above the results table to quickly filter the list.</p>
+                <div class="mrgn-tp-lg">
+                    <strong>Example:</strong> <span>If your search returns many foods containing <i>apple</i>, type <i>raw</i> in the table search box to show only results containing that word.</span>
+                </div>
+            </div>`,
+
+            [SearchOpts.SearchByNutrient]: `
+            <p class="mrgn-tp-lg">Use this search to find foods based on a nutrient. You can combine Nutrient and CNF Food Group to narrow your results.</p>
+
+            <h3>Search by Nutrient</h3>
+            <p>Use this search to explore foods based on a selected nutrient:</p>
+            <ul>
+                <li>Enter a nutrient name or select one from the dropdown list.</li>
+                <li>Results display foods and their nutrient values for a pre-determined serving size.</li>
+            </ul>
+
+            <h3>Filter by CNF Food Group</h3>
+            <p>The CNF Food Group cannot be used on its own in this search. It is available only as a filter after selecting a nutrient.</p>
+            <ul>
+                <li>Select a food group to narrow the results.</li>
+                <li>View foods within the selected group.</li>
+            </ul>
+
+            <div class="alert alert-info mrgn-tp-lg" role="alert">
+                <strong class="mrgn-bttm-md">Tip</strong>
+                <p>After your results are displayed, use the search box above the results table to quickly filter the list.</p>
+                <div class="mrgn-tp-lg">
+                    <strong>Example 1:</strong> <span>When viewing foods for <i>Protein</i>, type <i>chicken</i> to display only foods containing that word.</span>
+                    <br>
+                    <strong>Example 2:</strong> <span>After selecting <i>Dairy and Egg Products</i>, type <i>cheese</i> to display only foods containing that word.</span>
+                </div>
+            </div>`,
+
+            [SearchOpts.CompareFoods]: `
+            <p class="mrgn-tp-lg">Use this search to compare the nutrient content of up to three foods.</p>
+            <ul>
+                <li>Enter a food name or select a food from the dropdown list.</li>
+                <li>Select up to three foods.</li>
+                <li>Run the comparison.</li>
+                <li>Review the nutrient values displayed side by side.</li>
+            </ul>
+            <p class="mrgn-tp-lg">Nutrient values are displayed per 100 g edible portion.</p>
+
+            <div class="alert alert-info mrgn-tp-lg" role="alert">
+                <strong class="mrgn-bttm-md">Tip</strong>
+                <p>After your results are displayed, use the search box above the results table to quickly filter the list.</p>
+            </div>`
+        },
 
         LegendTitle: "Legend",
         LegendText: `
@@ -598,25 +669,97 @@ const LangFR = {
 
         SiteName: "Fichier canadien sur les éléments nutritifs (FCÉN) 2026",
 
-        SearchByFood: "Recherche par Aliment",
-        SearchByNutrient: "Recherche par Éléments Nutritifs",
-        CompareByNutrient: REMPLACER_MOI,
-        CompareByFoods: REMPLACER_MOI,
+        SearchByFood: "Recherche par aliment",
+        SearchByNutrient: " Recherche par élément nutritif",
+        CompareByNutrient: "Comparer des éléments nutritifs",
+        CompareByFoods: "Comparer des aliments",
 
         InstructionsTitle: "Instructions",
-        InstructionsText: `
-        <p>
-            Vous pouvez effectuer une recherche d'aliments avec ou sans accents, en lettres majuscules ou minuscules et avec des mots clés complets ou partiels. 
-            Les mots clés seront recherchés peu importe leur ordre, partout dans la description. Un espace laissé entre les mots sera interprété comme l'opérateur « et ». 
-            Vous pouvez aussi utiliser les opérateur « ou » et « non » pour préciser la recherche. Les mots clés sont cherchés en tant que mots complets ou mots partiels, 
-            ce qui veut dire qu'une recherche au singulier trouvera les mots au pluriel. Exemples : a) pomme trouvera aussi pommes, pommette, b) pomme crue (ou pomme et crue) trouvera aussi 
-            tous les aliments qui contiennent ces deux mots dont pomme de terre crue, c) pomme ou crue trouvera les aliments qui contiennent l'un ou l'autre de ces mots ainsi que les deux mots présents dans le nom. 
-            Pomme non crue trouvera tous les aliments qui contiennent le mot pomme sauf ceux renfermant le mot crue.
-        </p>
+        InstructionsText: {
+            [SearchOpts.SearchByFood]: `
+            <p class="mrgn-tp-lg">
+                Vous pouvez combiner plusieurs critères pour préciser votre recherche. Par exemple, utilisez ensemble le Nom de l’aliment, le Groupe alimentaire du FCÉN et le Code de l’aliment.
+            </p>
 
-        <p class="mrgn-tp-lg">
-            Vous pouvez également effectuer une recherche par le code d'aliment du Fichier canadien sur les éléments nutritifs (FCÉN) de 4 chiffres.
-        </p>`,
+            <h3>Recherche par nom d’aliment</h3>
+            <p>Utilisez cette option si vous connaissez le nom complet ou une partie du nom d’un aliment.</p>
+            <ul>
+                <li>Entrez un ou plusieurs mots-clés.</li>
+                <li>
+                    La recherche tient compte des mots complets et des parties de mots.
+
+                    <ul>
+                        <li>Les formes singulières et plurielles peuvent être trouvées.</li>
+                        <li>Les aliments contenant le mot-clé peuvent également être trouvés. Par exemple, une recherche avec <i>poisson</i> peut aussi trouver <i>espadon-poisson</i> ou d’autres aliments contenant ce mot..</li>
+                    </ul>
+                </li>
+                <li>La recherche ne tient pas compte des majuscules et des minuscules. Par exemple, <i>pomme</i>, <i>Pomme</i> et <i>POMME</i> donnent les mêmes résultats.</li>
+            </ul>
+
+            <h3>Recherche par groupe d’aliments du FCÉN</h3>
+            <p>Utilisez cette option pour trouver des aliments appartenant à l’un des 23 groupes d’aliments  du FCÉN.</p>
+            <ul>
+                <li>Sélectionnez un groupe dans la liste.</li>
+                <li>Consultez les aliments qui appartiennent à ce groupe.</li>
+            </ul>
+
+            <h3>Recherche par code d’aliment</h3>
+            <p>Utilisez cette option si vous connaissez le code exact d’un aliment du FCÉN.</p>
+            <ul>
+                <li>Entrez un code d’aliment valide.</li>
+                <li>L’aliment correspondant s’affichera.</li>
+            </ul>
+
+            <div class="alert alert-info mrgn-tp-lg" role="alert">
+                <strong class="mrgn-bttm-md">Astuce</strong>
+                <p>Une fois les résultats affichés, utilisez la boîte de recherche située au-dessus du tableau des résultats pour filtrer rapidement la liste.</p>
+                <div class="mrgn-tp-lg">
+                    <strong>Exemple :</strong> <span>Si votre recherche retourne plusieurs aliments contenant le mot <i>pomme</i>, saisissez <i>crue</i> dans la boîte de recherche du tableau pour afficher uniquement les résultats contenant ce mot.</span>
+                </div>
+            </div>`,
+
+            [SearchOpts.SearchByNutrient]: `
+            <p class="mrgn-tp-lg">Utilisez cette option pour trouver des aliments en fonction d’un élément nutritif. Vous pouvez aussi utiliser le Groupe d’aliments du FCÉN pour préciser les résultats.</p>
+
+            <h3>Recherche par élément nutritif</h3>
+            <p>Use this search to explore foods based on a selected nutrient:</p>
+            <ul>
+                <li>Entrez le nom d’un élément nutritif ou sélectionnez-en un dans la liste déroulante.</li>
+                <li>Les résultats affichent les aliments et leur teneur en élément nutritif selon la portion établie.</li>
+            </ul>
+
+            <h3>Filtrer par groupe alimentaire du FCÉN</h3>
+            <p>Le Groupe d’aliments du FCÉN ne peut pas être utilisé seul dans cette recherche. Il sert uniquement à filtrer les résultats après la sélection d’un élément nutritif.</p>
+            <ul>
+                <li>Sélectionnez un groupe alimentaire pour réduire le nombre de résultats.</li>
+                <li>Consultez les aliments du groupe sélectionné.</li>
+            </ul>
+
+            <div class="alert alert-info mrgn-tp-lg" role="alert">
+                <strong class="mrgn-bttm-md">Astuce</strong>
+                <p>Une fois les résultats affichés, utilisez la boîte de recherche située au-dessus du tableau des résultats pour filtrer rapidement la liste.</p>
+                <div class="mrgn-tp-lg">
+                    <strong>Exemple 1 :</strong> <span>Lorsque vous consultez les aliments selon leur teneur en <i>protéines</i>, saisissez <i>poulet</i> pour afficher uniquement les aliments contenant ce mot.</span>
+                    <br>
+                    <strong>Exemple 2 :</strong> <span>Après avoir sélectionné le groupe <i>Produits laitiers et œufs</i>, saisissez <i>fromage</i> pour afficher uniquement les aliments contenant ce mot.</span>
+                </div>
+            </div>`,
+
+            [SearchOpts.CompareFoods]: `
+            <p class="mrgn-tp-lg">Utilisez cette option pour comparer la teneur en éléments nutritifs d’un maximum de trois aliments.</p>
+            <ul>
+                <li>Entrez le nom d’un aliment ou sélectionnez-en un dans la liste déroulante.</li>
+                <li>Sélectionnez jusqu’à trois aliments.</li>
+                <li>Lancez la comparaison.</li>
+                <li>Consultez les valeurs nutritives affichées côte à côte.</li>
+            </ul>
+            <p class="mrgn-tp-lg">Les valeurs nutritives sont présentées pour 100 g de portion comestible.</p>
+
+            <div class="alert alert-info mrgn-tp-lg" role="alert">
+                <strong class="mrgn-bttm-md">Tip</strong>
+                <p>Une fois les résultats affichés, utilisez la boîte de recherche située au-dessus du tableau des résultats pour filtrer rapidement la liste.</p>
+            </div>`
+        },
 
         LegendTitle: "Légende",
         LegendText: `<dl class="legendDescriptionList">
@@ -668,14 +811,14 @@ const LangFR = {
 
         BackToTop: "Haut de la page",
 
-        SearchCriteriaTitle: "Critères de Recherche",
-        SearchTableTitle: "Résultats de Recherche",
-        NutrientSearchTableTitle: "Résultats de Recherche - {{ nutrientName }}",
-        CompareSearchTableTitle: "Résultats de Recherche: La comparaison est présentée pour 100 g de portion comestible de l'aliment.",
+        SearchCriteriaTitle: "Critères de recherche",
+        SearchTableTitle: "Résultats de recherche",
+        NutrientSearchTableTitle: "Résultats de recherche - {{ nutrientName }}",
+        CompareSearchTableTitle: "Résultats de recherche : La comparaison est présentée pour 100 g de portion comestible de l'aliment.",
         FoodNameInputTitle: "Nom de l'Aliment",
         FoodAltNameInputTitle: REMPLACER_MOI,
-        FoodGroupInputTitle: "Groupe de l'Aliment FCÉN",
-        FoodCodeInputTitle: "Code de l'Aliment",
+        FoodGroupInputTitle: "Groupe de l’aliment FCÉN",
+        FoodCodeInputTitle: "Code de l’aliment",
         NutrientInputTitle: "Élément nutritif",
         MultiNutrientPlaceholder: "Rechercher et sélectionner les éléments nutritifs",
         MultiFoodsPlaceholder: "Rechercher et sélectionner les aliments",
@@ -689,42 +832,42 @@ const LangFR = {
         SelectAll: "Tout Sélectionner",
         DeselectAll: "Tout Désélectionner",
 
-        SearchTableInstructions: REMPLACER_MOI,
+        SearchTableInstructions: "Veuillez sélectionner (cliquer sur) l’aliment qui vous intéresse.",
 
         SearchTableCols: {
             [SearchOpts.SearchByFood]: {
-                [DataCols.FoodCode]: "Code de l'Aliment",
-                [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
-                [DataCols.FoodDescription]: "Nom de l'Aliment"
+                [DataCols.FoodCode]: "Code de l'aliment",
+                [DataCols.FoodGroupDescription]: "Groupe de l'aliment",
+                [DataCols.FoodDescription]: "Nom de l'aliment"
             },
             [SearchOpts.SearchByNutrient]: {
-                [DataCols.FoodCode]: "Code de l'Aliment",
-                [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
-                [DataCols.FoodDescription]: "Nom de l'Aliment",
+                [DataCols.FoodCode]: "Code de l'aliment",
+                [DataCols.FoodGroupDescription]: "Groupe de l'aliment",
+                [DataCols.FoodDescription]: "Nom de l'aliment",
                 [DataCols.MeasureDescription]: "Portion",
                 [TableCols.WeightView]: "{{ nutrient }} {{ unit }} (par 100 g)",
                 [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }} (par portion)"
             },
             [SearchOpts.CompareNutrients]: {
-                [DataCols.FoodCode]: "Code de l'Aliment",
-                [DataCols.FoodGroupDescription]: "Groupe de l'Aliment",
-                [DataCols.FoodDescription]: "Nom de l'Aliment"
+                [DataCols.FoodCode]: "Code de l'aliment",
+                [DataCols.FoodGroupDescription]: "Groupe de l'aliment",
+                [DataCols.FoodDescription]: "Nom de l'aliment"
             },
             [SearchOpts.CompareFoods]: {
                 [DataCols.NutrientNameWithUnit]: "Nom de l'élément nutritif",
                 [DataCols.NutrientGroup]: "Groupe de l'élément nutritif"
             },
 
-            DefaultNutrientAmount: "Valeur Nutritive",
+            DefaultNutrientAmount: "Valeur nutritive",
             DefaultNutrientUnit: "g",
             FoodName: "{{ foodCode }} - {{ foodName }}"
         },
 
         FoodNutrientStats: {
-            SubTitle: `Code de l'Aliment: {{ foodCode }}`,
+            SubTitle: `Code de l'aliment: {{ foodCode }}`,
             SourceSubTitle: `Source: {{ foodSource }}`,
-            ServingTitle: `Taille(s) de Portion Disponible(s)`,
-            ServingRefuseTitle: `Portion Non Comestible`,
+            ServingTitle: `Taille(s) de portion disponible(s)`,
+            ServingRefuseTitle: `Portion non comestible`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
             ServingRefuseListItem: `{{ measureName }} {{ convertedMeasure }} %`,
             NutrientTableTitle: `Liste des valeurs nutritives pour {{ foodCode }} - {{ foodName }}`,
@@ -738,17 +881,17 @@ const LangFR = {
                 [DataCols.NutrientDataSrc]: `Source des données`
             },
 
-            ShowUnits: "Afficher les Unités ",
-            ShowExtraDetails: "Afficher Plus de Détails"
+            ShowUnits: "Afficher les unités ",
+            ShowExtraDetails: "Afficher plus de détails"
         },
 
         CSVDownload: {
             DownloadSearchButtonTitle: "Télécharger les données filtrées",
             DownloadNutrientButtonTitle: "Télécharger les données affichées",
             DownloadAllNutrientButtonTitle: "Télécharger toutes les données",
-            SearchFileName: `Profil de Recherche`,
-            AllNutrientFileName: `Profil Nutritionnel - {{ foodName }}`,
-            NutrientFileName: `Profil Nutritionnel - {{ foodName }}`,
+            SearchFileName: `Profil de recherche`,
+            AllNutrientFileName: `Profil nutritionnel - {{ foodName }}`,
+            NutrientFileName: `Profil nutritionnel - {{ foodName }}`,
             Date: `Date : {{ date }}`
         },
 

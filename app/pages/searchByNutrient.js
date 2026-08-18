@@ -36,6 +36,8 @@ export class SearchByNutrientPage extends BaseSearchPage {
 
         elements.searchButton.attr("value", Translation.translate("FoodSearchButton"));
         elements.resetSearchButton.html(Translation.translate("FoodSearchResetButton"));
+
+        d3.select("#about-tool-details div p").html(Translation.translate(`InstructionsText.${this.searchOpt}`));
     }
 
     updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {

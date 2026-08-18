@@ -312,7 +312,6 @@ export class BaseSearchPage extends BasePage {
         this.htmlElements.nutrientStatsDownloadBtn.html(Translation.translate("CSVDownload.DownloadNutrientButtonTitle"));
 
         d3.select("#about-tool-details summary h2").html(Translation.translate("InstructionsTitle"));
-        d3.select("#about-tool-details div p").html(Translation.translate("InstructionsText"));
 
         d3.selectAll(".toTopBtnText").each((data, ind, nodes) => {
             const textNode = d3.select(nodes[ind]);
@@ -697,7 +696,6 @@ export class BaseComparePage extends BasePage {
         elements.resetSearchButton.html(Translation.translate("FoodSearchResetButton"));
 
         d3.select("#about-tool-details summary h2").html(Translation.translate("InstructionsTitle"));
-        d3.select("#about-tool-details div p").html(Translation.translate("InstructionsText"));
 
         d3.selectAll(".toTopBtnText").each((data, ind, nodes) => {
             const textNode = d3.select(nodes[ind]);
