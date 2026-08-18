@@ -404,6 +404,8 @@ const LangEN = {
             noResultsText: "No results"
         },
 
+        dataTableAllOptions: "all",
+
         // reference: https://datatables.net/plug-ins/i18n/English.html
         // note:
         //  For some reason the CDN link provided in the documentation causes
@@ -900,6 +902,8 @@ const LangFR = {
             maxItemText: "Seulement {{ maxItemCount }} éléments peuvent être sélectionnés",
             noResultsText: "Aucun résultats"
         },
+
+        dataTableAllOptions: "toutes",
 
         // references: https://datatables.net/plug-ins/i18n/French.html
         // note:

@@ -29,7 +29,7 @@ export class BasePage {
             scrollX: true,
             scrollY: '400px',
             pageLength: 100,
-            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, Translation.translate("dataTableAllOptions")]]
         }, dataTableAtts]);
 
         if (DataTable.isDataTable(selector)) {
