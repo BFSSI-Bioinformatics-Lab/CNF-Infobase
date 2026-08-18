@@ -135,6 +135,7 @@ export class CompareByFood extends BaseComparePage {
                                                             placeholder: Translation.translate("MultiFoodsPlaceholder"),
                                                             noResultsText: Translation.translate("multiselectAutoComplete.noResultsText"),
                                                             searchFunc: (searchTerm, selections) => this.model.filterFoodNameSelections(searchTerm, selections),
+                                                            sort: false,
                                                             selectAtts: {
                                                                 searchResultLimit: foodNameSelections.length,
                                                                 
