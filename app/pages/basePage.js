@@ -176,11 +176,12 @@ export class BasePage {
         let choicesOpts = {
             removeItemButton: true,
             searchEnabled: true,
+            searchChoices: true,
             placeholder: hasPlaceholder,
             placeholderValue: hasPlaceholder ? placeholder : "",
             itemSelectText: "",
-            searchChoices: true,
-            shouldSort: sort
+            shouldSort: sort,
+            allowHTML: true
         };
 
         if (maxItemCount !== undefined) {
@@ -188,14 +189,13 @@ export class BasePage {
         }
 
         if (maxItemText !== undefined) {
-            choicesOpts.maxItemText = maxItemText
+            choicesOpts.maxItemText = maxItemText;
         }
 
         if (noResultsText !== undefined) {
             choicesOpts.noResultsText = noResultsText;
         }
 
-        choicesOpts.allowHTML = true;
         choicesOpts = DictTools.combine([choicesOpts, selectAtts]);
         const result = new Choices(element.node(), choicesOpts);
 
@@ -210,33 +210,59 @@ export class BasePage {
 
         if (searchFunc !== null) {
             result._searchChoices = function(searchTerm) {
-                const activeValues = result.getValue(true); 
                 const cleanTerm = (searchTerm || '').toLowerCase().trim();
 
                 if (cleanTerm === '') {
-                    result.clearChoices();
-                    result.setChoices(selections, 'value', 'text', true);
-                    if (activeValues && activeValues.length > 0) {
-                        result.setChoiceByValue(activeValues);
-                    }
-                    return;
+                    result._isSearching = false;
+                    result._currentValue = '';
+
+                    result._store.dispatch({
+                        type: 'ACTIVATE_CHOICES',
+                        active: true
+                    });
+
+                    return selections.length;
                 }
 
                 const filteredResults = searchFunc(searchTerm, selections);
+                const results = filteredResults
+                    .map((filteredChoice, index) => {
+                        const choice = result._store.choices.find(
+                            existingChoice =>
+                                result.config.valueComparer(
+                                    existingChoice.value,
+                                    filteredChoice.value
+                                )
+                        );
 
-                result.clearChoices();
-                result.setChoices(filteredResults, 'value', 'text', true);
+                        if (!choice) {
+                            return null;
+                        }
 
-                if (activeValues && activeValues.length > 0) {
-                    result.setChoiceByValue(activeValues);
-                }
+                        return {
+                            item: choice,
+                            score: index
+                        };
+                    })
+                    .filter(resultItem => resultItem !== null);
+
+                result._isSearching = true;
+                result._currentValue = cleanTerm;
+                result._highlightPosition = 0;
+
+                result._store.dispatch({
+                    type: 'FILTER_CHOICES',
+                    results
+                });
+
+                return results.length;
             };
         }
 
         element.on('change', function () {
             if (onChange !== undefined) {
                 const currentSelections = result.getValue(true);
-                onChange(currentSelection);
+                onChange(currentSelections);
             }
         });
 
