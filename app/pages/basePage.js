@@ -290,10 +290,17 @@ export class BaseSearchPage extends BasePage {
 
             nutrientStatsDownloadBtn: d3.select("#nutrientCSVDownload"),
             nutrientStatCSVDownloadAllBtn: d3.select("#allNutrientCSVDownload"),
-            nutrientTableTitle: d3.select("#nutrientTableTitle")
+            nutrientTableTitle: d3.select("#nutrientTableTitle"),
+            
+            legendAccordion: d3.select("#legend-accordion"),
+            instructionsAccordion: d3.select("#about-tool-details")
         };
 
-        elements.refuseList = elements.refuseListContainer.select("ul")
+        elements.refuseList = elements.refuseListContainer.select("ul");
+        elements.instructionsText = elements.instructionsAccordion.select("div p");
+
+        elements.legendAccordion.attr("open", null)
+        elements.instructionsAccordion.attr("open", null)
 
         this.htmlElements = elements;
     }
@@ -682,8 +689,16 @@ export class BaseComparePage extends BasePage {
             resetSearchButton: d3.select("#resetButton"),
             searchTable: $(this.htmlSelectors.foodSearchTable),
             searchCSVDownloadBtn: d3.select("#searchCSVDownload"),
-            searchTableTitle: d3.select("#searchResultTitle")
+            searchTableTitle: d3.select("#searchResultTitle"),
+
+            legendAccordion: d3.select("#legend-accordion"),
+            instructionsAccordion: d3.select("#about-tool-details")
         };
+
+        elements.instructionsText = elements.instructionsAccordion.select("div p");
+
+        elements.legendAccordion.attr("open", null)
+        elements.instructionsAccordion.attr("open", null)
 
         this.htmlElements = elements;
     }
