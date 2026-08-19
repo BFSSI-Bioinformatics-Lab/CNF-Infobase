@@ -25,7 +25,7 @@ export class CompareByFood extends BaseComparePage {
         elements.multiFoodContainer.select("label").html(Translation.translate("MultiFoodInputTitle"));
         elements.searchTableTitle.html(Translation.translate("CompareSearchTableTitle"));
 
-        d3.select("#about-tool-details div p").html(Translation.translate(`InstructionsText.${this.searchOpt}`));
+        elements.instructionsText.html(Translation.translate(`InstructionsText.${this.searchOpt}`));
     }
 
     setupListeners() {
