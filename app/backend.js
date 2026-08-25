@@ -418,14 +418,17 @@ export class Model {
         return [...result].map((ind) => table.data[ind]);
     }
 
-    findAllExactKeywords(tokens, ahoCorasickDFA) {
+    // findAllKeywords(tokens, ahoCorasick): Checks if 'tokens' contains all the keywords from 'ahoCorasickDFA'
+    //  and retrieves the starting index of the first keyword found. Otherwise will return -1 if not all the
+    //  keywords are found in 'tokens'
+    findAllKeywords(tokens, ahoCorasickDFA) {
         let foundKeywords = {};
         let uniqueCount = 0;
         let foundKeywordData = null;
         let tokenInd = 0;
 
         for (const token of tokens) {
-            foundKeywordData = TextTools.findExactKeyword(token, ahoCorasickDFA);
+            foundKeywordData = TextTools.findKeyword(token, ahoCorasickDFA);
             if (foundKeywordData === null) {
                 tokenInd += token.length;
                 continue;
@@ -433,7 +436,7 @@ export class Model {
 
             const keyword = foundKeywordData.keyword;
             if (foundKeywords[keyword] === undefined) {
-                foundKeywords[keyword] = tokenInd;
+                foundKeywords[keyword] = tokenInd + foundKeywordData.start;
                 uniqueCount++;
             }
 
@@ -455,7 +458,6 @@ export class Model {
         let closeMatchKeywordsCount = 0;
         let uniqueCount = 0;
         let foundKeywordData = null;
-        let keyword = null;
         let tokenInd = 0;
 
         for (const token of tokens) {
@@ -498,6 +500,7 @@ export class Model {
         return {exactMatches: foundKeywords, prefixedMatches: closeMatchKeywords, exactMatchCount: foundKeywordsCount, prefixedMatchCount: closeMatchKeywordsCount};
     }
 
+    // findCloseFood(foodrow, foodNameAhoCorasickDFA): Finds food names that closely match to the keywords in 'foodnameAhocorasickDFA'
     findCloseFood(foodRow, foodNameAhoCorasickDFA) {
         let matchData = this.findCloseMatchKeywords(foodRow[Translation.getDataCol(TableCols.FoodDescriptionTokens)], foodNameAhoCorasickDFA);
         if ($.isEmptyObject(matchData.exactMatches) && $.isEmptyObject(matchData.prefixedMatches)) {
@@ -507,11 +510,12 @@ export class Model {
         return matchData;
     }
 
-    findExactFood(foodRow, foodNameAhoCorasickDFA) {
-        let foundFoodNameKeywordInd = this.findAllExactKeywords(foodRow[Translation.getDataCol(TableCols.FoodDescriptionTokens)], foodNameAhoCorasickDFA);
+    // findContainsFood(foodRow, foodNameAhoCorasickDFA): Finds the food names that all contains the keywords in 'foodnameAhoCorasickDFA'
+    findContainsFood(foodRow, foodNameAhoCorasickDFA) {
+        let foundFoodNameKeywordInd = this.findAllKeywords(foodRow[Translation.getDataCol(TableCols.FoodDescriptionTokens)], foodNameAhoCorasickDFA);
 
         if (foundFoodNameKeywordInd == -1) {
-            foundFoodNameKeywordInd = this.findAllExactKeywords(foodRow[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)], foodNameAhoCorasickDFA);
+            foundFoodNameKeywordInd = this.findAllKeywords(foodRow[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)], foodNameAhoCorasickDFA);
         }
 
         return foundFoodNameKeywordInd;
@@ -606,7 +610,7 @@ export class Model {
             row[TableCols.FoodAltNameOrder] = Infinity;
 
             if (foodName != "") {
-                let foundFoodNameKeywordInd = this.findExactFood(row, foodNameAhoCorasickDFA);
+                let foundFoodNameKeywordInd = this.findContainsFood(row, foodNameAhoCorasickDFA);
                 if (foundFoodNameKeywordInd == -1) return false;
                 foodNameIndex = foundFoodNameKeywordInd;
             }
