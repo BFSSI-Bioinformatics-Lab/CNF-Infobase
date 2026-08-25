@@ -451,6 +451,8 @@ export class Model {
         return -1;
     }
 
+    // findCloseMatchKeywords(tokens, ahoCorasick): Checks if 'tokens' has keywords that prefix matches any of the keywords from 'ahoCorasickDFA'
+    // and keeps track of how many keywords in 'tokens' are exact matches/prefix matches 
     findCloseMatchKeywords(tokens, ahoCorasickDFA) {
         let foundKeywords = {};
         let closeMatchKeywords = {};
