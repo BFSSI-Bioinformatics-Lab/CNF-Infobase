@@ -518,7 +518,10 @@ export class Model {
     }
 
     filterFoodNameSelections(foodName, foodNameSelections) {
-        let foodNameKeywords = Array.from(new Set(foodName.trim().split(/\s+/)));
+        let foodNameKeywords = new Set(this.tokenizeFoodDescription(foodName));
+        foodNameKeywords.delete(""); // The AhoCorasick library we are using does not accept the empty strings
+
+        foodNameKeywords = Array.from(foodNameKeywords);
         foodNameKeywords = foodNameKeywords.map((keyword) => keyword.toLowerCase());
 
         let foodNameAhoCorasickDFA = TextTools.buildAhoCorasickDFA(foodNameKeywords);
