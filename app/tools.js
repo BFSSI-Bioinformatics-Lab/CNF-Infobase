@@ -232,6 +232,43 @@ export class TextTools {
         return result;
     }
 
+    static findKeyword(txt, ahoCorasickDFA) {
+        const gotoFn = ahoCorasickDFA.gotoFn;
+        const failure = ahoCorasickDFA.failure;
+        const output = ahoCorasickDFA.output;
+        let currentState = 0;
+
+        for (let i = 0; i < txt.length; i++) {
+            const char = txt[i];
+            
+            // Rollback through failure states safely if the character isn't a valid transition
+            while (currentState !== 0 && !(gotoFn[currentState] && char in gotoFn[currentState])) {
+                currentState = failure[currentState];
+            }
+            
+            // Advance to the next numerical state position
+            if (gotoFn[currentState] && char in gotoFn[currentState]) {
+                currentState = gotoFn[currentState][char];
+            } else {
+                currentState = 0; // Fall back to root state safely if nothing matches
+            }
+            
+            // Extract matching words immediately from the active numerical state
+            const matches = output[currentState];
+            if (matches && matches.length > 0) {
+                for (let j = 0; j < matches.length; j++) {
+                    const keyword = matches[j];
+                    const startIndex = i - keyword.length + 1;
+                    const endIndex = i + 1;
+
+                    return {keyword, start: startIndex, end: endIndex};
+                }
+            }
+        }
+
+        return null;
+    }
+
     static findPrefixedKeyword(txt, ahoCorasickDFA) {
         const foundKeywords = new Set();
         let prefixedMatch = null;
