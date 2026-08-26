@@ -42,7 +42,7 @@ export class CompareByNutrient extends BaseComparePage {
         });
 
         elements.searchCSVDownloadBtn.on("click", () => {
-            this.model.downloadSearchCSV();
+            this.model.downloadSearchCSV(this.searchOpt);
         });
     }
 

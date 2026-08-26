@@ -391,7 +391,7 @@ export class BaseSearchPage extends BasePage {
         });
 
         elements.searchCSVDownloadBtn.on("click", () => {
-            this.model.downloadSearchCSV();
+            this.model.downloadSearchCSV(this.searchOpt);
         });
     }
 
@@ -776,7 +776,7 @@ export class BaseComparePage extends BasePage {
         });
 
         elements.searchCSVDownloadBtn.on("click", () => {
-            this.model.downloadSearchCSV();
+            this.model.downloadSearchCSV(this.searchOpt);
         });
     }
 

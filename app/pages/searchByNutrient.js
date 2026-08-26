@@ -66,18 +66,24 @@ export class SearchByNutrientPage extends BaseSearchPage {
             tableColInfo.push({title: title, data: Translation.getDataCol(tableAtt)});
         }
 
+        const nutrientAmountColName = Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.NutrientAmountView}`, 
+                                                            {nutrient: nutrientName, 
+                                                             unit: nutrientData[DataCols.NutrientUnitShort]});
+        const nutrientWeightColName = Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.WeightView}`, 
+                                                            {nutrient: nutrientName,
+                                                             unit: nutrientData[DataCols.NutrientUnitShort]});
+
+        const headerRow = this.model.searchResultData[2];
+        headerRow.splice(-2, 2, nutrientAmountColName, nutrientWeightColName);
+
         const dataTable = this.updateTable({
             selector: this.htmlSelectors.foodSearchTable, columnInfo: tableColInfo, 
             data: tableData.data, 
             searchTxt: (searchTxt !== null) ? searchTxt : undefined, 
             order: (resetSort) ? [] : null,
             columnNameUpdates: {
-                [NutrientSearchTableCols.length - 2]: Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.NutrientAmountView}`, 
-                {nutrient: nutrientName, 
-                 unit: nutrientData[DataCols.NutrientUnitShort]}),
-                [NutrientSearchTableCols.length - 1]: Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.WeightView}`, 
-                {nutrient: nutrientName, 
-                 unit: nutrientData[DataCols.NutrientUnitShort]})
+                [NutrientSearchTableCols.length - 2]: nutrientAmountColName,
+                [NutrientSearchTableCols.length - 1]: nutrientWeightColName
             }
         });
         return dataTable;
