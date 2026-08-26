@@ -49,8 +49,23 @@ export class BasePage {
         if (columnNameUpdates !== null) {
             dataTable.columns().every(function(index) {
                 const newName = columnNameUpdates[index];
+                
                 if (newName !== undefined) {
-                    $(this.header()).text(newName);
+                    const header = $(this.header());
+                    const title = header.find('.dt-column-title');
+
+                    if (title.length) {
+                        title.text(newName);
+                    } else {
+                        // Fallback if the title isn't wrapped by DataTables
+                        header.contents()
+                            .filter(function() {
+                                return this.nodeType === Node.TEXT_NODE;
+                            })
+                            .remove();
+
+                        header.prepend(document.createTextNode(newName));
+                    }
                 }
             });
         }
