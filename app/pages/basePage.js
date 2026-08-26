@@ -489,8 +489,7 @@ export class BaseSearchPage extends BasePage {
         }
 
         const measureTableColInfo = [];
-        for (let i = 0; i < measureConvLen; ++i) {
-            const measureConv = measureWeightConv[i];
+        for (const measureConv of measureWeightConv) {
             const measureTypeCode = measureConv[DataCols.MeasureTypeCode];
 
             if (measureTypeCode == MeasureTypeCodes.Refuse) continue;
@@ -502,8 +501,9 @@ export class BaseSearchPage extends BasePage {
 
             const measureCode = measureConv[DataCols.MeasureCode];
             const measureVisible = visibleMeasureCodes.has(measureCode);
+            const measureConvId = measureConv[TableCols.MeasureWeightConvId];
 
-            const dataCol = Model.getConvertedNutrientColName(i);
+            const dataCol = Model.getConvertedNutrientColName(measureConvId);
             measureTableColInfo.push({title: measureColTitle, data: dataCol, name: dataCol, visible: measureVisible, orderable: false});
         }
 
@@ -577,7 +577,7 @@ export class BaseSearchPage extends BasePage {
     }
 
     // addServingCheckbox(measureConv, measureConvInd, isChecked): Adds the checkbox for the serving portions
-    addServingCheckbox(measureConv, measureConvInd, isChecked) {
+    addServingCheckbox(measureConv, measureConvId, isChecked) {
         const measureCode = measureConv[TableCols.MeasureCode];
         const checkboxId = `${this.htmlNames.servingSizeOpt}_${measureConv[TableCols.FoodCode]}_${measureConv[TableCols.MeasureTypeCode]}_${measureCode}`;
         const checkboxText = Translation.translate("FoodNutrientStats.ServingSizeOption", 
@@ -586,7 +586,7 @@ export class BaseSearchPage extends BasePage {
 
         this.addCheckbox({checkboxLst: this.htmlElements.servingSizeCheckList, 
                           checkLstName: this.htmlNames.servingSizeInput, 
-                          checkboxVal: [{measureConvInd, measureConv}], 
+                          checkboxVal: [{measureConvId: measureConvId, measureConv}], 
                           checkboxId, 
                           checkboxText, 
                           isChecked});
@@ -635,14 +635,12 @@ export class BaseSearchPage extends BasePage {
         this.htmlElements.refuseList.selectAll("*").remove();
 
         const measureWeightConv = stats.measureWeightConv;
-        const measureConvLen = measureWeightConv.length;
         let hasRefuse = false;
 
         const measureCodesSelected = this.model.nutrientStatsInputs[this.searchOpt][NutrientStatAtts.MeasureCodesSelected];
 
         // add the checkboxes for the serving sizes
-        for (let i = 0; i < measureConvLen; ++i) {
-            const measureConv = measureWeightConv[i];
+        for (const measureConv of measureWeightConv) {
             if (measureConv[DataCols.MeasureTypeCode] == MeasureTypeCodes.Refuse) {
                 this.addRefuseListItem(measureConv);
                 
@@ -651,8 +649,10 @@ export class BaseSearchPage extends BasePage {
                 }
             } else {
                 const measureCode = measureConv[TableCols.MeasureCode];
+                const measureConvId = measureConv[TableCols.MeasureWeightConvId];
+
                 const isChecked = measureCodesSelected.has(measureCode);
-                this.addServingCheckbox(measureConv, i, isChecked);
+                this.addServingCheckbox(measureConv, measureConvId, isChecked);
             }
         }
 
@@ -663,7 +663,7 @@ export class BaseSearchPage extends BasePage {
 
         // when the user selects some serving size checkbox
         this.htmlElements.servingSizeCheckList.selectAll("input[type=checkbox]").on("change", function(measureConvData) {
-            const measureConvInd = measureConvData.measureConvInd;
+            const measureConvId = measureConvData.measureConvId;
             const measureConv = measureConvData.measureConv;
             const measureCode = measureConv[TableCols.MeasureCode];
 
@@ -681,7 +681,7 @@ export class BaseSearchPage extends BasePage {
 
             let showExtraDetails = self.model.showFoodNutrientsExtraColsFromSearchOpt(self.searchOpt);
 
-            self.updateNutrientTableConvCols(dataTable, measureConvInd, this.checked);
+            self.updateNutrientTableConvCols(dataTable, measureConvId, this.checked);
             self.updateNutrientTableExtraCols(dataTable, showExtraDetails);
 
             if (dataTable.rowGroup) {

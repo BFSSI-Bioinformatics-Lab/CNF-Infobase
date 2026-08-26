@@ -901,8 +901,8 @@ export class Model {
         return result;
     }
 
-    static getConvertedNutrientColName(ind) {
-        return `${TableCols.ConvertedNutrientAmount}${ind}`;
+    static getConvertedNutrientColName(convertedNutrientId) {
+        return `${TableCols.ConvertedNutrientAmount}${convertedNutrientId}`;
     }
 
     static getCompareNutrientAmtColName(nutrientCode) {
@@ -918,7 +918,8 @@ export class Model {
         const measureWeightConvLen = measureWeightConv.length;
         for (let i = 0; i < measureWeightConvLen; ++i) {
             const row = measureWeightConv[i];
-            tableColNames[row[TableCols.MeasureWeightConvId]] = Model.getConvertedNutrientColName(i);
+            const measureWeightConvId = row[TableCols.MeasureWeightConvId];
+            tableColNames[measureWeightConvId] = Model.getConvertedNutrientColName(measureWeightConvId);
         }
 
         for (const row of nutrientTable) {
@@ -933,10 +934,10 @@ export class Model {
         return nutrientTable;
     }
 
-    formatNutrientTable(nutrientTable, measureWeightConvLen) {
+    formatNutrientTable(nutrientTable, measureWeightConv) {
         const convColNames = [];
-        for (let i = 0; i < measureWeightConvLen; ++i) {
-            convColNames.push(Model.getConvertedNutrientColName(i));
+        for (const row of measureWeightConv) {
+            convColNames.push(Model.getConvertedNutrientColName(row[TableCols.MeasureWeightConvId]));
         }
 
         for (const row of nutrientTable) {
@@ -1115,13 +1116,12 @@ export class Model {
         const measureColDisplay = [];
         let defaultMeasureTableAtt = null;
         let defaultMeasureColDisplay = null;
-        const measureConvLen = measureWeightConv.length;
 
-        for (let i = 0; i < measureConvLen; ++i) {
-            const measureConv = measureWeightConv[i];
+        for (const measureConv of measureWeightConv) {
             if (measureConv[DataCols.MeasureTypeCode] == MeasureTypeCodes.Refuse) continue;
-
-            const dataCol = Model.getConvertedNutrientColName(i);
+            
+            const measureConvId = measureConv[TableCols.MeasureWeightConvId];
+            const dataCol = Model.getConvertedNutrientColName(measureConvId);
             const currentMeasureDisplay = Translation.translate("FoodNutrientStats.ConvertedMeasureCol", {
                 measureName: Translation.translateNum(measureConv[Translation.getDataCol(TableCols.MeasureDescription)]), 
                 convertedMeasure: Translation.translateNum(measureConv[TableCols.MeasureWeight], undefined)
@@ -1229,7 +1229,7 @@ export class Model {
         
         // format the data
         this.webSearchedNutrientTable = this.convertNutrientAmounts(nutrients, measureWeightConv);
-        this.webSearchedNutrientTable = this.formatNutrientTable(this.webSearchedNutrientTable, measureWeightConv.length);
+        this.webSearchedNutrientTable = this.formatNutrientTable(this.webSearchedNutrientTable, measureWeightConv);
 
         this.csvSearchedAllNutrientTable = this.getNutrientCSVDownload(food, this.webSearchedNutrientTable, measureWeightConv);
 
