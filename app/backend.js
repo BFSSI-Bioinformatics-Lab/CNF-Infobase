@@ -743,7 +743,7 @@ export class Model {
         result = TableTools.leftJoinById(result, measureWeightConv, DataCols.FoodCode);
 
         this.formatNutrientSearchTable(result);
-        this.searchResultData = this.getSearchCSVDownload(searchOpt, {data: result});
+        this.searchResultData = this.getSearchCSVDownload(searchOpt, {data: result}, false);
 
         const nutrientData = this.getNutrientSearchNutrientData(nutrientCode);
         return {data: result, nutrientData};
@@ -1030,7 +1030,7 @@ export class Model {
         return measureWeightConv;
     }
 
-    getSearchCSVDownload(searchOpt, searchTable) {
+    getSearchCSVDownload(searchOpt, searchTable, toStr = true) {
         let translations = Translation.translate(`SearchTableCols`,{ returnObjects: true });
         translations = translations[searchOpt];
         if (translations === undefined) return null;
@@ -1067,11 +1067,22 @@ export class Model {
             }
         }
 
-        const headerRow = [];
-        let result = [headerRow];
+        const tableAttsLen = tableAtts.length;
+        let result = [];
+
+        // header of the CSV
+        for (let i = 0; i < 2; ++i) {
+            result.push(Array(tableAttsLen).fill(null));
+        }
+
+        result[0][0] = Translation.translate("SiteName");
+
+        // table heading
+        const tableHeading = [];
+        result.push(tableHeading);
 
         for (const display of tableColDisplay) {
-            headerRow.push(display);
+            tableHeading.push(display);
         }
 
         const tableData = searchTable.data;
@@ -1091,7 +1102,21 @@ export class Model {
             result.push(currentRow);
         }
 
-        result = TableTools.createCSVContent(result);
+        // footer of the CSV
+        const footer = [];
+        for (let i = 0; i < 2; ++i) {
+            footer.push(Array(tableAttsLen).fill(null));
+        }
+
+        const today = new Date().toLocaleDateString('en-CA');
+        footer[1][0] = Translation.translate("CSVDownload.Date", {date: today});
+
+        result.push(...footer);
+
+        if (toStr) {
+            result = TableTools.createCSVContent(result);
+        }
+
         return result;
     }
 
@@ -1285,7 +1310,11 @@ export class Model {
     }
 
     // downloadSearchCSV(): Downloads the CSV for the search table
-    downloadSearchCSV() {
+    downloadSearchCSV(searchOpt) {
+        if (searchOpt == SearchOpts.SearchByNutrient) {
+            this.searchResultData = TableTools.createCSVContent(this.searchResultData);
+        }
+
         const csvFileName = Translation.translate("CSVDownload.SearchFileName");
         TableTools.downloadCSV({csvContent: this.searchResultData, fileName: csvFileName});
     }
