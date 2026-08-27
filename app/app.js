@@ -17,13 +17,23 @@ class App {
             [SearchOpts.CompareNutrients]: new CompareByNutrient(model, this),
             [SearchOpts.CompareFoods]: new CompareByFood(model, this)
         }
+
+        this.htmlElements = {};
     }
 
     // init(page): Initializes the entire app
     async init(page = undefined) {
+        this.updateHTMLElements();
         this.updateStaticText();
         this.setupListeners();
         this.loadSearchPage(page);
+    }
+
+    updateHTMLElements() {
+        const elements = this.htmlElements;
+
+        elements.legendAccordion = d3.select("#legend-accordion");
+        elements.instructionsAccordion = d3.select("#about-tool-details");
     }
 
     // updateStaticText: Updates text for static elements when the main page loads
@@ -34,11 +44,23 @@ class App {
         d3.select("#compareFoodsTab").html(Translation.translate("CompareByFoods"));
 
         d3.select("#legendTitle").html(Translation.translate("LegendTitle"));
-        d3.select("#legendContent").html(Translation.translate("LegendText"));
+        d3.select("#legendContent p").html(Translation.translate("LegendText"));
+
+        d3.select("#closeInstructionsText").html(Translation.translate("CloseInstructions"));
+        d3.select("#closeLegendText").html(Translation.translate("CloseLegend"));
     }
 
     setupListeners() {
         this.setupSearchTab();
+        const elements = this.htmlElements;
+
+        d3.select("#closeInstructions").on("click", () => {
+            elements.instructionsAccordion.attr("open", null);
+        });
+
+        d3.select("#closeLegend").on("click", () => {
+            elements.legendAccordion.attr("open", null);
+        });
     }
 
     setupSearchTab() {
