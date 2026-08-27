@@ -698,8 +698,8 @@ const LangFR = {
                 <li>La recherche ne tient pas compte des majuscules et des minuscules. Par exemple, <i>pomme</i>, <i>Pomme</i> et <i>POMME</i> donnent les mêmes résultats.</li>
             </ul>
 
-            <h3>Recherche par groupe d’aliments du FCÉN</h3>
-            <p>Utilisez cette option pour trouver des aliments appartenant à l’un des 23 groupes d’aliments  du FCÉN.</p>
+            <h3>Recherche par Groupe d’aliments du FCÉN</h3>
+            <p>Utilisez cette option pour trouver des aliments appartenant à l’un des 23 groupes d’aliments du FCÉN.</p>
             <ul>
                 <li>Sélectionnez un groupe dans la liste.</li>
                 <li>Consultez les aliments qui appartiennent à ce groupe.</li>
@@ -724,13 +724,13 @@ const LangFR = {
             <p class="mrgn-tp-lg">Utilisez cette option pour trouver des aliments en fonction d’un élément nutritif. Vous pouvez aussi utiliser le Groupe d’aliments du FCÉN pour préciser les résultats.</p>
 
             <h3>Recherche par élément nutritif</h3>
-            <p>Use this search to explore foods based on a selected nutrient:</p>
+            <p>Utilisez cette recherche pour découvrir des aliments en fonction d’un nutriment de votre choix :</p>
             <ul>
                 <li>Entrez le nom d’un élément nutritif ou sélectionnez-en un dans la liste déroulante.</li>
                 <li>Les résultats affichent les aliments et leur teneur en élément nutritif selon la portion établie.</li>
             </ul>
 
-            <h3>Filtrer par groupe alimentaire du FCÉN</h3>
+            <h3>Filtrer par groupe d’aliments du FCÉN</h3>
             <p>Le Groupe d’aliments du FCÉN ne peut pas être utilisé seul dans cette recherche. Il sert uniquement à filtrer les résultats après la sélection d’un élément nutritif.</p>
             <ul>
                 <li>Sélectionnez un groupe alimentaire pour réduire le nombre de résultats.</li>
@@ -817,9 +817,9 @@ const LangFR = {
         SearchTableTitle: "Résultats de recherche",
         NutrientSearchTableTitle: "Résultats de recherche - {{ nutrientName }}",
         CompareSearchTableTitle: "Résultats de recherche : La comparaison est présentée pour 100 g de portion comestible de l'aliment.",
-        FoodNameInputTitle: "Nom de l'Aliment",
+        FoodNameInputTitle: "Nom de l'aliment",
         FoodAltNameInputTitle: REMPLACER_MOI,
-        FoodGroupInputTitle: "Groupe de l’aliment FCÉN",
+        FoodGroupInputTitle: "Groupe d’aliments du FCÉN",
         FoodCodeInputTitle: "Code de l’aliment",
         NutrientInputTitle: "Élément nutritif",
         MultiNutrientPlaceholder: "Rechercher et sélectionner les éléments nutritifs",
@@ -830,9 +830,9 @@ const LangFR = {
         FoodSearchButton: "Recherche",
         FoodSearchResetButton: "Réinitialiser",
 
-        NoneSelected: "Aucune Sélectionnée",
-        SelectAll: "Tout Sélectionner",
-        DeselectAll: "Tout Désélectionner",
+        NoneSelected: "Aucune sélectionnée",
+        SelectAll: "Tout sélectionner",
+        DeselectAll: "Tout désélectionner",
 
         SearchTableInstructions: "Veuillez sélectionner (cliquer sur) l’aliment qui vous intéresse.",
 
