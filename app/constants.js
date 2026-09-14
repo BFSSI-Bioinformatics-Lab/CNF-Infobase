@@ -814,8 +814,8 @@ const LangFR = {
         </dl>`,
 
         BackToTop: "Haut de la page",
-        CloseInstructions: REMPLACER_MOI,
-        CloseLegend: REMPLACER_MOI,
+        CloseInstructions: "Fermer les instructions",
+        CloseLegend: "Fermer la légende",
 
         SearchCriteriaTitle: "Critères de recherche",
         SearchTableTitle: "Résultats de recherche",
