@@ -347,8 +347,8 @@ const LangEN = {
                 [DataCols.FoodGroupDescription]: "Food Group",
                 [DataCols.FoodDescription]: "Food Name",
                 [DataCols.MeasureDescription]: "Portion",
-                [TableCols.WeightView]: "{{ nutrient }} {{ unit }} (per 100 g)",
-                [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }} (per portion)"
+                [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }} (per portion)",
+                [TableCols.WeightView]: "{{ nutrient }} {{ unit }} (per 100 g)"
             },
             [SearchOpts.CompareNutrients]: {
                 [DataCols.FoodCode]: "Food Code",
@@ -851,8 +851,8 @@ const LangFR = {
                 [DataCols.FoodGroupDescription]: "Groupe de l'aliment",
                 [DataCols.FoodDescription]: "Nom de l'aliment",
                 [DataCols.MeasureDescription]: "Portion",
-                [TableCols.WeightView]: "{{ nutrient }} {{ unit }} (par 100 g)",
-                [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }} (par portion)"
+                [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }} (par portion)",
+                [TableCols.WeightView]: "{{ nutrient }} {{ unit }} (par 100 g)"
             },
             [SearchOpts.CompareNutrients]: {
                 [DataCols.FoodCode]: "Code de l'aliment",
