@@ -700,7 +700,7 @@ const LangFR = {
                 <li>La recherche ne tient pas compte des majuscules et des minuscules. Par exemple, <i>pomme</i>, <i>Pomme</i> et <i>POMME</i> donnent les mêmes résultats.</li>
             </ul>
 
-            <h3>Recherche par Groupe d’aliments du FCÉN</h3>
+            <h3>Recherche par groupe d’aliments du FCÉN</h3>
             <p>Utilisez cette option pour trouver des aliments appartenant à l’un des 23 groupes d’aliments du FCÉN.</p>
             <ul>
                 <li>Sélectionnez un groupe dans la liste.</li>
