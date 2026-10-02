@@ -1,5 +1,35 @@
 import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols, NutrientTableExtraCols, DefaultMeasureTypeCode, RAMeasureTypeCode, HighlightedNutrientCodes } from "./constants.js";
 import { Translation, TableTools, TextTools, SetTools, ListTools } from "./tools.js";
+import { BackendAPIURL } from "../env.js";
+
+
+// BackendAPIGateway: The API gateway to the backend data
+export class BackendAPIGateway {
+    constructor(apiURL) {
+        this.apiURL = apiURL;
+    }
+
+    // getData(query): Retrieves data from the table
+    async getData(query) {
+        const url = new URL(`${this.apiURL}/query`);
+        url.searchParams.append("q", query);
+
+        const response = await fetch(url.toString());
+        if (!response.ok) throw new Error(`Unable to fetch data. HTTP Status: ${response.status}`);
+
+        return response.json();
+    }
+
+    // getTables(): Retrieves the tables
+    async getTables() {
+        const url = new URL(this.apiURL);
+
+        const response = await fetch(url.toString());
+        if (!response.ok) throw new Error(`Unable to read table. HTTP Status: ${response.status}`);
+
+        return response.json();
+    }
+}
 
 
 export class Model {
@@ -30,6 +60,7 @@ export class Model {
         this.csvSearchedAllNutrientTable;
 
         this.highlightedNutrientNames = new Set();
+        this.api = new BackendAPIGateway(BackendAPIURL);
     }
 
     clearSearchInputs(searchOpt) {
@@ -346,6 +377,14 @@ export class Model {
 
     // load(): Initial load of all the required data
     async load() {
+
+        const temp = this.api.getTables();
+        console.log("TEMPER: ", temp);
+
+        const temp2 = this.api.getData("SELECT * FROM measure_type");
+        console.log("TMPER2: ", temp2);
+
+
         const [foodNameTable, 
                foodGroupTable,
                foodSourceTable,
