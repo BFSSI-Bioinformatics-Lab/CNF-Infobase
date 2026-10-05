@@ -103,14 +103,16 @@ export class BasePage {
     }
 
     // updateDropdownSelect(dropdownSelector, selections, input, onChange): Update the selections for the dropdown select widget
-    updateDropdownSelect({dropdownSelector, selections, input, onChange = undefined, noneOption = null} = {}) {
+    updateDropdownSelect({dropdownSelector, selections, input, onChange = undefined, noneOption = null, sortCmpFunc = null} = {}) {
         let dropdown = d3.select(dropdownSelector);
 
         const selectionIsArr = Array.isArray(selections);
         const orderedSelections = selectionIsArr ? selections : Array.from(selections);
 
-        if (selectionIsArr) {
+        if (selectionIsArr && sortCmpFunc === null) {
             orderedSelections.sort((a, b) => a.text.localeCompare(b.text));
+        } else if (sortCmpFunc !== null) {
+            orderedSelections.sort(sortCmpFunc);
         } else {
             orderedSelections.sort();
         }
@@ -398,6 +400,22 @@ export class BaseSearchPage extends BasePage {
     // loadPageInputs(): Setup any initial inputs for the page
     loadPageInputs() {
 
+    }
+
+    // buildDropdownLstCompare(noneOption): Builds the compare function for the dropdown so that
+    //  the "none" option appears at the top of the list
+    buildDropdownLstCompare(noneOption = null) {
+        if (noneOption === null) return (a, b) => a.text.localeCompare(b.text);
+
+        return (a, b) => {
+            if (a.text == noneOption) {
+                return -1;
+            } else if (b.text == noneOption) {
+                return 1;
+            }
+
+            return a.text.localeCompare(b.text);
+        };
     }
 
     // setupSearchTable(): Setup the search table
