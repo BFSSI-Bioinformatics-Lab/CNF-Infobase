@@ -1,1 +1,1 @@
-export const BackendAPI = "Some URL";
+export const BackendAPIURL = "Some URL";
