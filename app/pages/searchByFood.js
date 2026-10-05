@@ -112,7 +112,8 @@ export class SearchByFoodPage extends BaseSearchPage {
         // add in the food groups
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
                                    selections: selections[SearchAtts.FoodGroup], 
-                                   inputs: new Set([inputs[SearchAtts.FoodGroup]])});
+                                   inputs: new Set([inputs[SearchAtts.FoodGroup]]),
+                                   sortCmpFunc: this.buildDropdownLstCompare(Translation.translate("NoneSelected"))});
 
         this.clearSearch();
 

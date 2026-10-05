@@ -120,7 +120,8 @@ export class SearchByNutrientPage extends BaseSearchPage {
         // add in the food groups and nutrient dropdowns
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
                                    selections: selections[SearchAtts.FoodGroup], 
-                                   inputs: new Set([inputs[SearchAtts.FoodGroup]])});
+                                   inputs: new Set([inputs[SearchAtts.FoodGroup]]),
+                                   sortCmpFunc: this.buildDropdownLstCompare(Translation.translate("NoneSelected"))});
 
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.nutrientInput, 
                                 selections: selections[SearchAtts.Nutrient], 
