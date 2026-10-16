@@ -169,12 +169,12 @@ const LangEN = {
         Number: "{{num, number}}",
         AltLangCode: "fr",
 
-        SiteName: "Canadian Nutrient File (CNF) 2026",
+        SiteName: "Canadian nutrient file (CNF) 2026",
 
-        SearchByFood: "Search by Food",
-        SearchByNutrient: "Search by Nutrient",
-        CompareByNutrient:"Compare by Nutrient",
-        CompareByFoods: "Compare by Foods",
+        SearchByFood: "Search by food",
+        SearchByNutrient: "Search by nutrient",
+        CompareByNutrient:"Compare by nutrient",
+        CompareByFoods: "Compare by foods",
 
         InstructionsTitle: "Instructions",
         InstructionsText: {
@@ -310,17 +310,17 @@ const LangEN = {
         </dl>`,
 
         BackToTop: "Back to top",
-        CloseInstructions: "Close Instructions",
-        CloseLegend: "Close Legend",
+        CloseInstructions: "Close instructions",
+        CloseLegend: "Close legend",
 
-        SearchCriteriaTitle: "Search Criteria",
-        SearchTableTitle: "Search Results",
-        NutrientSearchTableTitle: "Search Results - {{ nutrientName }}",
-        CompareSearchTableTitle: "Search Results: Comparison is presented per 100g of edible portion of food",
-        FoodNameInputTitle: "Food Name",
-        FoodAltNameInputTitle: "Food Common Name",
-        FoodGroupInputTitle: "CNF Food Group",
-        FoodCodeInputTitle: "Food Code",
+        SearchCriteriaTitle: "Search criteria",
+        SearchTableTitle: "Search results",
+        NutrientSearchTableTitle: "Search results - {{ nutrientName }}",
+        CompareSearchTableTitle: "Search results: comparison is presented per 100g of edible portion of food",
+        FoodNameInputTitle: "Food name",
+        FoodAltNameInputTitle: "Food common name",
+        FoodGroupInputTitle: "CNF food group",
+        FoodCodeInputTitle: "Food code",
         NutrientInputTitle: "Nutrient",
         MultiNutrientPlaceholder: "Search and select nutrients",
         MultiFoodsPlaceholder: "Search and select foods",
@@ -330,9 +330,9 @@ const LangEN = {
         FoodSearchButton: "Search",
         FoodSearchResetButton: "Reset",
 
-        NoneSelected: "None Selected",
-        SelectAll: "Select All",
-        DeselectAll: "Deselect All",
+        NoneSelected: "None selected",
+        SelectAll: "Select all",
+        DeselectAll: "Deselect all",
 
         SearchTableInspect: "Inspect",
         SearchTableClose: "Close",
@@ -340,38 +340,38 @@ const LangEN = {
         SearchTableInstructions: "Please select (click) on the food item you are interested",
         SearchTableCols: {
             [SearchOpts.SearchByFood]: {
-                [DataCols.FoodCode]: "Food Code",
-                [DataCols.FoodGroupDescription]: "Food Group",
-                [DataCols.FoodDescription]: "Food Name",
+                [DataCols.FoodCode]: "Food code",
+                [DataCols.FoodGroupDescription]: "Food group",
+                [DataCols.FoodDescription]: "Food name",
             },
 
             [SearchOpts.SearchByNutrient]: {
-                [DataCols.FoodCode]: "Food Code",
-                [DataCols.FoodGroupDescription]: "Food Group",
-                [DataCols.FoodDescription]: "Food Name",
+                [DataCols.FoodCode]: "Food code",
+                [DataCols.FoodGroupDescription]: "Food group",
+                [DataCols.FoodDescription]: "Food name",
                 [DataCols.MeasureDescription]: "Portion",
                 [TableCols.NutrientAmountView]: "{{ nutrient }} {{ unit }} (per portion)",
                 [TableCols.WeightView]: "{{ nutrient }} {{ unit }} (per 100 g)"
             },
             [SearchOpts.CompareNutrients]: {
-                [DataCols.FoodCode]: "Food Code",
-                [DataCols.FoodGroupDescription]: "Food Group",
-                [DataCols.FoodDescription]: "Food Name"
+                [DataCols.FoodCode]: "Food code",
+                [DataCols.FoodGroupDescription]: "Food group",
+                [DataCols.FoodDescription]: "Food name"
             },
             [SearchOpts.CompareFoods]: {
-                [DataCols.NutrientNameWithUnit]: "Nutrient Name",
-                [DataCols.NutrientGroup]: "Nutrient Group"
+                [DataCols.NutrientNameWithUnit]: "Nutrient name",
+                [DataCols.NutrientGroup]: "Nutrient group"
             },
 
-            DefaultNutrientAmount: "Nutrient Amount",
+            DefaultNutrientAmount: "Nutrient amount",
             DefaultNutrientUnit: "g",
             FoodName: "{{ foodCode }} - {{ foodName }}"
         },
 
         FoodNutrientStats: {
-            SubTitle: `Food Code: {{ foodCode }}`,
+            SubTitle: `Food code: {{ foodCode }}`,
             SourceSubTitle: `Source: {{ foodSource }}`,
-            ServingTitle: `Available Serving Size(s)`,
+            ServingTitle: `Available serving size(s)`,
             ServingRefuseTitle: `Refuse`,
             ServingSizeOption: `{{ measureName }} = {{ convertedMeasure }} g`,
             ServingRefuseListItem: `{{ measureName }} {{ convertedMeasure }} %`,
@@ -379,7 +379,7 @@ const LangEN = {
             DefaultNutrientMeasure: `Value per 100 g of edible portion`,
 
             TableCols: {
-                [DataCols.NutrientNameWithUnit]: `Nutrient Name`,
+                [DataCols.NutrientNameWithUnit]: `Nutrient name`,
                 [DataCols.NutrientShortUnit]: `Unit`,
                 [TableCols.NutrientNoOfObservationsView]: `Number of obser­vations`,
                 [TableCols.NutrientStdErrView]: `Standard error`,
@@ -389,17 +389,17 @@ const LangEN = {
             ConvertedMeasureCol: `{{ measureName }} / {{ convertedMeasure }} g`,
             ConvertedMeasureColWithoutConversion: `{{ measureName }}`,
 
-            ShowUnits: "Show Units",
-            ShowExtraDetails: "Show Extra Details"
+            ShowUnits: "Show units",
+            ShowExtraDetails: "Show extra details"
         },
 
         CSVDownload: {
             DownloadSearchButtonTitle: "Download filtered data",
             DownloadNutrientButtonTitle: "Download displayed data",
             DownloadAllNutrientButtonTitle: "Download all data",
-            SearchFileName: `Search Profile`,
-            AllNutrientFileName: `Nutrient Profile - {{ foodName }}`,
-            NutrientFileName: `Nutrient Profile - {{ foodName }}`,
+            SearchFileName: `Search profile`,
+            AllNutrientFileName: `Nutrient profile - {{ foodName }}`,
+            NutrientFileName: `Nutrient profile - {{ foodName }}`,
             Date: `Date: {{ date }}`
         },
 
