@@ -334,6 +334,9 @@ const LangEN = {
         SelectAll: "Select All",
         DeselectAll: "Deselect All",
 
+        SearchTableInspect: "Inspect",
+        SearchTableClose: "Close",
+
         SearchTableInstructions: "Please select (click) on the food item you are interested",
         SearchTableCols: {
             [SearchOpts.SearchByFood]: {
@@ -837,6 +840,9 @@ const LangFR = {
         NoneSelected: "Aucune sélectionnée",
         SelectAll: "Tout sélectionner",
         DeselectAll: "Tout désélectionner",
+
+        SearchTableInspect: "Examiner",
+        SearchTableClose: "Fermer",
 
         SearchTableInstructions: "Veuillez sélectionner (cliquer sur) l’aliment qui vous intéresse.",
 

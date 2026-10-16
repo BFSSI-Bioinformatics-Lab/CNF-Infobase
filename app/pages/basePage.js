@@ -304,7 +304,9 @@ export class BaseSearchPage extends BasePage {
             servingSizeInput: "servingSizeInput",
             servingSizeOpt: "servingSizeOpt",
             portionValCell: "nutrientPortionValCell",
-            highlightedNutrientCell: "highlightedNutrientCell"
+            highlightedNutrientCell: "highlightedNutrientCell",
+            searchTableActionBtn: "searchTableActionBtn",
+            searchTableOptSelected: "searchTableOptSelected"
         }
 
         this.htmlSelectors = {
@@ -418,6 +420,45 @@ export class BaseSearchPage extends BasePage {
         };
     }
 
+    buildSearchTableSelectBtn() {
+        return `<button type="button" class="btn btn-primary searchTableActionBtn" aria-label="${Translation.translate("SearchTableInspect")}"><i class="fa fa-search"></i></button>`;
+    }
+
+    setupSearchTableSelect(optSelected = false) {
+        const self = this;
+
+        const selectBtns = d3.selectAll(`.${this.htmlNames.searchTableActionBtn}`);
+
+        if (optSelected) {
+            selectBtns.classed("btn-primary", false)
+                .classed("btn-danger", true)
+                .attr("aria-label", Translation.translate("SearchTableClose"))
+                .html(null)
+                .append("i")
+                .classed("fa", true)
+                .classed("fa-times", true);
+        }
+
+        selectBtns.on("click", function(d) {
+            const row = this.closest("tr");
+            const rowData = self.searchTable.row(row).data();
+            if (rowData === undefined) return;
+
+            const foodCode = rowData[TableCols.FoodCode];
+            self.model.selectedFoodCodes[self.searchOpt] = [foodCode];
+
+            const foodSelected = !self.model.foodSelected[self.searchOpt];
+            self.model.foodSelected[self.searchOpt] = foodSelected;
+
+            self.updateSearchTable(foodSelected);
+
+            if (!foodSelected) return;
+
+            self.model.clearNutrientStatsInputs(self.searchOpt);
+            self.showFoodNutrientStats(foodCode);
+        }); 
+    }
+
     // setupSearchTable(): Setup the search table
     setupSearchTable() {
         const inputs = this.model.searchInputs[this.searchOpt]; 
@@ -426,24 +467,6 @@ export class BaseSearchPage extends BasePage {
         if (this.searchTable === undefined) return;
 
         const self = this;
-
-        $(`${this.htmlSelectors.foodSearchTable} tbody`).on('click', 'tr', function () {
-            const rowData = self.searchTable.row(this).data();
-            if (rowData === undefined) return;
-
-            const foodCode = rowData[TableCols.FoodCode];
-            self.model.selectedFoodCodes[self.searchOpt] = [foodCode];
-
-            const foodSelected = !self.model.foodSelected[self.searchOpt];
-            self.model.foodSelected[self.searchOpt] = foodSelected;
-            
-            self.updateSearchTable(foodSelected);
-
-            if (!foodSelected) return;
-
-            self.model.clearNutrientStatsInputs(self.searchOpt);
-            self.showFoodNutrientStats(foodCode);
-        });
 
         this.searchTable.on('search.dt', function() {
             self.model.searchInputs[self.searchOpt][SearchAtts.FilterHelper] = self.searchTable.search();

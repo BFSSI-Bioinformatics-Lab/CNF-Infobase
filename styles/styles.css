@@ -226,7 +226,6 @@
 
 .dataTable.clickableTable tr:hover td {
     filter: brightness(0.8);
-    cursor: pointer;
 }
 
 /* Flip the scroll container upside down */
@@ -487,6 +486,10 @@ tr.dtrg-group th .dtrg-sticky-text {
 
 .foodResultContainer {
     border-radius: var(--borderRadius);
+}
+
+.searchTableActionBtn {
+    margin: 5px;
 }
 
 #nutrientTable_wrapper .dataTables_scrollHeadInner,

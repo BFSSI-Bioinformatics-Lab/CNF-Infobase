@@ -65,6 +65,16 @@ export class SearchByFoodPage extends BaseSearchPage {
             tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
         }
 
+        tableColInfo.push({
+            data: null,
+            orderable: false,
+            searchable: false,
+            className: 'text-right',
+            render: (data, type, row) => {
+                return this.buildSearchTableSelectBtn();
+            }
+        });
+
         const dataTable = this.updateTable({
             selector: this.htmlSelectors.foodSearchTable, 
             columnInfo: tableColInfo, 
@@ -78,6 +88,8 @@ export class SearchByFoodPage extends BaseSearchPage {
             searchTxt: (searchTxt !== null) ? searchTxt : undefined,
             order: (resetSort) ? [] : null
         });
+
+        this.setupSearchTableSelect(selectFood);
         return dataTable;
     }
 
