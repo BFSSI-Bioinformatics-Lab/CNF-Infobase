@@ -66,6 +66,16 @@ export class SearchByNutrientPage extends BaseSearchPage {
             tableColInfo.push({title: title, data: Translation.getDataCol(tableAtt)});
         }
 
+        tableColInfo.push({
+            data: null,
+            orderable: false,
+            searchable: false,
+            className: 'text-right',
+            render: (data, type, row) => {
+                return this.buildSearchTableSelectBtn();
+            }
+        });
+
         const nutrientAmountColName = Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.NutrientAmountView}`, 
                                                             {nutrient: nutrientName, 
                                                              unit: nutrientData[DataCols.NutrientUnitShort]});
@@ -86,6 +96,8 @@ export class SearchByNutrientPage extends BaseSearchPage {
                 [NutrientSearchTableCols.length - 1]: nutrientWeightColName
             }
         });
+
+        this.setupSearchTableSelect(selectFood);
         return dataTable;
     }
 
