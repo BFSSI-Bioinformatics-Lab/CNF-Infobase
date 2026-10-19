@@ -401,6 +401,10 @@ export class BaseSearchPage extends BasePage {
         elements.searchCSVDownloadBtn.on("click", () => {
             this.model.downloadSearchCSV(this.searchOpt);
         });
+
+        d3.select("#closeLegend").on("click", () => {
+            elements.legendAccordion.attr("open", null);
+        });
     }
 
     // loadPageInputs(): Setup any initial inputs for the page
@@ -826,6 +830,10 @@ export class BaseComparePage extends BasePage {
 
         elements.searchCSVDownloadBtn.on("click", () => {
             this.model.downloadSearchCSV(this.searchOpt);
+        });
+
+        d3.select("#closeLegend").on("click", () => {
+            elements.legendAccordion.attr("open", null);
         });
     }
 

@@ -53,10 +53,6 @@ class App {
         d3.select("#closeInstructions").on("click", () => {
             elements.instructionsAccordion.attr("open", null);
         });
-
-        d3.select("#closeLegend").on("click", () => {
-            elements.legendAccordion.attr("open", null);
-        });
     }
 
     setupSearchTab() {
