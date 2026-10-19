@@ -365,6 +365,10 @@ export class BaseSearchPage extends BasePage {
 
         d3.select("#about-tool-details summary h2").html(Translation.translate("InstructionsTitle"));
 
+        d3.select("#legendTitle").html(Translation.translate("LegendTitle"));
+        d3.select("#legendContent p").html(Translation.translate("LegendText"));
+        d3.select("#closeLegendText").html(Translation.translate("CloseLegend"));
+
         d3.selectAll(".toTopBtnText").each((data, ind, nodes) => {
             const textNode = d3.select(nodes[ind]);
             textNode.html(Translation.translate("BackToTop")); 
@@ -396,6 +400,10 @@ export class BaseSearchPage extends BasePage {
 
         elements.searchCSVDownloadBtn.on("click", () => {
             this.model.downloadSearchCSV(this.searchOpt);
+        });
+
+        d3.select("#closeLegend").on("click", () => {
+            elements.legendAccordion.attr("open", null);
         });
     }
 
@@ -798,6 +806,10 @@ export class BaseComparePage extends BasePage {
 
         d3.select("#about-tool-details summary h2").html(Translation.translate("InstructionsTitle"));
 
+        d3.select("#legendTitle").html(Translation.translate("LegendTitle"));
+        d3.select("#legendContent p").html(Translation.translate("LegendText"));
+        d3.select("#closeLegendText").html(Translation.translate("CloseLegend"));
+
         d3.selectAll(".toTopBtnText").each((data, ind, nodes) => {
             const textNode = d3.select(nodes[ind]);
             textNode.html(Translation.translate("BackToTop")); 
@@ -818,6 +830,10 @@ export class BaseComparePage extends BasePage {
 
         elements.searchCSVDownloadBtn.on("click", () => {
             this.model.downloadSearchCSV(this.searchOpt);
+        });
+
+        d3.select("#closeLegend").on("click", () => {
+            elements.legendAccordion.attr("open", null);
         });
     }
 

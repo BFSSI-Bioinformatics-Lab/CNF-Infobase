@@ -43,11 +43,7 @@ class App {
         d3.select("#compareNutrientsTab").html(Translation.translate("CompareByNutrient"));
         d3.select("#compareFoodsTab").html(Translation.translate("CompareByFoods"));
 
-        d3.select("#legendTitle").html(Translation.translate("LegendTitle"));
-        d3.select("#legendContent p").html(Translation.translate("LegendText"));
-
         d3.select("#closeInstructionsText").html(Translation.translate("CloseInstructions"));
-        d3.select("#closeLegendText").html(Translation.translate("CloseLegend"));
     }
 
     setupListeners() {
@@ -56,10 +52,6 @@ class App {
 
         d3.select("#closeInstructions").on("click", () => {
             elements.instructionsAccordion.attr("open", null);
-        });
-
-        d3.select("#closeLegend").on("click", () => {
-            elements.legendAccordion.attr("open", null);
         });
     }
 

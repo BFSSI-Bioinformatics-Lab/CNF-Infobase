@@ -42,6 +42,10 @@ export class CompareByFood extends BaseComparePage {
         elements.searchCSVDownloadBtn.on("click", () => {
             this.model.downloadSearchCSV();
         });
+
+        d3.select("#closeLegend").on("click", () => {
+            elements.legendAccordion.attr("open", null);
+        });
     }
 
     clearSearch() {
