@@ -106,62 +106,45 @@
 
 /* ----- sort icons ----- */
 
-/* Previously displayed two separate icons, hide first one */
-.dt-column-order {
-    top: 0.18em !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-size: 1.3em !important;
-}
- 
-.dt-column-order:before, .dt-column-order:after {
-    content: "" !important;
-}
-
+/* DataTables 1.10 (used by WET) has no element for the sort icon, so the icon is
+   drawn after the header text, based on the sorting class of the header cell */
 
 /* font-family and font-weight needed for Font Awesome icons to display by CSS */
-.dt-column-order::before {
+.dataTable thead th.sorting::after,
+.dataTable thead th.sorting_asc::after,
+.dataTable thead th.sorting_desc::after {
     font-family: 'Font Awesome\ 5 Free';
     font-weight: 900;
+    font-size: 1.3em;
     display: inline-block;
     font-style: normal;
     font-variant: normal;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
-}
- 
-/* Only display in after */
-.dt-orderable-asc .dt-column-order::before
-{
-    /*right:    0 !important;*/
-    content: "\f0dc" !important;
-    color: var(--onPrimary) !important;
-    opacity: 1 !important;
-    top: unset !important;
-    bottom: 0.3em !important;
-    line-height: unset !important;
+    color: var(--onPrimary);
+    opacity: 1;
     padding-left: 5px;
 }
 
+/* sortable, but not sorted */
+.dataTable thead th.sorting::after {
+    content: "\f0dc";
+}
+
 /* sort ascending */
-.dt-ordering-asc span.dt-column-order::before {
-    content: "\f161" !important;
-    color: var(--onPrimary) !important;
-    opacity: 1 !important;
-    top: unset !important;
-    bottom: 0.3em !important;
-    line-height: unset !important; /* DataTable 1.12 set to 9px */
-    padding-left: inherit;
+.dataTable thead th.sorting_asc::after {
+    content: "\f161";
 }
 
 /* sort descending */
-.dt-ordering-desc span.dt-column-order::before {
-    content: "\f160" !important;
-    color: var(--onPrimary) !important;
-    opacity: 1 !important;
-    top: unset !important;
-    bottom: 0.3em !important;
-    line-height: unset !important; /* DataTable 1.12 set to 9px */
-    padding-left: inherit;
+.dataTable thead th.sorting_desc::after {
+    content: "\f160";
+}
+
+/* The scroll body keeps a hidden copy of the header for sizing the columns,
+   so do not draw the icons there */
+.dataTables_scrollBody .dataTable thead th::after {
+    content: none;
 }
 
 /* ---------------------- */
@@ -181,15 +164,15 @@
     border-radius: 0 var(--smBorderRadius) 0 0;
 }
 
-.dtrg-group th {
+.groupRow th {
     background-color: var(--primaryVariant) !important;
 }
 
-.dtrg-group th:first-child {
+.groupRow th:first-child {
     border-radius: 0;
 }
 
-.dtrg-group th:last-child {
+.groupRow th:last-child {
     border-radius: 0;
 }
 
@@ -228,51 +211,10 @@
     filter: brightness(0.8);
 }
 
-/* Flip the scroll container upside down */
-.dataTables_scroll {
-    transform: rotateX(180deg);
-}
-
-/* Flip the inner elements back so the text reads normally */
-.dataTables_scrollHead, 
-.dataTables_scrollBody, 
-.dataTables_scrollFoot {
-    transform: rotateX(180deg);
-}
-
 #foodSearchTable.foodSelected td {
     background-color: var(--secondary) !important;
     color: white;
 }
-
-/* ----- row group ----- */
-/* Make row group horizontal sticky */
-
-tr.dtrg-group th {
-    padding: 0 !important;
-}
-
-tr.dtrg-group th .dtrg-sticky-window {
-    position: sticky !important;
-    left: 0;
-    width: max-content;
-    max-width: calc(100vw - 40px);
-    
-    display: inline-flex !important;
-    justify-content: left;
-    align-items: center;
-    padding: 8px 5px;
-    box-sizing: border-box;
-}
-
-tr.dtrg-group th .dtrg-sticky-text {
-    display: inline-block;
-    width: max-content;
-    text-align: left;
-    white-space: nowrap;
-}
-
-/* ---------------------- */
 
 /* =================================================== */
 /* ======== Pagination =============================== */

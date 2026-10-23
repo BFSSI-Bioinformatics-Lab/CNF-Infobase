@@ -12,7 +12,8 @@
               content="REMPLACER MOI: Description">
 
         <!-- JQuery -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <!-- Downgraded to the jQuery version WET v4.0.32 is built for -->
+        <script src="./static/wet-boew/js/jquery/2.2.4/jquery.min.js"></script>
 
         <!-- Popper.js: Needed for the multiselect widgets -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
@@ -28,8 +29,8 @@
         <link rel="stylesheet" href="./static/css/global.css">
 
         <!-- Jquery Datatables: https://datatables.net -->
-        <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.1.8/rg-1.6.0/datatables.min.css" type="text/css" crossorigin="anonymous">
-        <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.1.8/rg-1.6.0/datatables.min.js"></script>
+        <!-- Downgraded to the DataTables version bundled with WET v4.0.32; group rows are added by BasePage.getGroupRowsDrawCallback -->
+        <script src="./static/wet-boew/js/deps/jquery.dataTables.min.js"></script>
 
         <!-- Multiselect widget: https://developer.snapappointments.com/bootstrap-select/ -->
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" crossorigin="anonymous">

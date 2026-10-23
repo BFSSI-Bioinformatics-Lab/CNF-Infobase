@@ -32,7 +32,7 @@ export class BasePage {
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, Translation.translate("dataTableAllOptions")]]
         }, dataTableAtts]);
 
-        if (DataTable.isDataTable(selector)) {
+        if ($.fn.dataTable.isDataTable(selector)) {
             dataTable = $(selector).DataTable();
 
             if (destroyExisting) {
@@ -81,7 +81,70 @@ export class BasePage {
         }
 
         dataTable.draw();
+        this.addUnsortedOrderStep(dataTable);
         return dataTable;
+    }
+
+    // addUnsortedOrderStep(dataTable): Makes clicking the header of a column that is already sorted
+    //  in its last direction remove the sorting, instead of going back to the first direction
+    // Note:
+    // - DataTables 1.10 (used by WET) only cycles between ascending and descending, while
+    //   DataTables 2 also goes back to unsorted
+    // - Shift + click is left to DataTables, for sorting by multiple columns
+    addUnsortedOrderStep(dataTable) {
+        const settings = dataTable.settings()[0];
+        const columnSettings = settings.aoColumns;
+
+        dataTable.columns().every(function(colIndex) {
+            const header = this.header();
+            if (header.dataset.unsortedOrderStep) return;
+            header.dataset.unsortedOrderStep = "true";
+
+            const onSortAction = (event) => {
+                if (event.shiftKey || (event.type == "keypress" && event.which != KeyboardCodes.Enter)) return;
+
+                const order = dataTable.order();
+                const orderSequence = columnSettings[colIndex].asSorting;
+                const lastDirection = orderSequence[orderSequence.length - 1];
+                if (order.length != 1 || order[0][0] != colIndex || order[0][1] != lastDirection) return;
+
+                // run before the DataTables listener on the header and stop it from sorting again
+                event.stopImmediatePropagation();
+
+                // DataTables 1.10 breaks ties in the sorting by using the current position of the rows,
+                //  so put the rows back in their original order to not keep the previous sorting
+                settings.aiDisplayMaster.sort((a, b) => a - b);
+                dataTable.order([]).draw();
+            };
+
+            header.addEventListener("click", onSortAction, true);
+            header.addEventListener("keypress", onSortAction, true);
+        });
+    }
+
+    // getGroupRowsDrawCallback(dataSrc): Creates a 'drawCallback' for a datatable that inserts a row
+    //  before each group of rows, where the group's name is repeated in every visible column
+    // Note:
+    // - used instead of the RowGroup extension, which is not available for the DataTables version used by WET
+    getGroupRowsDrawCallback(dataSrc) {
+        return function() {
+            const api = this.api();
+            const visibleColumnsCount = api.columns(':visible').count();
+            let lastGroup = null;
+
+            api.rows({page: 'current'}).every(function() {
+                const group = this.data()[dataSrc];
+                if (group === lastGroup) return;
+                lastGroup = group;
+
+                const groupRow = $('<tr class="groupRow"/>');
+                for (let i = 0; i < visibleColumnsCount; i++) {
+                    groupRow.append($('<th scope="row"/>').text(group));
+                }
+
+                $(this.node()).before(groupRow);
+            });
+        };
     }
 
     // addCheckbox(checkboxLst, checkLstName, checkboxVal, checkboxId, checkboxText, isChecked): 
@@ -447,7 +510,10 @@ export class BaseSearchPage extends BasePage {
                 .classed("fa-times", true);
         }
 
-        selectBtns.on("click", function(d) {
+        // listen on the table instead of the buttons, so that the buttons in rows that are not drawn yet
+        //  (rows on other pages or rows shown after sorting) also work
+        const selectBtnSelector = `.${this.htmlNames.searchTableActionBtn}`;
+        $(this.htmlSelectors.foodSearchTable).off("click", selectBtnSelector).on("click", selectBtnSelector, function() {
             const row = this.closest("tr");
             const rowData = self.searchTable.row(row).data();
             if (rowData === undefined) return;
@@ -464,7 +530,7 @@ export class BaseSearchPage extends BasePage {
 
             self.model.clearNutrientStatsInputs(self.searchOpt);
             self.showFoodNutrientStats(foodCode);
-        }); 
+        });
     }
 
     // setupSearchTable(): Setup the search table
@@ -567,22 +633,7 @@ export class BaseSearchPage extends BasePage {
                 orderFixed: {
                     pre: [0, 'asc'] // Fix the order for the nutrients
                 },
-                rowGroup: {
-                    dataSrc: Translation.getDataCol(TableCols.NutrientGroup),
-                    startRender: function (rows, group) {
-                        var api = rows.context[0].oInstance.api();
-                        var visibleColumnsCount = api.columns(':visible').count();
-
-                        var stickyWrapper = $('<div class="dtrg-sticky-window"/>')
-                            .append($('<span class="dtrg-sticky-text"/>').text(group));
-
-                        return $('<tr class="dtrg-group dtrg-start dtrg-level-0"/>')
-                            .append(
-                                $(`<th colspan="${visibleColumnsCount}" scope="row"/>`)
-                                    .append(stickyWrapper)
-                            );
-                    }
-                },
+                drawCallback: this.getGroupRowsDrawCallback(Translation.getDataCol(TableCols.NutrientGroup)),
                 columnDefs: [
                     {
                         targets: 1,
@@ -603,10 +654,6 @@ export class BaseSearchPage extends BasePage {
         dataTable.column(`${colName}:name`).visible(show); 
         if (!updateDatable) return;
 
-        if (dataTable.rowGroup) {
-            dataTable.rowGroup().draw();
-        }
-
         dataTable.columns.adjust().draw(false); 
     }
 
@@ -617,10 +664,6 @@ export class BaseSearchPage extends BasePage {
         }
 
         if (!updateDatable) return;
-
-        if (dataTable.rowGroup) {
-            dataTable.rowGroup().draw();
-        }
 
         dataTable.columns.adjust().draw(false); 
     }
@@ -732,10 +775,6 @@ export class BaseSearchPage extends BasePage {
 
             self.updateNutrientTableConvCols(dataTable, measureConvId, this.checked);
             self.updateNutrientTableExtraCols(dataTable, showExtraDetails);
-
-            if (dataTable.rowGroup) {
-                dataTable.rowGroup().draw();
-            }
 
             dataTable.columns.adjust().draw(false); 
         });
