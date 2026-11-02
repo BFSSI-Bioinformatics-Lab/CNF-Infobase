@@ -203,8 +203,235 @@ export class BasePage {
         }
     }
 
-    // updateMultiSelect(dropdownSelector, selections, inputs, onChange, translations): Updates the selections for the multi-select dropdown select widget
-    updateMultiSelect({dropdownSelector, selections, inputs, onChange = undefined, noneSelectedText = ""} = {}) {
+    // fixMultiSelectKeys(): Fixes the keyboard controls inside the menu of a multi-select dropdown
+    static fixMultiSelectKeys() {
+        if (BasePage.multiSelectKeysFixed) return;
+        BasePage.multiSelectKeysFixed = true;
+
+        const handledKeys = new Set(["Escape", "ArrowUp", "ArrowDown", "Tab", "Enter"]);
+        const selectpickerKeySelector = '.bootstrap-select [role="listbox"], .bootstrap-select .bs-searchbox input';
+
+        // runs bootstrap-select's own key handler for a key event on one of the parts of the menu that it listens to
+        const runSelectpickerKeydown = (keyTarget, selectpickerEvent) => {
+            selectpickerEvent.currentTarget = keyTarget;
+            $.fn.selectpicker.Constructor.prototype.keydown.call(keyTarget, selectpickerEvent);
+        };
+
+        // moves the focus to the highlighted option
+        // Note:
+        // - bootstrap-select only draws the options around the scroll position of the list, and draws the other options
+        //   once the list scrolls (on the 'scroll' event, which the browser fires later). Its 'scroll' handler is run right away,
+        //   so that the highlighted option is drawn before focusing it
+        // - the focus does not scroll the list, since bootstrap-select already scrolled it, and an extra scroll would
+        //   redraw the options again and lose the focus
+        const focusHighlightedOption = (menuContainer) => {
+            const listbox = menuContainer.querySelector('[role="listbox"]');
+            if (listbox !== null) $(listbox).triggerHandler("scroll");
+
+            const highlightedOption = menuContainer.querySelector("li.active > a");
+            if (highlightedOption !== null) highlightedOption.focus({preventScroll: true});
+        };
+
+        // moves the focus into the list of options, highlighting an option if none is
+        const focusList = (menuContainer, listbox) => {
+            if (menuContainer.querySelector("li.active") === null) {
+                runSelectpickerKeydown(listbox, $.Event("keydown", {which: 40, keyCode: 40, key: "ArrowDown"}));
+            }
+
+            focusHighlightedOption(menuContainer);
+        };
+
+        window.addEventListener("keydown", (event) => {
+            if (!handledKeys.has(event.key) || !(event.target instanceof Element)) return;
+
+            // TAB from the button of an open dropdown moves into its menu, since the menu is at the end of the <body>
+            //  and the browser would otherwise skip it
+            const dropdownButton = event.target.closest('.bootstrap-select > button[aria-owns^="bs-select-"]');
+            if (event.key === "Tab" && !event.shiftKey && dropdownButton !== null && dropdownButton.getAttribute("aria-expanded") === "true") {
+                const buttonMenuInner = document.getElementById(dropdownButton.getAttribute("aria-owns"));
+                const buttonMenuContainer = (buttonMenuInner === null) ? null : buttonMenuInner.closest(".bs-container");
+                if (buttonMenuContainer === null) return;
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const firstControl = buttonMenuContainer.querySelector(".bs-searchbox input, .bs-actionsbox button");
+                if (firstControl !== null) {
+                    firstControl.focus();
+                } else {
+                    focusList(buttonMenuContainer, buttonMenuInner);
+                }
+                return;
+            }
+
+            const menuContainer = event.target.closest(".bs-container");
+            const menuInner = (menuContainer === null) ? null : menuContainer.querySelector("[id^='bs-select-']");
+            if (menuInner === null) return;
+
+            const listbox = menuContainer.querySelector('[role="listbox"]');
+            const onOption = listbox !== null && listbox.contains(event.target);
+
+            // ENTER is only changed in the list of options; elsewhere bootstrap-select handles it as usual
+            if (event.key === "Enter" && !onOption) return;
+
+            event.stopPropagation();
+
+            const button = document.querySelector(`button[aria-owns="${menuInner.id}"]`);
+            const menu = menuContainer.querySelector(":scope > .dropdown-menu");
+            const highlightedOption = menuContainer.querySelector("li.active");
+
+            if (event.key === "Tab") {
+                if (button === null) return;
+
+                const menuControls = Array.from(menuContainer.querySelectorAll(".bs-searchbox input, .bs-actionsbox button"));
+                const lastControl = menuControls[menuControls.length - 1];
+
+                // TAB/SHIFT + TAB in the list of options moves to the next/previous option, until it gets past
+                //  the last option or before the first option
+                const selectpicker = (menu === null) ? undefined : $(menu).data("this");
+                if (onOption && selectpicker !== undefined) {
+                    const optionPos = selectpicker.selectpicker.current.data.findIndex((option) => option.index === selectpicker.activeIndex);
+                    const canHighlight = selectpicker.selectpicker.view.canHighlight;
+                    const atEnd = (optionPos !== -1) && (event.shiftKey ? optionPos <= canHighlight.indexOf(true) : optionPos >= canHighlight.lastIndexOf(true));
+
+                    if (!atEnd) {
+                        event.preventDefault();
+                        const arrowKey = event.shiftKey ? {which: 38, keyCode: 38, key: "ArrowUp"} : {which: 40, keyCode: 40, key: "ArrowDown"};
+                        runSelectpickerKeydown(listbox, $.Event("keydown", arrowKey));
+                        focusHighlightedOption(menuContainer);
+                        return;
+                    }
+                }
+
+                // SHIFT + TAB from the first option moves back to the last control above the list
+                if (event.shiftKey && onOption && lastControl !== undefined) {
+                    event.preventDefault();
+                    lastControl.focus();
+                    return;
+                }
+
+                // TAB from the last control moves into the list of options, highlighting an option if none is
+                if (!event.shiftKey && event.target === lastControl && listbox !== null) {
+                    event.preventDefault();
+                    focusList(menuContainer, listbox);
+                    return;
+                }
+
+                const leaveForward = !event.shiftKey && onOption;
+                const leaveBackward = event.shiftKey && event.target === menuControls[0];
+                if (!leaveForward && !leaveBackward) return;
+
+                event.preventDefault();
+
+                const dropdown = button.closest(".bootstrap-select");
+                BasePage.closeMultiSelect(button);
+
+                const nextElement = leaveForward ? BasePage.getNextFocusable(dropdown) : null;
+                (nextElement === null ? button : nextElement).focus();
+                return;
+            }
+
+            if (event.key === "Escape" && menu !== null && (onOption || highlightedOption !== null)) {
+                event.preventDefault();
+
+                const selectpicker = $(menu).data("this");
+                if (highlightedOption !== null && selectpicker !== undefined) {
+                    selectpicker.defocusItem(highlightedOption);
+                    selectpicker.activeIndex = undefined;
+                }
+
+                menu.setAttribute("tabindex", "-1");
+                menu.focus();
+                return;
+            }
+
+            // the parts of the menu that bootstrap-select listens to (the search box and the list of options)
+            const keyTarget = event.target.closest(selectpickerKeySelector);
+            if (keyTarget !== null) {
+                runSelectpickerKeydown(keyTarget, $.event.fix(event));
+                if (onOption) focusHighlightedOption(menuContainer);
+                return;
+            }
+
+            // other parts of the menu (e.g. the menu itself or the select all buttons): ESC closes the dropdown
+            if (event.key !== "Escape" || button === null) return;
+
+            event.preventDefault();
+            BasePage.closeMultiSelect(button);
+            button.focus();
+        }, true);
+    }
+
+    // closeMultiSelect(button): Closes the menu of a multi-select dropdown, given the dropdown's button
+    // Note:
+    // - bootstrap-select's 'close' checks whether the dropdown is open from a class on the dropdown, which is not set
+    //   when the menu is moved to the <body>, so the button's 'aria-expanded' is checked instead
+    static closeMultiSelect(button) {
+        if (button.getAttribute("aria-expanded") !== "true") return;
+        $(button).closest(".bootstrap-select").find("select").selectpicker("toggle");
+    }
+
+    // getNextFocusable(element): Retrieves the first element after 'element' (and outside of it) that TAB can move the focus to
+    static getNextFocusable(element) {
+        const focusables = document.querySelectorAll("a[href], button, input, select, textarea, [tabindex]");
+
+        for (const focusable of focusables) {
+            if (focusable.disabled || focusable.tabIndex < 0 || focusable.getClientRects().length == 0) continue;
+            if (element.contains(focusable) || focusable.closest(".bs-container") !== null) continue;
+            if (element.compareDocumentPosition(focusable) & Node.DOCUMENT_POSITION_FOLLOWING) return focusable;
+        }
+
+        return null;
+    }
+
+    // setMultiSelectSearch(dropdown, selections, searchFunc): Replaces the search of a multi-select dropdown with searchFunc
+    static setMultiSelectSearch(dropdown, selections, searchFunc) {
+        const selectpicker = dropdown.data("selectpicker");
+        if (selectpicker === undefined) return;
+
+        const optionsByValue = new Map(Array.from(dropdown[0].options).map((option) => [option.value, option]));
+
+        selectpicker.$searchbox.on("input propertychange", () => {
+            const searchTerm = selectpicker.$searchbox[0].value;
+            if (!searchTerm) return;
+
+            const mainData = selectpicker.selectpicker.main.data;
+            const mainElements = selectpicker.selectpicker.main.elements;
+            const results = [];
+
+            for (const selection of searchFunc(searchTerm, selections)) {
+                const option = optionsByValue.get(String(selection.value));
+                if (option !== undefined && mainData[option.liIndex] !== undefined) results.push(mainData[option.liIndex]);
+            }
+
+            selectpicker.selectpicker.search.data = results;
+            selectpicker.selectpicker.search.elements = results.map((result) => mainElements[result.index]);
+
+            selectpicker.activeIndex = undefined;
+            selectpicker.noScroll = true;
+            selectpicker.$menuInner.scrollTop(0);
+            selectpicker.createView(true);
+
+            // show the message for no results, the same way as bootstrap-select
+            const optionList = selectpicker.$menuInner[0].firstChild;
+            optionList.querySelectorAll(".no-results").forEach((noResults) => noResults.remove());
+
+            if (results.length == 0) {
+                const noResults = document.createElement("li");
+                noResults.className = "no-results";
+                noResults.textContent = selectpicker.options.noneResultsText.replace("{0}", `"${searchTerm}"`);
+                optionList.appendChild(noResults);
+            }
+        });
+    }
+
+    // updateMultiSelect(dropdownSelector, selections, inputs, onChange, translations, searchFunc, maxOptions, maxOptionsText):
+    //  Updates the selections for the multi-select dropdown select widget
+    // Note:
+    // - maxOptions is the most options that can be selected, and maxOptionsText is the message shown when the limit is reached.
+    //   bootstrap-select's select all button does not follow this limit, so the button is hidden when there is a limit
+    updateMultiSelect({dropdownSelector, selections, inputs, onChange = undefined, noneSelectedText = "", searchFunc = null,
+                       maxOptions = undefined, maxOptionsText = undefined} = {}) {
         // destroy the select picker, so that when adding the new selections
         //  to the dropdown, the dropdown will not fire extra events
         let dropdown = $(dropdownSelector);
@@ -228,12 +455,47 @@ export class BasePage {
             .attr("value", (d) => selectionIsArr ? d.value : null)
             .text((d) => selectionIsArr ? d.text : d);
 
-        dropdown = $(dropdownSelector).selectpicker({
-            deselectAllText: Translation.translate("DeselectAll"), 
+        const selectpickerOpts = {
+            deselectAllText: Translation.translate("DeselectAll"),
             selectAllText: Translation.translate("SelectAll"),
             container: 'body',
-            noneSelectedText});
-        
+            noneSelectedText
+        };
+
+        if (maxOptions !== undefined) {
+            selectpickerOpts.maxOptions = maxOptions;
+        }
+
+        if (maxOptionsText !== undefined) {
+            selectpickerOpts.maxOptionsText = () => [maxOptionsText, maxOptionsText];
+        }
+
+        dropdown = $(dropdownSelector).selectpicker(selectpickerOpts);
+
+        const selectpicker = dropdown.data("selectpicker");
+        if (maxOptions !== undefined && selectpicker !== undefined) {
+            selectpicker.$menu.find(".bs-select-all").addClass("d-none");
+
+            // when the limit is reached, bootstrap-select unselects the clicked <option> but its own fix for the
+            //  option's tick does not work in this version (it passes an index instead of the option's data),
+            //  so remove the tick from any option that is shown as selected but whose <option> is not selected
+            dropdown.on("maxReached.bs.select", () => {
+                setTimeout(() => {
+                    for (const optionData of selectpicker.selectpicker.main.data) {
+                        if (optionData.selected && optionData.option && !optionData.option.selected) {
+                            selectpicker.setSelected(optionData, false);
+                        }
+                    }
+                }, 20);
+            });
+        }
+
+        if (searchFunc !== null && selectionIsArr) {
+            BasePage.setMultiSelectSearch(dropdown, orderedSelections, searchFunc);
+        }
+
+        BasePage.fixMultiSelectKeys();
+
         if (orderedSelections.length == inputs.size) {
             dropdown.selectpicker('selectAll');
         } else {
