@@ -463,6 +463,16 @@ select.form-control {
     margin: 5px;
 }
 
+/* small copy of the search table's action buttons, shown in the instructions text */
+.instructionIcon {
+    pointer-events: none;
+    min-height: 0;
+    padding: 2px 6px;
+    font-size: inherit;
+    line-height: 1.2;
+    vertical-align: baseline;
+}
+
 #nutrientTable_wrapper .dataTables_scrollHeadInner,
 #nutrientTable_wrapper .dataTables_scrollHeadInner table,
 #nutrientTable {
