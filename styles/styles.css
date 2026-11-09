@@ -182,7 +182,7 @@
     padding-left: 5px;
     border-top: 1px solid var(--tableBorderColor);
     border-left: 1px solid var(--tableBorderColor);
-    vertical-align: top;
+    vertical-align: middle !important;
     line-height: 1.4375;
 }
 
@@ -461,6 +461,7 @@ select.form-control {
 
 .searchTableActionBtn {
     margin: 5px;
+    padding: 5px;
 }
 
 /* small copy of the search table's action buttons, shown in the instructions text */
