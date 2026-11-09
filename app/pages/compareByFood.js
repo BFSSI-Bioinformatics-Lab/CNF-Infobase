@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, CompFoodSearchTableCols, TableCols } from "../constants.js";
+import { SearchOpts, SearchAtts, DataCols, CompFoodSearchTableCols } from "../constants.js";
 import { Translation } from "../tools.js";
 import { BaseComparePage } from "./basePage.js";
 import { Model } from "../backend.js";
@@ -87,6 +87,9 @@ export class CompareByFood extends BaseComparePage {
             tableColInfo.push({title: colName, data: dataCol, orderable: false});
         }
 
+        // the nutrient group goes in the last column
+        tableColInfo.push({title: translations[DataCols.NutrientGroup], data: Translation.getDataCol(DataCols.NutrientGroup), orderable: false});
+
         const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, 
                                             columnInfo: tableColInfo, 
                                             data: tableData.data, 
@@ -99,7 +102,6 @@ export class CompareByFood extends BaseComparePage {
                                                 orderFixed: {
                                                     pre: [0, 'asc'] // Fix the order for the nutrients
                                                 },
-                                                drawCallback: this.getGroupRowsDrawCallback(Translation.getDataCol(TableCols.NutrientGroup)),
                                                 columnDefs: [
                                                     {
                                                         targets: 1,
