@@ -464,6 +464,25 @@ select.form-control {
     padding: 5px;
 }
 
+.dataTable td.searchTableActionCol {
+    text-align: center !important;
+}
+
+/* keep the widths of the search table's columns the same, no matter which rows are shown (e.g. when a food is selected):
+   - the widths of the columns come from the table's settings instead of the contents of the rows
+   - the space for the scrollbar is kept, even when there are too few rows to scroll */
+#foodSearchTable_wrapper table.dataTable {
+    table-layout: fixed;
+}
+
+#foodSearchTable_wrapper table.dataTable td {
+    overflow-wrap: anywhere;
+}
+
+#foodSearchTable_wrapper .dataTables_scrollBody {
+    scrollbar-gutter: stable;
+}
+
 /* small copy of the search table's action buttons, shown in the instructions text */
 .instructionIcon {
     pointer-events: none;
