@@ -122,31 +122,6 @@ export class BasePage {
         });
     }
 
-    // getGroupRowsDrawCallback(dataSrc): Creates a 'drawCallback' for a datatable that inserts a row
-    //  before each group of rows, where the group's name is repeated in every visible column
-    // Note:
-    // - used instead of the RowGroup extension, which is not available for the DataTables version used by WET
-    getGroupRowsDrawCallback(dataSrc) {
-        return function() {
-            const api = this.api();
-            const visibleColumnsCount = api.columns(':visible').count();
-            let lastGroup = null;
-
-            api.rows({page: 'current'}).every(function() {
-                const group = this.data()[dataSrc];
-                if (group === lastGroup) return;
-                lastGroup = group;
-
-                const groupRow = $('<tr class="groupRow"/>');
-                for (let i = 0; i < visibleColumnsCount; i++) {
-                    groupRow.append($('<th scope="row"/>').text(group));
-                }
-
-                $(this.node()).before(groupRow);
-            });
-        };
-    }
-
     // addCheckbox(checkboxLst, checkLstName, checkboxVal, checkboxId, checkboxText, isChecked): 
     //  Adds a checkbox to some container
     addCheckbox({checkboxLst, checkLstName, checkboxVal, checkboxId, checkboxText = "", isChecked = false} = {}) {
@@ -904,6 +879,9 @@ export class BaseSearchPage extends BasePage {
 
         tableColInfo.splice(2, 0, ...measureTableColInfo);
 
+        // the nutrient group goes in the last column
+        tableColInfo.push({title: translations[DataCols.NutrientGroup], data: Translation.getDataCol(DataCols.NutrientGroup), name: DataCols.NutrientGroup, orderable: false});
+
         const dataTable = this.updateTable({
             selector: this.htmlSelectors.nutrientTable, 
             columnInfo: tableColInfo, 
@@ -913,7 +891,6 @@ export class BaseSearchPage extends BasePage {
                 orderFixed: {
                     pre: [0, 'asc'] // Fix the order for the nutrients
                 },
-                drawCallback: this.getGroupRowsDrawCallback(Translation.getDataCol(TableCols.NutrientGroup)),
                 columnDefs: [
                     {
                         targets: 1,

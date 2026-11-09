@@ -164,18 +164,6 @@
     border-radius: 0 var(--smBorderRadius) 0 0;
 }
 
-.groupRow th {
-    background-color: var(--primaryVariant) !important;
-}
-
-.groupRow th:first-child {
-    border-radius: 0;
-}
-
-.groupRow th:last-child {
-    border-radius: 0;
-}
-
 .dataTable td {
     color: var(--fontColour);
     text-align: left !important;
