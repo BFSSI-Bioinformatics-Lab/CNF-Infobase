@@ -757,6 +757,20 @@ export class BaseSearchPage extends BasePage {
         return `<button type="button" class="btn btn-primary searchTableActionBtn" aria-label="${Translation.translate("SearchTableInspect")}"><i class="fa fa-search"></i></button>`;
     }
 
+    // buildSearchTableSelectCol(): Builds the column of the search table with the buttons to select (inspect) or unselect a food
+    buildSearchTableSelectCol() {
+        return {
+            data: null,
+            orderable: false,
+            searchable: false,
+            width: "80px",
+            className: "searchTableActionCol",
+            render: (data, type, row) => {
+                return this.buildSearchTableSelectBtn();
+            }
+        };
+    }
+
     setupSearchTableSelect(optSelected = false) {
         const self = this;
 
@@ -788,7 +802,11 @@ export class BaseSearchPage extends BasePage {
 
             self.updateSearchTable(foodSelected);
 
-            if (!foodSelected) return;
+            // the X button closes the food's nutrient info
+            if (!foodSelected) {
+                self.hideFoodNutrientStats();
+                return;
+            }
 
             self.model.clearNutrientStatsInputs(self.searchOpt);
             self.showFoodNutrientStats(foodCode);
