@@ -39,7 +39,8 @@ Purpose: Defines the page for comparing nutrients
                     <button class="btn btn-primary" id="searchCSVDownload"></button>
                 </div>
                 <div class="tableContainer">
-                    <table id="foodSearchTable" class="wb-tables table"></table>
+                    <!-- "wb-tables-inited" stops WET from creating its own DataTable on this table: the app creates the DataTable itself -->
+                    <table id="foodSearchTable" class="wb-tables wb-tables-inited table"></table>
                 </div>
             </div>
         </div>
