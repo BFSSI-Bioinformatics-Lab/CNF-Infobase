@@ -1056,7 +1056,15 @@ export class Model {
         let tableAtts = [];
         let tableColDisplay = [];
 
+        // the nutrient group goes in the last column, the same as in the table
+        let hasNutrientGroupCol = false;
+
         for (const tableCol in translations) {
+            if (tableCol == DataCols.NutrientGroup) {
+                hasNutrientGroupCol = true;
+                continue;
+            }
+
             tableAtts.push(Translation.getDataCol(tableCol));
             tableColDisplay.push(translations[tableCol]);
         }
@@ -1083,6 +1091,11 @@ export class Model {
                 tableAtts.push(dataCol);
                 tableColDisplay.push(colName);
             }
+        }
+
+        if (hasNutrientGroupCol) {
+            tableAtts.push(Translation.getDataCol(DataCols.NutrientGroup));
+            tableColDisplay.push(translations[DataCols.NutrientGroup]);
         }
 
         const tableAttsLen = tableAtts.length;
@@ -1191,6 +1204,10 @@ export class Model {
         tableAtts.push(...measureTableAtts);
         tableColDisplay.push(...measureColDisplay);
 
+        // the nutrient group goes in the last column, the same as in the nutrient table
+        tableAtts.push(Translation.getDataCol(DataCols.NutrientGroup));
+        tableColDisplay.push(nutrientColTranslations[DataCols.NutrientGroup]);
+
         const tableAttsLen = tableAtts.length;
 
         // header of the CSV
@@ -1209,21 +1226,8 @@ export class Model {
         result.push(tableColDisplay);
 
         // table data
-        let nutrientGroup = "";
-        let nutrientRowGroup = [];
-
         for (const row of webSearchedNutrientTable) {
             const currentCSVRow = [];
-
-            // add a row for the nutrient group
-            const currentNutrientGroup = row[Translation.getDataCol(DataCols.NutrientGroup)];
-            if (currentNutrientGroup != nutrientGroup) {
-                nutrientGroup = currentNutrientGroup;
-
-                nutrientRowGroup = Array(tableAttsLen).fill(null);
-                nutrientRowGroup[0] = nutrientGroup;
-                result.push(nutrientRowGroup);
-            }
 
             for (const tableAtt of tableAtts) {
                 currentCSVRow.push(row[tableAtt]);
