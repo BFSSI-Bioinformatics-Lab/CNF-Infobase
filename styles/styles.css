@@ -384,8 +384,18 @@ tr.dtrg-group th .dtrg-sticky-text {
     margin-bottom: 15px;
 }
 
+/* Bootstrap 5's .form-control hides the down arrow of a select, so bring back the browser's arrow */
+select.form-control {
+    appearance: auto;
+}
+
 .bootstrap-select .bs-actionsbox {
     overflow: visible !important;
+}
+
+/* when the select all button is hidden (the dropdown has a limit on the selections), the deselect all button takes the full width */
+.bootstrap-select .bs-actionsbox .bs-select-all.d-none + .bs-deselect-all {
+    width: 100%;
 }
 
 .bootstrap-select .bs-actionsbox .btn-group {
