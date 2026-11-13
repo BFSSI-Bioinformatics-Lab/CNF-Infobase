@@ -48,10 +48,10 @@ export class CompareByFood extends BaseComparePage {
         });
     }
 
-    clearSearch() {
+    async clearSearch() {
         this.model.clearSearchInputs(this.searchOpt);
         this.syncInputs();
-        this.updateSearchTable("", true);
+        await this.updateSearchTable("", true);
     }
 
     getInputs() {
@@ -62,8 +62,8 @@ export class CompareByFood extends BaseComparePage {
         inputs[SearchAtts.FoodName] = (foods.length == 0) ? [] : foods;
     }
 
-    updateSearchTable(searchTxt = null, resetSort = false) {
-        const tableData = this.model.getCompareFoodTableData(this.searchOpt);
+    async updateSearchTable(searchTxt = null, resetSort = false) {
+        const tableData = await this.model.getCompareFoodTableData(this.searchOpt);
         let searchTable = this.htmlElements.searchTable;
         if (tableData === undefined) return;
 
@@ -141,7 +141,7 @@ export class CompareByFood extends BaseComparePage {
         container.classList.add("food-bubbles-below");
     }
 
-    loadPageInputs() {
+    async loadPageInputs() {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt];
         const selections = this.model.searchSelections[this.searchOpt];
@@ -167,6 +167,6 @@ export class CompareByFood extends BaseComparePage {
                                                              }});
         
         this.moveFoodBubblesBelowInput();
-        this.clearSearch();
+        await this.clearSearch();
     } 
 }

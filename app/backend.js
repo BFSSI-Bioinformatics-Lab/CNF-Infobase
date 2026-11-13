@@ -1,9 +1,19 @@
-import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols, NutrientTableExtraCols, DefaultMeasureTypeCode, RAMeasureTypeCode, HighlightedNutrientCodes } from "./constants.js";
-import { Translation, TableTools, TextTools, SetTools, ListTools } from "./tools.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols, HiddenMeasureCodes, DefaultMeasureCode, MeasureTypeCodes, NutrientStatAtts, NutrientTableCols, NutrientTableExtraCols, DefaultMeasureTypeCode, RAMeasureTypeCode, HighlightedNutrientCodes, DataSources } from "./constants.js";
+import { Translation, TableTools, TextTools, SetTools, ListTools, EnvTools } from "./tools.js";
+import { FileDataLoader } from "./dataLoaders/fileDataLoader.js";
+import { APIDataLoader } from "./dataLoaders/apiDataLoader.js";
 
 
+// Model: The backend of the app
+// Note:
+// - The tables are retrieved through the data loader ('dataLoader'), which is some subclass of BaseDataLoader:
+//   * FileDataLoader: retrieves the data from the CSV files
+//   * APIDataLoader: retrieves the data from the backend API
+//
+// - If no data loader is given, the data loader is chosen in 'load' by 'DataSource' in env.js. The CSV files are used
+//   if env.js is not provided or 'DataSource' is not set. If the data cannot be loaded from the API, the CSV files are used instead
 export class Model {
-    constructor() {
+    constructor(DataLoaderClass = null) {
         this.searchOpt = SearchOpts.SearchByFood;
         this.searchSelections = this.initSearchSelections();
         this.defaultSearchInputs = this.initSearchInputs();
@@ -17,12 +27,7 @@ export class Model {
         this.nutrientStatsInputs = this.initNutrientStatsInputs();
         this.defaultNutrientStatsInputs = this.initNutrientStatsInputs();
 
-        this.foodTable;
-        this.foodGroupTable;
-        this.foodNameTable;
-        this.measureConvTable;
-        this.nutrientTable;
-        this.nutrientNameTable;
+        this.dataLoader = (DataLoaderClass === null) ? undefined : new DataLoaderClass(this);
 
         this.searchResultData;
         this.searchedNutrientData;
@@ -107,190 +112,12 @@ export class Model {
         }
     }
 
-    // loadCSV(file): Loads the table and its columns from a CSV file
-    async loadCSV(file) {
-        const data = await d3.csv(file);
-        const columns = data.length > 0 ? Object.keys(data[0]) : [];
-        return {data, columns};
-    }
-
-    assertFoodCodeIndUnique(index, val) {
-        if (index[val] !== undefined) {
-            throw new TypeError("Food Code is not unique!");
-        }
-    }
-
-    // tokenizeFoodDescription(foodDescription): Split the food description name into different tokens
-    tokenizeFoodDescription(foodDescription) {
-        if (foodDescription === "") return [];
-        
-        const result = foodDescription.toLowerCase().split(",");
-        let resultLen = result.length;
-        let i = 0;
-
-        while (i < resultLen) {
-            const keywords = result[i].trim().split(" ");
-            const keywordsLen = keywords.length;
-
-            result.splice(i, 1, ...keywords);
-
-            i += keywordsLen;
-            resultLen += keywordsLen - 1;
-        }
-
-        return result;
-    }
-
-    setupFoodNameTableIndices() {
-        const foodNameTableData = this.foodNameTable.data;
-        const foodCodeIndex = {};
-        const getFoodCodeVal = (row) => row[DataCols.FoodCode];
-
-        const foodNameTableIndices = {[DataCols.FoodCode]: foodCodeIndex};
-        this.foodNameTable.indices = foodNameTableIndices;
-
-        const foodNameTableLen = foodNameTableData.length;
-        for (let i = 0; i < foodNameTableLen; ++i) {
-            const row = foodNameTableData[i];
-            this.addIndexVal(row, i, foodCodeIndex, getFoodCodeVal);
-        }
-    }
-
-    setupFoodTableIndices() {
-        const foodTableData = this.foodTable.data;
-        
-        const foodCodeIndex = {};
-        const foodTableIndices = {[DataCols.FoodCode]: foodCodeIndex};
-        this.foodTable.indices = foodTableIndices;
-
-        const foodTableLen = foodTableData.length;
-        for (let i = 0; i < foodTableLen; ++i) {
-            const row = foodTableData[i];
-            const indexVal = row[DataCols.FoodCode]
-            this.assertFoodCodeIndUnique(foodCodeIndex, indexVal);
-            foodCodeIndex[indexVal] = new Set([i]);
-
-            row[TableCols.FoodNameOrder] = Infinity;
-            row[TableCols.FoodAltNameOrder] = Infinity;
-            
-            // tokenize the food descriptions for searching
-            row[Translation.getDataCol(TableCols.FoodDescriptionTokens)] = this.tokenizeFoodDescription(row[Translation.getDataCol(DataCols.FoodDescription)]);
-            row[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)] = this.tokenizeFoodDescription(row[Translation.getDataCol(DataCols.FoodAltDescription)]);
-        }
-    }
-
-    async loadFoodTable(foodNameTable, foodGroupTable, foodSourceTable) {
-        this.foodGroupTable = foodGroupTable;
-        this.foodNameTable = foodNameTable;
-
-        // setup the food group selections
-        const foodGroups = this.getFoodGroups();
-        this.searchSelections[SearchOpts.SearchByFood][SearchAtts.FoodGroup] = foodGroups;
-        this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.FoodGroup] = structuredClone(foodGroups);
-        this.searchSelections[SearchOpts.CompareNutrients][SearchAtts.FoodGroup] = structuredClone(foodGroups);
-
-        // setup the food name selections
-        const foodNames = this.getFoodNames();
-        this.searchSelections[SearchOpts.CompareFoods][SearchAtts.FoodName] = foodNames;
-
-        this.foodTable = TableTools.dataLeftJoinById(foodNameTable, foodGroupTable, DataCols.FoodGroupCode, DataCols.FoodGroupCode);
-        this.foodTable = TableTools.dataLeftJoinById(this.foodTable, foodSourceTable, DataCols.FoodSourceCode, DataCols.FoodSourceCode);
-
-        this.setupFoodTableIndices();
-        this.setupFoodNameTableIndices();
-    }
-
     static getMeasureWeigthConvId(foodCode, measureTypeCode, measureCode) {
         return `${foodCode}_${measureTypeCode}_${measureCode}`;
     }
 
     static getMeasureWeightConvIdFromRow(measureWeightConvRow) {
         return Model.getMeasureWeigthConvId(measureWeightConvRow[DataCols.FoodCode], measureWeightConvRow[DataCols.MeasureTypeCode], measureWeightConvRow[DataCols.MeasureCode]);
-    }
-
-    addIndexVal(row, rowInd, indices, getIndexVal) {
-        const indexVal = getIndexVal(row);
-        const indexBucket = indices[indexVal];
-
-        if (indexBucket === undefined) {
-            indices[indexVal] = new Set([rowInd]);
-        } else {
-            indexBucket.add(rowInd);
-        }
-    }
-
-    async loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable) {
-        this.measureConvTable = TableTools.dataLeftJoinById(measureWeightConvTable, measureTypeTable, DataCols.MeasureTypeCode, DataCols.MeasureTypeCode);
-        this.measureConvTable = TableTools.dataLeftJoinById(this.measureConvTable, measureNameTable, DataCols.MeasureCode, DataCols.MeasureCode);
-
-        // there are duplicate rows in the original data that needs to be filtered out
-        this.measureConvTable.data = ListTools.getUnique(this.measureConvTable.data, (row) => {
-            const result = Model.getMeasureWeightConvIdFromRow(row);
-            row[TableCols.MeasureWeightConvId] = result;
-            return result;
-        });
-
-        const measureConvTableData = this.measureConvTable.data;
-
-        const foodCodeIndex = {};
-        const measureTypeCodeIndex = {};
-        const measureCodeIndex = {};
-        const getFoodCodeVal = (row) => row[DataCols.FoodCode];
-        const getMeasureTypeCodeVal = (row) => row[DataCols.MeasureTypeCode];
-        const getMeasureCodeVal = (row) => row[DataCols.MeasureCode];
-
-        const indices = {
-            [DataCols.FoodCode]: foodCodeIndex, 
-            [DataCols.MeasureTypeCode]: measureTypeCodeIndex,
-            [DataCols.MeasureCode]: measureCodeIndex
-        };
-
-        this.measureConvTable.indices = indices;
-
-        const measureWeightConvTableLen = measureConvTableData.length;
-
-        for (let i = 0; i < measureWeightConvTableLen; ++i) {
-            const row = measureConvTableData[i];
-            this.addIndexVal(row, i, foodCodeIndex, getFoodCodeVal);
-            this.addIndexVal(row, i, measureTypeCodeIndex, getMeasureTypeCodeVal);
-            this.addIndexVal(row, i, measureCodeIndex, getMeasureCodeVal);
-        }
-    }
-
-    setupNutrientTableIndices() {
-        const foodCodeIndex = {};
-        const getFoodCodeVal = (row) => row[DataCols.FoodCode];
-
-        const nutrientCodeIndex = {};
-        const getNutrientCodeVal = (row) => row[DataCols.NutrientCode];
-
-        const indices = {[DataCols.FoodCode]: foodCodeIndex, [DataCols.NutrientCode]: nutrientCodeIndex};
-        this.nutrientTable.indices = indices;
-
-        const nutrientTableData = this.nutrientTable.data;
-        const nutrientTableDataLen = nutrientTableData.length;
-        
-        for (let i = 0; i < nutrientTableDataLen; ++i) {
-            const row = nutrientTableData[i];
-            this.addIndexVal(row, i, foodCodeIndex, getFoodCodeVal);
-            this.addIndexVal(row, i, nutrientCodeIndex, getNutrientCodeVal);
-        }
-    }
-
-    setupNutrientNameTableIndices() {
-        const nutrientCodeIndex = {};
-        const getNutrientCodeVal = (row) => row[DataCols.NutrientCode];
-
-        const indices = {[DataCols.NutrientCode]: nutrientCodeIndex};
-        this.nutrientNameTable.indices = indices;
-
-        const nutrientTableData = this.nutrientNameTable.data;
-        const nutrientTableDataLen = nutrientTableData.length;
-        
-        for (let i = 0; i < nutrientTableDataLen; ++i) {
-            const row = nutrientTableData[i];
-            this.addIndexVal(row, i, nutrientCodeIndex, getNutrientCodeVal);
-        }
     }
 
     static getNutrientName(nutrientWithUnit) {
@@ -302,138 +129,53 @@ export class Model {
         return result;
     }
 
-    async loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable, nutrientGroupTable) {
-        // add the nutrient group ordering
-        const nutrientGroupData = nutrientGroupTable.data;
-        let currentNutrientGroupInd = 0;
+    // getDefaultDataLoaderClass(): Retrieves the data loader set by 'DataSource' in env.js
+    //  (FileDataLoader if env.js is not provided or 'DataSource' is not set)
+    static async getDefaultDataLoaderClass() {
+        const env = await EnvTools.load();
+        return (env.DataSource == DataSources.API) ? APIDataLoader : FileDataLoader;
+    }
 
-        this.nutrientNameTable = nutrientNameTable;
-        this.nutrientNameTable = TableTools.dataLeftJoinById(this.nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
-
-        // update which nutrients should be bolded in the nutrient table and
-        //  modify the nutrient names column with the updated nutrient names
-        const nutrientNameCol = Translation.getDataCol(DataCols.NutrientName);
-        const nutrientNameWithUnitCol = Translation.getDataCol(DataCols.NutrientNameWithUnit);
-
-        for (const row of this.nutrientNameTable.data) {
-            const nutrientCode = row[DataCols.NutrientCode];
-            row[nutrientNameCol] = Model.getNutrientName(row[nutrientNameWithUnitCol]);
-
-            if (HighlightedNutrientCodes.has(nutrientCode)) {
-                const nutrientNameWithUnit = row[Translation.getDataCol(DataCols.NutrientNameWithUnit)]
-                this.highlightedNutrientNames.add(nutrientNameWithUnit);
-            }
+    // load(): Initial load of all the required data
+    // Note: If the data cannot be loaded from the API (eg. the API is down), the data is loaded from the CSV files instead
+    async load() {
+        if (this.dataLoader === undefined) {
+            const DataLoaderClass = await Model.getDefaultDataLoaderClass();
+            this.dataLoader = new DataLoaderClass(this);
         }
 
-        let nutrients = this.getNutrients();
-        nutrients.sort((a, b) => a.text.localeCompare(b.text));
+        try {
+            await this.loadData();
+        } catch (error) {
+            if (this.dataLoader instanceof FileDataLoader) throw error;
+
+            console.warn("Unable to load the data from the API. Loading the data from the CSV files instead.", error);
+            this.dataLoader = new FileDataLoader(this);
+            await this.loadData();
+        }
+    }
+
+    // loadData(): Loads the data needed at startup from the data loader
+    async loadData() {
+        await this.dataLoader.load();
+
+        const [foodGroups, foodNames, nutrients, highlightedNutrientNames] = await Promise.all([
+            this.dataLoader.getFoodGroups(),
+            this.dataLoader.getFoodNames(),
+            this.dataLoader.getNutrients(),
+            this.dataLoader.getHighlightedNutrientNames()
+        ]);
+
+        // setup the selections for the dropdowns
+        this.searchSelections[SearchOpts.SearchByFood][SearchAtts.FoodGroup] = foodGroups;
+        this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.FoodGroup] = structuredClone(foodGroups);
+        this.searchSelections[SearchOpts.CompareNutrients][SearchAtts.FoodGroup] = structuredClone(foodGroups);
+        this.searchSelections[SearchOpts.CompareFoods][SearchAtts.FoodName] = foodNames;
 
         this.searchSelections[SearchOpts.SearchByNutrient][SearchAtts.Nutrient] = nutrients;
         this.searchSelections[SearchOpts.CompareNutrients][SearchAtts.Nutrient] = structuredClone(nutrients);
 
-        // join the different parts of the nutrients
-        nutrientNameTable = TableTools.dataLeftJoinById(nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
-        this.nutrientTable = TableTools.dataLeftJoinById(nutrientAmtTable, nutrientNameTable, DataCols.NutrientCode, DataCols.NutrientCode);
-        this.nutrientTable = TableTools.dataLeftJoinById(this.nutrientTable, nutrientSrcTable, DataCols.NutrientSrcCode, DataCols.NutrientSrcCode);
-        this.nutrientTable = TableTools.dataLeftJoinById(this.nutrientTable, this.foodTable, DataCols.FoodCode, DataCols.FoodCode);
-
-        const nutrientTableData = this.nutrientTable.data;
-
-        // setup the indices
-        this.setupNutrientTableIndices();
-        this.setupNutrientNameTableIndices();
-    }
-
-    // load(): Initial load of all the required data
-    async load() {
-        const [foodNameTable, 
-               foodGroupTable,
-               foodSourceTable,
-               measureTypeTable, 
-               measureNameTable, 
-               measureWeightConvTable, 
-               nutrientAmtTable, 
-               nutrientNameTable, 
-               nutrientSrcTable,
-               nutrientGroupTable,
-               raMeasureTypeTable,
-               raMeasureNameTable,
-               raMeasureWeightConvTable] = await Promise.all([this.loadCSV(`data/Food_Name.csv`), 
-                           this.loadCSV(`data/CNF_Food_Group.csv`), 
-                           this.loadCSV(`data/Food_Source.csv`),
-                           this.loadCSV(`data/Measure_Type.csv`),
-                           this.loadCSV(`data/Measure_Name.csv`),
-                           this.loadCSV(`data/Measure_Weight_Conversion.csv`),
-                           this.loadCSV(`data/Nutrient_Amount.csv`),
-                           this.loadCSV(`data/Nutrient_Name.csv`),
-                           this.loadCSV(`data/Nutrient_Source.csv`),
-                           this.loadCSV(`data/Nutrients and grouping_CNF_2026.csv`),
-                           this.loadCSV(`data/Measure_Type_RA for Health Infobase.csv`),
-                           this.loadCSV(`data/Measure_Name_RA for Health Infobase.csv`),
-                           this.loadCSV(`data/Measure_Weight_Conversion_RA for Health Infobase.csv`)]);
-
-        measureTypeTable.data.push(...(raMeasureTypeTable.data));
-        raMeasureTypeTable.columns.length = 0;
-        raMeasureTypeTable.data.length = 0;
-
-        measureNameTable.data.push(...(raMeasureNameTable.data));
-        raMeasureNameTable.columns.length = 0;
-        raMeasureNameTable.data.length = 0;
-
-        measureWeightConvTable.data.push(...(raMeasureWeightConvTable.data));
-        raMeasureWeightConvTable.columns.length = 0;
-        raMeasureWeightConvTable.data.length = 0;
-
-        await Promise.all([this.loadFoodTable(foodNameTable, foodGroupTable, foodSourceTable),
-                           this.loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable),
-                           this.loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable, nutrientGroupTable)]);
-    }
-
-    getRowById(table, indexName, id) {
-        const rowInds = table.indices[indexName][id];
-        if (rowInds === undefined || rowInds.size == 0) return;
-        return table.data[SetTools.getFirst(rowInds)];
-    }
-
-    getRowsById(table, indexName, id) {
-        const rowInds = table.indices[indexName][id];
-        if (rowInds === undefined) return;
-        return [...rowInds].map((ind) => table.data[ind]);
-    }
-
-    getRowsByIds(table, indexName, ids) {
-        const indices = table.indices[indexName];
-        ids = new Set(ids);
-        let result = new Set();
-
-        for (const id of ids) {
-            const rowInds = indices[id];
-            if (rowInds === undefined) continue;
-            SetTools.union(result, rowInds);
-        }
-
-        return [...result].map((ind) => table.data[ind]);
-    }
-
-    getRowsByManyIds(table, indexData) {
-        let result = null;
-
-        for (const indexName in indexData) {
-            const currentResult = new Set();
-            const indices = table.indices[indexName];
-            let ids = new Set(indexData[indexName]);
-
-            for (const id of ids) {
-                const rowInds = indices[id];
-                if (rowInds === undefined) continue;
-
-                SetTools.union(currentResult, rowInds);
-            }
-
-            result = (result === null) ? currentResult : SetTools.intersection(result, currentResult);
-        }
-
-        return [...result].map((ind) => table.data[ind]);
+        this.highlightedNutrientNames = highlightedNutrientNames;
     }
 
     // findAllKeywords(tokens, ahoCorasick): Checks if 'tokens' contains all the keywords from 'ahoCorasickDFA'
@@ -541,8 +283,8 @@ export class Model {
         return foundFoodNameKeywordInd;
     }
 
-    filterFoodNameSelections(foodName, foodNameSelections) {
-        let foodNameKeywords = new Set(this.tokenizeFoodDescription(foodName));
+    async filterFoodNameSelections(foodName, foodNameSelections) {
+        let foodNameKeywords = new Set(this.dataLoader.tokenizeFoodDescription(foodName));
         foodNameKeywords.delete(""); // The AhoCorasick library we are using does not accept the empty strings
 
         foodNameKeywords = Array.from(foodNameKeywords);
@@ -550,8 +292,10 @@ export class Model {
 
         let foodNameAhoCorasickDFA = TextTools.buildAhoCorasickDFA(foodNameKeywords);
 
-        let result = foodNameSelections.filter((selection) => {
-            const foodRow = this.getRowById(this.foodTable, DataCols.FoodCode, selection.value);
+        const foodRows = await Promise.all(foodNameSelections.map((selection) => this.dataLoader.getFoodByCode(selection.value)));
+
+        let result = foodNameSelections.filter((selection, selectionInd) => {
+            const foodRow = foodRows[selectionInd];
 
             let matchData = this.findCloseFood(foodRow, foodNameAhoCorasickDFA);
             if ($.isEmptyObject(matchData.exactMatches) && $.isEmptyObject(matchData.prefixedMatches)) {
@@ -584,18 +328,8 @@ export class Model {
         return result;
     }
 
-    filterFoodSearchTable(foodName, foodAltName, foodGroupCode, foodCode) {
-        let result = this.foodTable.data;
-
-        if (foodCode != "") {
-            const row = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
-            if (row === undefined) return [];
-            result = [row];
-        }
-
-        if (foodGroupCode != "") {
-            result = result.filter((row) => row[DataCols.FoodGroupCode] == foodGroupCode);
-        }
+    async filterFoodSearchTable(foodName, foodAltName, foodGroupCode, foodCode) {
+        let result = await this.dataLoader.filterFoodSearchTableByCodes(foodGroupCode, foodCode);
 
         if (foodName == "" && foodAltName == "") {
             for (const row of result) {
@@ -649,74 +383,20 @@ export class Model {
         return result;
     }
 
-    filterNutrientSearchTable(nutrientCode, foodGroupCode, foodCode) {
-        let result = this.nutrientTable.data;
-        const nutrientCodeIsEmpty = nutrientCode == "";
-
-        if (nutrientCodeIsEmpty) return [];
-
-        if (foodCode != "") {
-            result = this.getRowsById(this.nutrientTable, DataCols.FoodCode, foodCode);
-            if (result === undefined) return [];
-        }
-
-        if (foodGroupCode != "") {
-            result = result.filter((row) => row[DataCols.FoodGroupCode] == foodGroupCode);
-        }
-
-        result = result.filter((row) => row[DataCols.NutrientCode] == nutrientCode);
-        return result;
-    }
-
-    filterCompareNutrientTable(nutrientCodes, foodGroupCode) {
-        let result = this.nutrientTable.data;
-        const foodGroupEmpty = foodGroupCode == "";
-        const nutrientCodesEmpty = nutrientCodes.length <= 0;
-
-        if (!foodGroupEmpty) {
-            result = result.filter((row) => row[DataCols.FoodGroupCode] == foodGroupCode);
-        }
-
-        if (!nutrientCodesEmpty) {
-            nutrientCodes = new Set(nutrientCodes);
-            result = result.filter((row) => nutrientCodes.has(row[DataCols.NutrientCode]));
-        }
-
-        if (foodGroupEmpty && nutrientCodesEmpty) {
-            return [];
-        }
-
-        return result;
-    }
-
-    filterCompareFoodTable(foodCodes) {
-        let result = this.nutrientTable.data;
-        const foodCodesEmpty = foodCodes.length <= 0;
-
-        if (!foodCodesEmpty) {
-            foodCodes = new Set(foodCodes);
-            result = result.filter((row) => foodCodes.has(row[DataCols.FoodCode]));
-        } else {
-            return [];
-        }
-
-        return result;
-    }
-
     // getFoodSearchTableData(searchOpt): Retrieves the food search data for the searched inputs 
-    getFoodSearchTableData(searchOpt) {
+    async getFoodSearchTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
-        const result = this.filterFoodSearchTable(inputs[SearchAtts.FoodName], "", inputs[SearchAtts.FoodGroup], inputs[SearchAtts.FoodCode]);
+        const result = await this.filterFoodSearchTable(inputs[SearchAtts.FoodName], "", inputs[SearchAtts.FoodGroup], inputs[SearchAtts.FoodCode]);
         this.searchResultData = this.getSearchCSVDownload(searchOpt, {data: result});
         return result;
     }
 
     // getFoodSearchSelectedData(searchOpt): Retrieves the food search data for the selected foods
-    getFoodSearchSelectedData(searchOpt) {
+    async getFoodSearchSelectedData(searchOpt) {
         const selectedFoods = this.selectedFoodCodes[searchOpt];
         if (selectedFoods === undefined || selectedFoods.length == 0) return [];
 
-        return this.filterFoodSearchTable("", "", "", selectedFoods[0]);
+        return await this.filterFoodSearchTable("", "", "", selectedFoods[0]);
     }
 
     formatNutrientSearchTable(nutrientSearchTable) {
@@ -741,46 +421,46 @@ export class Model {
         };
     }
 
-    getNutrientSearchNutrientData(nutrientCode) {
+    async getNutrientSearchNutrientData(nutrientCode) {
         if (nutrientCode == "") return this.getDefaultNutrientSearchNutrientData();
 
-        const result = this.getRowById(this.nutrientNameTable, DataCols.NutrientCode, nutrientCode);
+        const result = await this.dataLoader.getNutrientByCode(nutrientCode);
         if (result === undefined) return this.getDefaultNutrientSearchNutrientData();
         return result;
     }
 
     // getNutrientSearchTableData(searchOpt): Retrieves the nutrient search data for the searched inputs
-    getNutrientSearchTableData(searchOpt) {
+    async getNutrientSearchTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
         const nutrientCode = inputs[SearchAtts.Nutrient];
-        let result = this.filterNutrientSearchTable(nutrientCode, inputs[SearchAtts.FoodGroup], "");
+        let result = await this.dataLoader.filterNutrientSearchTable(nutrientCode, inputs[SearchAtts.FoodGroup], "");
 
         const foodCodes = new Set(result.map((row) => row[DataCols.FoodCode]));
-        const measureWeightConv = this.getFoodsRAMeasureWeightConv(foodCodes);
+        const measureWeightConv = await this.getFoodsRAMeasureWeightConv(foodCodes);
 
         result = TableTools.leftJoinById(result, measureWeightConv, DataCols.FoodCode);
 
         this.formatNutrientSearchTable(result);
         this.searchResultData = this.getSearchCSVDownload(searchOpt, {data: result}, false);
 
-        const nutrientData = this.getNutrientSearchNutrientData(nutrientCode);
+        const nutrientData = await this.getNutrientSearchNutrientData(nutrientCode);
         return {data: result, nutrientData};
     }
 
     // getNutrientSearchSelectedData(searchOpt): Retrieves the nutrient search data for the selected food
-    getNutrientSearchSelectedData(searchOpt) {
+    async getNutrientSearchSelectedData(searchOpt) {
         const selectedFoods = this.selectedFoodCodes[searchOpt];
         const inputs = this.searchInputs[searchOpt];
 
         const nutrientCode = inputs[SearchAtts.Nutrient];
-        const nutrientData = this.getNutrientSearchNutrientData(nutrientCode);
+        const nutrientData = await this.getNutrientSearchNutrientData(nutrientCode);
 
         if (selectedFoods === undefined || selectedFoods.length == 0) return {data: [], nutrientData};
 
         const selectedFood = selectedFoods[0];
 
-        let result = this.filterNutrientSearchTable(nutrientCode, "", selectedFood);
-        const measureWeightConv = this.getFoodsRAMeasureWeightConv([selectedFood]);
+        let result = await this.dataLoader.filterNutrientSearchTable(nutrientCode, "", selectedFood);
+        const measureWeightConv = await this.getFoodsRAMeasureWeightConv([selectedFood]);
         result = TableTools.leftJoinById(result, measureWeightConv, DataCols.FoodCode, DataCols.FoodCode);
 
         this.formatNutrientSearchTable(result);
@@ -788,13 +468,13 @@ export class Model {
     }
 
     // getCompareFoodTableData(searchOpt): Retrieves the search data for the compare by foods page
-    getCompareFoodTableData(searchOpt) {
+    async getCompareFoodTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
-        let result = this.filterCompareFoodTable(inputs[SearchAtts.FoodName]);
+        let result = await this.dataLoader.filterCompareFoodTable(inputs[SearchAtts.FoodName]);
 
         // get the data for the foods
         const foodCodes = inputs[SearchAtts.FoodName];
-        const foodNameData = this.getRowsByIds(this.foodNameTable, DataCols.FoodCode, foodCodes);
+        const foodNameData = await this.dataLoader.getFoodNamesByCodes(foodCodes);
         const foodColNames = {};
 
         if (result.length == 0) {
@@ -854,13 +534,13 @@ export class Model {
     }
 
     // getCompareNutrientTableData(searchOpt): Retrieves the search data for the compare by nutrient page
-    getCompareNutrientTableData(searchOpt) {
+    async getCompareNutrientTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
-        let result = this.filterCompareNutrientTable(inputs[SearchAtts.Nutrient], inputs[SearchAtts.FoodGroup]);
+        let result = await this.dataLoader.filterCompareNutrientTable(inputs[SearchAtts.Nutrient], inputs[SearchAtts.FoodGroup]);
 
         // get the data for the nutrients
         const nutrientCodes = inputs[SearchAtts.Nutrient];
-        const nutrientNameData = this.getRowsByIds(this.nutrientNameTable, DataCols.NutrientCode, nutrientCodes);
+        const nutrientNameData = await this.dataLoader.getNutrientNamesByCodes(nutrientCodes);
         const nutrientColNames = {};
 
         if (result.length == 0) {
@@ -995,34 +675,9 @@ export class Model {
         }
     }
 
-    getFoodMeasureWeightConv(foodCode, measureCodes = null) {
-        let measureWeightConv = this.getRowsById(this.measureConvTable, DataCols.FoodCode, foodCode);
+    async getFoodsRAMeasureWeightConv(foodCodes, addDefaultOnNoFound = true) {
+        let measureWeightConv = await this.dataLoader.getRAMeasureWeightConvByFoodCodes(foodCodes);
         if (measureWeightConv == undefined) return;
-
-        this.add100gMeasureWeightConv(measureWeightConv);
-        if (measureCodes !== null) {
-            measureWeightConv = measureWeightConv.filter((row) => measureCodes.has(row[DataCols.MeasureCode]));
-        }
-
-        const result = {};
-        for (const conv of measureWeightConv) {
-            const measureName = conv[Translation.getDataCol(DataCols.MeasureDescription)];
-            const currentConv = result[measureName];
-
-            if (currentConv == undefined || currentConv[DataCols.MeasureTypeCode] != RAMeasureTypeCode) {
-                result[measureName] = conv;
-            }
-        }
-
-        return Object.values(result);
-    }
-
-    getFoodsRAMeasureWeightConv(foodCodes, addDefaultOnNoFound = true) {
-        let measureWeightConv = this.getRowsByManyIds(this.measureConvTable, {[DataCols.MeasureTypeCode]: [RAMeasureTypeCode], [DataCols.FoodCode]: foodCodes});
-        if (measureWeightConv == undefined) return;
-
-        let temper = this.getRowsByIds(this.measureConvTable, DataCols.FoodCode, foodCodes);
-        temper = temper.filter((row) => row[DataCols.MeasureTypeCode] == RAMeasureTypeCode);
 
         if (!addDefaultOnNoFound) return measureWeightConv;
 
@@ -1247,14 +902,14 @@ export class Model {
     }
 
     // getFoodNutrientStats(foodCode, searchOpt): Retrives the nutrient data for the selected foods
-    getFoodNutrientStats(foodCode, searchOpt) {
-        let food = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
+    async getFoodNutrientStats(foodCode, searchOpt) {
+        let food = await this.dataLoader.getFoodByCode(foodCode);
         if (food == undefined) return;
 
-        let measureWeightConv = this.getFoodMeasureWeightConv(foodCode);
+        let measureWeightConv = await this.dataLoader.getFoodMeasureWeightConv(foodCode);
         if (measureWeightConv == undefined) return;
 
-        const nutrients = this.getRowsById(this.nutrientTable, DataCols.FoodCode, foodCode);
+        const nutrients = await this.dataLoader.getNutrientsByFoodCode(foodCode);
         if (nutrients == undefined) return;
 
         // set the default selected nutrient
@@ -1278,22 +933,6 @@ export class Model {
 
         this.searchedNutrientData = {measureWeightConv, food, nutrients};
         return this.searchedNutrientData;
-    }
-
-    getFoodGroups() {
-        let result = this.foodGroupTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodGroupDescription)], value: row[DataCols.FoodGroupCode]}});
-        result.push({text: Translation.translate("NoneSelected"), value: ""});
-        return result;
-    }
-
-    getFoodNames() {
-        let result = this.foodNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodDescription)], value: row[DataCols.FoodCode], exactMatchCount: 0, prefixedMatchCount: 0, startInd: Infinity}});
-        return result;
-    }
-
-    getNutrients() {
-        let result = this.nutrientNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.NutrientNameWithUnit)], value: row[DataCols.NutrientCode]}});
-        return result;
     }
 
     showFoodNutrientsExtraColsFromSearchOpt(searchOpt) {
@@ -1338,12 +977,12 @@ export class Model {
     }
 
     // downloadAllNutrientCSV(searchOpt): Downloads the CSV for all the serving sizes in the nutrient table
-    downloadAllNutrientCSV(searchOpt) {
+    async downloadAllNutrientCSV(searchOpt) {
         const selectedFoodCodes = this.selectedFoodCodes[searchOpt];
         if (selectedFoodCodes === undefined ||  selectedFoodCodes.length == 0) return;
 
         const foodCode = selectedFoodCodes[0];
-        let food = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
+        let food = await this.dataLoader.getFoodByCode(foodCode);
         if (food == undefined) return;
 
         const foodName = food[Translation.getDataCol(DataCols.FoodDescription)];
@@ -1353,7 +992,7 @@ export class Model {
     }
 
     // downloadNutrientCSV(searchOpt): Downloads the CSV for the selected serving sizes in the nutrient table
-    downloadNutrientCSV(searchOpt) {
+    async downloadNutrientCSV(searchOpt) {
         const selectedFoodCodes = this.selectedFoodCodes[searchOpt];
         if (selectedFoodCodes === undefined ||  selectedFoodCodes.length == 0) return;
 
@@ -1364,13 +1003,13 @@ export class Model {
         if (measureCodesSelected == undefined) return;
 
         const foodCode = selectedFoodCodes[0];
-        let food = this.getRowById(this.foodTable, DataCols.FoodCode, foodCode);
+        let food = await this.dataLoader.getFoodByCode(foodCode);
         if (food == undefined) return;
 
         const foodName = food[Translation.getDataCol(DataCols.FoodDescription)];
         const csvFileName = Translation.translate("CSVDownload.NutrientFileName", {foodName});
 
-        let measureWeightConv = this.getFoodMeasureWeightConv(foodCode, measureCodesSelected);
+        let measureWeightConv = await this.dataLoader.getFoodMeasureWeightConv(foodCode, measureCodesSelected);
 
         const nutrientStatInputs = this.nutrientStatsInputs[searchOpt];
         const csvTable = this.getNutrientCSVDownload(food, this.webSearchedNutrientTable, measureWeightConv, nutrientStatInputs);

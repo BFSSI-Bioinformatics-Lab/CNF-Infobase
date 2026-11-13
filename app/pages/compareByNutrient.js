@@ -46,10 +46,10 @@ export class CompareByNutrient extends BaseComparePage {
         });
     }
 
-    clearSearch() {
+    async clearSearch() {
         this.model.clearSearchInputs(this.searchOpt);
         this.syncInputs();
-        this.updateSearchTable("", true);
+        await this.updateSearchTable("", true);
     }
 
     getInputs() {
@@ -64,8 +64,8 @@ export class CompareByNutrient extends BaseComparePage {
     }
 
     // updateSearchTable(selectFood, resetSort): Updates the search table
-    updateSearchTable(searchTxt = null, resetSort = false) {
-        const tableData = this.model.getCompareNutrientTableData(this.searchOpt);
+    async updateSearchTable(searchTxt = null, resetSort = false) {
+        const tableData = await this.model.getCompareNutrientTableData(this.searchOpt);
         let searchTable = this.htmlElements.searchTable;
         if (tableData === undefined) return;
 
@@ -104,7 +104,7 @@ export class CompareByNutrient extends BaseComparePage {
         elements.nutrientInput.setChoiceByValue(inputs[SearchAtts.Nutrient]);
     }
 
-    loadPageInputs() {
+    async loadPageInputs() {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt];
         const selections = this.model.searchSelections[this.searchOpt];
@@ -131,6 +131,6 @@ export class CompareByNutrient extends BaseComparePage {
                                                                     }
                                                                }});
 
-        this.clearSearch();
+        await this.clearSearch();
     }
 }

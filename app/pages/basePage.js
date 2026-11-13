@@ -526,8 +526,12 @@ export class BasePage {
         result.setChoiceByValue(inputs);
 
         if (searchFunc !== null) {
+            // the search function may be async, so only the results of the latest search are shown
+            let latestSearchId = 0;
+
             result._searchChoices = function(searchTerm) {
                 const cleanTerm = (searchTerm || '').toLowerCase().trim();
+                const searchId = ++latestSearchId;
 
                 if (cleanTerm === '') {
                     result._isSearching = false;
@@ -541,7 +545,14 @@ export class BasePage {
                     return selections.length;
                 }
 
-                const filteredResults = searchFunc(searchTerm, selections);
+                Promise.resolve(searchFunc(searchTerm, selections)).then((filteredResults) => {
+                    if (searchId != latestSearchId) return;
+                    showSearchResults(filteredResults, cleanTerm);
+                });
+            };
+
+            // showSearchResults(filteredResults, cleanTerm): Shows the results of the search in the dropdown
+            const showSearchResults = (filteredResults, cleanTerm) => {
                 const results = filteredResults
                     .map((filteredChoice, index) => {
                         const choice = result._store.choices.find(
@@ -571,8 +582,6 @@ export class BasePage {
                     type: 'FILTER_CHOICES',
                     results
                 });
-
-                return results.length;
             };
         }
 
@@ -764,7 +773,7 @@ export class BaseSearchPage extends BasePage {
         // listen on the table instead of the buttons, so that the buttons in rows that are not drawn yet
         //  (rows on other pages or rows shown after sorting) also work
         const selectBtnSelector = `.${this.htmlNames.searchTableActionBtn}`;
-        $(this.htmlSelectors.foodSearchTable).off("click", selectBtnSelector).on("click", selectBtnSelector, function() {
+        $(this.htmlSelectors.foodSearchTable).off("click", selectBtnSelector).on("click", selectBtnSelector, async function() {
             const row = this.closest("tr");
             const rowData = self.searchTable.row(row).data();
             if (rowData === undefined) return;
@@ -775,7 +784,7 @@ export class BaseSearchPage extends BasePage {
             const foodSelected = !self.model.foodSelected[self.searchOpt];
             self.model.foodSelected[self.searchOpt] = foodSelected;
 
-            self.updateSearchTable(foodSelected);
+            await self.updateSearchTable(foodSelected);
 
             // the X button closes the food's nutrient info
             if (!foodSelected) {
@@ -784,15 +793,15 @@ export class BaseSearchPage extends BasePage {
             }
 
             self.model.clearNutrientStatsInputs(self.searchOpt);
-            self.showFoodNutrientStats(foodCode);
+            await self.showFoodNutrientStats(foodCode);
         });
     }
 
     // setupSearchTable(): Setup the search table
-    setupSearchTable() {
-        const inputs = this.model.searchInputs[this.searchOpt]; 
+    async setupSearchTable() {
+        const inputs = this.model.searchInputs[this.searchOpt];
 
-        this.searchTable = this.updateSearchTable(this.model.foodSelected[this.searchOpt], inputs[SearchAtts.FilterHelper]);
+        this.searchTable = await this.updateSearchTable(this.model.foodSelected[this.searchOpt], inputs[SearchAtts.FilterHelper]);
         if (this.searchTable === undefined) return;
 
         const self = this;
@@ -803,18 +812,18 @@ export class BaseSearchPage extends BasePage {
     }
 
     // updateSearchTable(selectFood, searchTxt, resetSort): Updates the search table
-    updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {
+    async updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {
 
     }
 
     // clearSearch(): Clears the search inputs of the page
-    clearSearch() {
+    async clearSearch() {
         this.model.clearSearchInputs(this.searchOpt);
         this.model.clearSelectedFoods(this.searchOpt);
         this.syncInputs();
         this.hideFoodNutrientStats();
 
-        this.updateSearchTable(false, "", true);
+        await this.updateSearchTable(false, "", true);
     }
 
     // syncInputs: Synchronizes the page's inputs with the inputs the user has previously entered
@@ -831,10 +840,10 @@ export class BaseSearchPage extends BasePage {
     }
     
     // submitSearch(): Submits the search inputs to retrieve the search results in the search table
-    submitSearch() {
+    async submitSearch() {
         this.scrollToElement(this.htmlElements.searchContainer.node());
-        const inputs = this.model.searchInputs[this.searchOpt]; 
-        this.updateSearchTable(false, inputs[SearchAtts.FilterHelper]);
+        const inputs = this.model.searchInputs[this.searchOpt];
+        await this.updateSearchTable(false, inputs[SearchAtts.FilterHelper]);
     }
 
     // updateNutrientTable(visibleMeasureCodes): Updates the nutrient table
@@ -956,11 +965,11 @@ export class BaseSearchPage extends BasePage {
     }
 
     // showFoodNutrientStats(foodCode): Shows the stats of a particular foods' nutrients
-    showFoodNutrientStats(foodCode) {
+    async showFoodNutrientStats(foodCode) {
         const self = this;
 
         const foodResultContainer = this.htmlElements.foodResultContainer;
-        const stats = this.model.getFoodNutrientStats(foodCode, this.searchOpt);
+        const stats = await this.model.getFoodNutrientStats(foodCode, this.searchOpt);
         const statsEmpty = stats === undefined;
 
         foodResultContainer.classed("d-none", statsEmpty);
@@ -1039,13 +1048,13 @@ export class BaseSearchPage extends BasePage {
         return dataTable;
     }
 
-    loadPage() {
+    async loadPage() {
         super.loadPage();
         this.updateHTMLElements();
         this.updateStaticText();
         this.setupListeners();
-        this.loadPageInputs();
-        this.setupSearchTable();
+        await this.loadPageInputs();
+        await this.setupSearchTable();
     }
 }
 
@@ -1134,10 +1143,10 @@ export class BaseComparePage extends BasePage {
     }
 
     // clearSearch(): Clears the search inputs of the page
-    clearSearch() {
+    async clearSearch() {
         this.model.clearSearchInputs(this.searchOpt);
         this.syncInputs();
-        this.updateSearchTable("", true);
+        await this.updateSearchTable("", true);
     }
 
     // getInputs(): Retrieves the values of the input widgets to the backend
@@ -1146,7 +1155,7 @@ export class BaseComparePage extends BasePage {
     }
 
     // submitSearch(): Submits the search inputs to retrieve the search results in the search table
-    submitSearch() {
+    async submitSearch() {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt]; 
 
@@ -1154,14 +1163,14 @@ export class BaseComparePage extends BasePage {
         this.getInputs();
 
         inputs[SearchAtts.FilterHelper] = this.searchTable.search();
-        this.updateSearchTable(inputs[SearchAtts.FilterHelper]);
+        await this.updateSearchTable(inputs[SearchAtts.FilterHelper]);
     }
 
     // setupSearchTable(): Setup the search table
-    setupSearchTable() {
-        const inputs = this.model.searchInputs[this.searchOpt]; 
+    async setupSearchTable() {
+        const inputs = this.model.searchInputs[this.searchOpt];
 
-        this.searchTable = this.updateSearchTable(inputs[SearchAtts.FilterHelper]);
+        this.searchTable = await this.updateSearchTable(inputs[SearchAtts.FilterHelper]);
         if (this.searchTable === undefined) return;
 
         const self = this;
@@ -1172,7 +1181,7 @@ export class BaseComparePage extends BasePage {
     }
 
     // updateSearchTable(selectFood, resetSort): Updates the search table
-    updateSearchTable(searchTxt = null, resetSort = false) {
+    async updateSearchTable(searchTxt = null, resetSort = false) {
 
     }
 
@@ -1184,12 +1193,12 @@ export class BaseComparePage extends BasePage {
 
     }
 
-    loadPage() {
+    async loadPage() {
         super.loadPage();
         this.updateHTMLElements();
         this.updateStaticText();
         this.setupListeners();
-        this.loadPageInputs();
-        this.setupSearchTable();
+        await this.loadPageInputs();
+        await this.setupSearchTable();
     }
 }
