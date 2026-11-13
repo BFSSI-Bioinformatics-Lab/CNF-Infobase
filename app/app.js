@@ -53,21 +53,6 @@ class App {
         d3.select("#closeInstructions").on("click", () => {
             elements.instructionsAccordion.attr("open", null);
         });
-
-        // open the single option selects when ENTER is pressed, since browsers only open
-        //  them with SPACE or ALT + DOWN
-        // Note:
-        // - the listener is on the document, since the selects are recreated whenever a search page is loaded
-        document.addEventListener("keydown", (event) => {
-            const select = event.target;
-            if (event.key !== "Enter" || !(select instanceof HTMLSelectElement) || !select.classList.contains("singleOptSelect")) return;
-            if (typeof select.showPicker !== "function") return;
-
-            event.preventDefault();
-            try {
-                select.showPicker();
-            } catch (error) {}
-        });
     }
 
     setupSearchTab() {

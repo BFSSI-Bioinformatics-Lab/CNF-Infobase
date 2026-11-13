@@ -55,10 +55,11 @@ export class CompareByFood extends BaseComparePage {
     }
 
     getInputs() {
+        const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt]; 
-        let foodInputs = $(this.htmlSelectors.foodInput).selectpicker('val');
 
-        inputs[SearchAtts.FoodName] =  (foodInputs !== null) ? foodInputs : [];
+        const foods = elements.foodInput.getValue(true);
+        inputs[SearchAtts.FoodName] = (foods.length == 0) ? [] : foods;
     }
 
     updateSearchTable(searchTxt = null, resetSort = false) {
@@ -134,7 +135,8 @@ export class CompareByFood extends BaseComparePage {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt];
 
-        $(this.htmlSelectors.foodInput).selectpicker('val', [inputs[SearchAtts.FoodName]]);
+        elements.foodInput.removeActiveItems();
+        elements.foodInput.setChoiceByValue(inputs[SearchAtts.FoodName]);
     }
 
     loadPageInputs() {
@@ -143,14 +145,23 @@ export class CompareByFood extends BaseComparePage {
         const selections = this.model.searchSelections[this.searchOpt];
 
         const foodNameSelections = selections[SearchAtts.FoodName];
-
-        this.updateMultiSelect({dropdownSelector: this.htmlSelectors.foodInput, 
-                                selections: foodNameSelections, 
-                                inputs: new Set([inputs[SearchAtts.FoodName]]),
-                                noneSelectedText: Translation.translate("NoneSelected"),
-                                searchFunc: (searchTerm, selections) => this.model.filterFoodNameSelections(searchTerm, selections),
-                                maxOptions: this.maxFoodsCount,
-                                maxOptionsText: Translation.translate("multiselectAutoComplete.maxItemText", {maxItemCount: this.maxFoodsCount})});
+        elements.foodInput = this.setupAutoCompleteSelect({elementSelector: this.htmlSelectors.foodInput, 
+                                                            selections: foodNameSelections, 
+                                                            inputs: new Set([inputs[SearchAtts.FoodName]]),
+                                                            maxItemCount: this.maxFoodsCount,
+                                                            maxItemText: (maxItemCount) => Translation.translate("multiselectAutoComplete.maxItemText", {maxItemCount: this.maxFoodsCount}),
+                                                            placeholder: Translation.translate("MultiFoodsPlaceholder"),
+                                                            noResultsText: Translation.translate("multiselectAutoComplete.noResultsText"),
+                                                            searchFunc: (searchTerm, selections) => this.model.filterFoodNameSelections(searchTerm, selections),
+                                                            sort: false,
+                                                            selectAtts: {
+                                                                searchResultLimit: foodNameSelections.length,
+                                                                
+                                                                // fuzzy matching engine
+                                                                fuseOptions: {
+                                                                    threshold: 0.15 // range of 0-1, 0 = exact match
+                                                                }
+                                                             }});
 
         this.clearSearch();
     } 
