@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, TableCols, CompFoodSearchTableCols } from "../constants.js";
+import { SearchOpts, SearchAtts, DataCols, CompFoodSearchTableCols } from "../constants.js";
 import { Translation } from "../tools.js";
 import { BaseComparePage } from "./basePage.js";
 import { Model } from "../backend.js";
@@ -101,22 +101,6 @@ export class CompareByFood extends BaseComparePage {
                                                 pageLength: -1,
                                                 orderFixed: {
                                                     pre: [0, 'asc'] // Fix the order for the nutrients
-                                                },
-                                                rowGroup: {
-                                                    dataSrc: Translation.getDataCol(TableCols.NutrientGroup),
-                                                    startRender: function (rows, group) {
-                                                        var api = rows.context[0].oInstance.api();
-                                                        var visibleColumnsCount = api.columns(':visible').count();
-
-                                                        var stickyWrapper = $('<div class="dtrg-sticky-window"/>')
-                                                            .append($('<span class="dtrg-sticky-text"/>').text(group));
-
-                                                        return $('<tr class="dtrg-group dtrg-start dtrg-level-0"/>')
-                                                            .append(
-                                                                $(`<th colspan="${visibleColumnsCount}" scope="row"/>`)
-                                                                    .append(stickyWrapper)
-                                                            );
-                                                    }
                                                 },
                                                 columnDefs: [
                                                     {

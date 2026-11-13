@@ -850,22 +850,6 @@ export class BaseSearchPage extends BasePage {
                 orderFixed: {
                     pre: [0, 'asc'] // Fix the order for the nutrients
                 },
-                rowGroup: {
-                    dataSrc: Translation.getDataCol(TableCols.NutrientGroup),
-                    startRender: function (rows, group) {
-                        var api = rows.context[0].oInstance.api();
-                        var visibleColumnsCount = api.columns(':visible').count();
-
-                        var stickyWrapper = $('<div class="dtrg-sticky-window"/>')
-                            .append($('<span class="dtrg-sticky-text"/>').text(group));
-
-                        return $('<tr class="dtrg-group dtrg-start dtrg-level-0"/>')
-                            .append(
-                                $(`<th colspan="${visibleColumnsCount}" scope="row"/>`)
-                                    .append(stickyWrapper)
-                            );
-                    }
-                },
                 columnDefs: [
                     {
                         targets: 1,
@@ -883,14 +867,10 @@ export class BaseSearchPage extends BasePage {
     // updateNutrientTableConvCols(dataTable, ind, show): Updates the nutrient table to hide/show certain portion serving columns
     updateNutrientTableConvCols(dataTable, ind, show, updateDatable = false) {
         const colName = Model.getConvertedNutrientColName(ind);
-        dataTable.column(`${colName}:name`).visible(show); 
+        dataTable.column(`${colName}:name`).visible(show);
         if (!updateDatable) return;
 
-        if (dataTable.rowGroup) {
-            dataTable.rowGroup().draw();
-        }
-
-        dataTable.columns.adjust().draw(false); 
+        dataTable.columns.adjust().draw(false);
     }
 
     // updateNutrientTableExtraCols(dataTable, show): Updates the nutrient table to hide/show the extra detail columns
@@ -901,11 +881,7 @@ export class BaseSearchPage extends BasePage {
 
         if (!updateDatable) return;
 
-        if (dataTable.rowGroup) {
-            dataTable.rowGroup().draw();
-        }
-
-        dataTable.columns.adjust().draw(false); 
+        dataTable.columns.adjust().draw(false);
     }
 
     // addServingCheckbox(measureConv, measureConvInd, isChecked): Adds the checkbox for the serving portions
@@ -1016,11 +992,7 @@ export class BaseSearchPage extends BasePage {
             self.updateNutrientTableConvCols(dataTable, measureConvId, this.checked);
             self.updateNutrientTableExtraCols(dataTable, showExtraDetails);
 
-            if (dataTable.rowGroup) {
-                dataTable.rowGroup().draw();
-            }
-
-            dataTable.columns.adjust().draw(false); 
+            dataTable.columns.adjust().draw(false);
         });
 
         return dataTable;

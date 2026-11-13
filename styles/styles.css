@@ -181,18 +181,6 @@
     border-radius: 0 var(--smBorderRadius) 0 0;
 }
 
-.dtrg-group th {
-    background-color: var(--primaryVariant) !important;
-}
-
-.dtrg-group th:first-child {
-    border-radius: 0;
-}
-
-.dtrg-group th:last-child {
-    border-radius: 0;
-}
-
 .dataTable td {
     color: var(--fontColour);
     text-align: left !important;
@@ -244,35 +232,6 @@
     background-color: var(--secondary) !important;
     color: white;
 }
-
-/* ----- row group ----- */
-/* Make row group horizontal sticky */
-
-tr.dtrg-group th {
-    padding: 0 !important;
-}
-
-tr.dtrg-group th .dtrg-sticky-window {
-    position: sticky !important;
-    left: 0;
-    width: max-content;
-    max-width: calc(100vw - 40px);
-    
-    display: inline-flex !important;
-    justify-content: left;
-    align-items: center;
-    padding: 8px 5px;
-    box-sizing: border-box;
-}
-
-tr.dtrg-group th .dtrg-sticky-text {
-    display: inline-block;
-    width: max-content;
-    text-align: left;
-    white-space: nowrap;
-}
-
-/* ---------------------- */
 
 /* =================================================== */
 /* ======== Pagination =============================== */
