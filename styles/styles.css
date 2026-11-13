@@ -458,6 +458,25 @@ select.form-control {
     border-left: 1px solid var(--onPrimary) !important;
 }
 
+/* Anchor the results dropdown to the search field. */
+#foodInputContainer .food-bubbles-below .choices__inner {
+    position: relative;
+    overflow: visible;
+}
+
+/* Let the search input use the available width. */
+#foodInputContainer .food-bubbles-below .choices__input--cloned {
+    box-sizing: border-box;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-bottom: 0;
+}
+
+/* Keep the selected bubbles below the field. */
+#foodInputContainer .food-bubbles-below > .choices__list--multiple {
+    margin-top: 8px;
+}
+
 /* =================================================== */
 
 
