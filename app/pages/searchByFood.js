@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, TableCols, FoodSearchTableCols, KeyboardCodes } from "../constants.js";
+import { SearchOpts, SearchAtts, TableCols, DataCols, FoodSearchTableCols, KeyboardCodes } from "../constants.js";
 import { Translation } from "../tools.js";
 import { BaseSearchPage } from "./basePage.js";
 
@@ -61,23 +61,37 @@ export class SearchByFoodPage extends BaseSearchPage {
                             {data: TableCols.FoodAltNameOrder, visible: false}
         ];
 
+        // fixed column widths, so that the widths do not change with the rows shown (e.g. when a food is selected);
+        //  the food name column takes the rest of the width
+        const colWidths = {
+            [DataCols.FoodCode]: "10%",
+            [DataCols.FoodGroupDescription]: "25%"
+        };
+
         for (const tableAtt of FoodSearchTableCols) {
-            tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt)});
+            tableColInfo.push({title: translations[tableAtt], data: Translation.getDataCol(tableAtt), width: colWidths[tableAtt]});
         }
 
+        tableColInfo.push(this.buildSearchTableSelectCol());
+
         const dataTable = this.updateTable({
-            selector: this.htmlSelectors.foodSearchTable, 
-            columnInfo: tableColInfo, 
-            data: tableData, 
-            dataTableAtts: {orderFixed: {
-                post: [
-                    [0, "asc"],
-                    [1, "asc"]
-                ]
-            }},
+            selector: this.htmlSelectors.foodSearchTable,
+            columnInfo: tableColInfo,
+            data: tableData,
+            dataTableAtts: {
+                autoWidth: false,
+                orderFixed: {
+                    post: [
+                        [0, "asc"],
+                        [1, "asc"]
+                    ]
+                }
+            },
             searchTxt: (searchTxt !== null) ? searchTxt : undefined,
             order: (resetSort) ? [] : null
         });
+
+        this.setupSearchTableSelect(selectFood);
         return dataTable;
     }
 
@@ -112,7 +126,8 @@ export class SearchByFoodPage extends BaseSearchPage {
         // add in the food groups
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
                                    selections: selections[SearchAtts.FoodGroup], 
-                                   inputs: new Set([inputs[SearchAtts.FoodGroup]])});
+                                   inputs: new Set([inputs[SearchAtts.FoodGroup]]),
+                                   sortCmpFunc: this.buildDropdownLstCompare(Translation.translate("NoneSelected"))});
 
         this.clearSearch();
 

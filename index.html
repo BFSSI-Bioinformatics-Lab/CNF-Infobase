@@ -12,7 +12,8 @@
               content="REPLACE ME: SOME DESCRIPTION">
 
         <!-- JQuery -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <!-- Downgraded to the jQuery version WET v4.0.32 is built for -->
+        <script src="./static/wet-boew/js/jquery/2.2.4/jquery.min.js"></script>
 
         <!-- Popper.js: Needed for the multiselect widgets -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
@@ -28,8 +29,8 @@
         <link rel="stylesheet" href="./static/css/global.css">
 
         <!-- Jquery Datatables: https://datatables.net -->
-        <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.1.8/rg-1.6.0/datatables.min.css" type="text/css" crossorigin="anonymous">
-        <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.1.8/rg-1.6.0/datatables.min.js"></script>
+        <!-- Downgraded to the DataTables version bundled with WET v4.0.32 -->
+        <script src="./static/wet-boew/js/deps/jquery.dataTables.min.js"></script>
 
         <!-- Multiselect widget: https://developer.snapappointments.com/bootstrap-select/ -->
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" crossorigin="anonymous">
@@ -103,7 +104,7 @@
                         <li><a href="https://healthycanadians.gc.ca/index-eng.php">Health</a></li>
                         <li><a href="https://healthycanadians.gc.ca/science-research-sciences-recherches/index-eng.php">Science, Research and Data</a></li>
                         <li><a href="https://health-infobase.canada.ca">Public Health Infobase</a></li>
-                        <li>Canadian Nutrient File</li>
+                        <li>Canadian nutrient file</li>
                     </ol>
             </div>
         </nav>
@@ -113,7 +114,7 @@
             <div class="container mrgn-tp-sm">
                 <h1 class="mrgn-tp-md" property="name" id="wb-cont" dir="ltr"><span class="stacked"><span>Canadian Nutrient File (CNF) 2026 <small style="color:#fff;">from Health
                     Canada</small></span>: <span></span></span></h1> <!-- <a class="app-name" href="https://health-infobase.canada.ca/">Health Infobase</a> -->
-                <p>An interactive tool to visualise the nutrient profile of foods included in the 2026 database</p>
+                <p>An interactive tool to explore the nutrient profiles of foods included in the 2026 Canadian Nutrient File.</p>
                 <ul class="list-inline small mrgn-bttm-sm" style="line-height:1.65em" id="list-inline-desktop-only">
                     <li class="mrgn-rght-lg"> Last updated: REMPLACE ME: (yyyy-mm-dd)</li>
                 </ul>
@@ -125,17 +126,10 @@
                 <div class="row">
                     <div class="mrgn-tp-xl mrgn-bttm-lg justify-content-center">
                         <p>
-                            This tool will help you visualise the average nutrient values for foods available in Canada included in the <a href="https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/nutrient-data/canadian-nutrient-file-about-us.html">2026 Canadian Nutrient File</a>. Use the tool to find detailed values for up to 173 nutrients including:
+                            Use this interactive tool to explore the nutrient profiles and average nutrient values of foods included in the <a href="https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/nutrient-data/canadian-nutrient-file-about-us.html">2026 Canadian Nutrient File</a>. Find detailed information on up to 173 nutrients including fat, protein, energy, vitamins and minerals.
                         </p>
-                        <ul>
-                            <li>Fat</li>
-                            <li>Energy</li>
-                            <li>Protein</li>
-                            <li>Vitamins, and</li>
-                            <li>Minerals.</li>
-                        </ul>
                         <p class="mrgn-tp-lg">
-                            Learn more about the <a href="https://open.canada.ca/data/en/dataset/1b6139bd-ed7e-4043-bc28-ff00e10f3109/resource/86483321-6c76-4a5f-9061-04b9a0a48a8d">2026 CNF</a>.
+                            Learn more about the <a href="https://open.canada.ca/data/en/dataset/1b6139bd-ed7e-4043-bc28-ff00e10f3109/resource/86483321-6c76-4a5f-9061-04b9a0a48a8d">2026 Canadian Nutrient File (CNF)</a>.
                         </p>
                     </div>
                 </div>
@@ -151,7 +145,7 @@
             </div>
 
             <div class="container foodTableContainer">
-                <details class="mrgn-tp-lg mrgn-bttm-lg" id="about-tool-details">
+                <details class="mrgn-tp-lg" id="about-tool-details">
                     <summary class="wb-toggle" data-toggle='{"print":"on"}'>
                         <h2 class="h3 mrgn-tp-sm"></h2>
                     </summary>
@@ -161,22 +155,6 @@
                         <div class="text-right mrgn-tp-lg">
                             <a href="#about-tool-details" id="closeInstructions">
                                 <span id="closeInstructionsText"></span>
-                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                    </div>
-                </details>
-
-                <details class="mrgn-tp-lg mrgn-bttm-lg" id="legend-accordion">
-                    <summary class="wb-toggle" data-toggle='{"print":"on"}'>
-                        <h2 class="h3 mrgn-tp-sm" id="legendTitle"></h2>
-                    </summary>
-                    <div class="mrgn-lft-md" id="legendContent">
-                        <p></p>
-
-                        <div class="text-right mrgn-tp-lg">
-                            <a href="#legend-accordion" id="closeLegend">
-                                <span id="closeLegendText"></span>
                                 <i class="fa fa-eye-slash" aria-hidden="true"></i>
                             </a>
                         </div>

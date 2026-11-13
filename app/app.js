@@ -43,11 +43,7 @@ class App {
         d3.select("#compareNutrientsTab").html(Translation.translate("CompareByNutrient"));
         d3.select("#compareFoodsTab").html(Translation.translate("CompareByFoods"));
 
-        d3.select("#legendTitle").html(Translation.translate("LegendTitle"));
-        d3.select("#legendContent p").html(Translation.translate("LegendText"));
-
         d3.select("#closeInstructionsText").html(Translation.translate("CloseInstructions"));
-        d3.select("#closeLegendText").html(Translation.translate("CloseLegend"));
     }
 
     setupListeners() {
@@ -58,8 +54,19 @@ class App {
             elements.instructionsAccordion.attr("open", null);
         });
 
-        d3.select("#closeLegend").on("click", () => {
-            elements.legendAccordion.attr("open", null);
+        // open the single option selects when ENTER is pressed, since browsers only open
+        //  them with SPACE or ALT + DOWN
+        // Note:
+        // - the listener is on the document, since the selects are recreated whenever a search page is loaded
+        document.addEventListener("keydown", (event) => {
+            const select = event.target;
+            if (event.key !== "Enter" || !(select instanceof HTMLSelectElement) || !select.classList.contains("singleOptSelect")) return;
+            if (typeof select.showPicker !== "function") return;
+
+            event.preventDefault();
+            try {
+                select.showPicker();
+            } catch (error) {}
         });
     }
 

@@ -4,12 +4,12 @@ Purpose: Defines the page for searching by nutrients
 
 -------------------------------------------------->
 
-<div class="mrgn-tp-lg">
+<div>
     <div class="container foodTableContainer" id="searchSection">
         <h3 id="searchTitle"></h3>
 
-        <fieldset class="pb-5">
-            <div class="searchInputContainer row mrgn-bttm-lg">
+        <fieldset>
+            <div class="searchInputContainer row">
                 <div class="form-group dropdownInputContainer col-12 col-sm-6 col-md-4" id="nutrientInputContainer">
                     <label for="nutrientInput"></label>
                     <select id="nutrientInput" class="singleOptSelect form-control">
@@ -29,7 +29,7 @@ Purpose: Defines the page for searching by nutrients
             </div>
         </fieldset>
 
-        <div class="mrgn-tp-xl">
+        <div>
             <h3 id="searchResultTitle" class="border-bottom pb-4"></h3>
 
             <div>
@@ -39,10 +39,26 @@ Purpose: Defines the page for searching by nutrients
                     <button class="btn btn-primary" id="searchCSVDownload"></button>
                 </div>
                 <div class="tableContainer">
-                    <table id="foodSearchTable" class="clickableTable"></table>
+                    <table id="foodSearchTable" class="clickableTable wb-tables table"></table>
                 </div>
             </div>
         </div>
+
+        <details class="mrgn-tp-lg mrgn-bttm-lg" id="legend-accordion">
+            <summary>
+                <h2 class="h3 mrgn-tp-sm" id="legendTitle"></h2>
+            </summary>
+            <div class="mrgn-lft-md" id="legendContent">
+                <p></p>
+
+                <div class="text-right mrgn-tp-lg">
+                    <a href="#legend-accordion" id="closeLegend">
+                        <span id="closeLegendText"></span>
+                        <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </details>
 
         <div class="text-right mrgn-tp-lg">
             <a href="#top">
@@ -89,7 +105,7 @@ Purpose: Defines the page for searching by nutrients
                     <button class="btn btn-primary" id="nutrientCSVDownload"></button>
                     <button class="btn btn-primary" id="allNutrientCSVDownload"></button>
                 </div>
-                <table id="nutrientTable"></table>
+                <table id="nutrientTable" class="wb-tables table"></table>
             </div>
 
             <div class="text-right mrgn-tp-lg">

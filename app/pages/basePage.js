@@ -32,7 +32,7 @@ export class BasePage {
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, Translation.translate("dataTableAllOptions")]]
         }, dataTableAtts]);
 
-        if (DataTable.isDataTable(selector)) {
+        if ($.fn.dataTable.isDataTable(selector)) {
             dataTable = $(selector).DataTable();
 
             if (destroyExisting) {
@@ -81,7 +81,45 @@ export class BasePage {
         }
 
         dataTable.draw();
+        this.addUnsortedOrderStep(dataTable);
         return dataTable;
+    }
+
+    // addUnsortedOrderStep(dataTable): Makes clicking the header of a column that is already sorted
+    //  in its last direction remove the sorting, instead of going back to the first direction
+    // Note:
+    // - DataTables 1.10 (used by WET) only cycles between ascending and descending, while
+    //   DataTables 2 also goes back to unsorted
+    // - Shift + click is left to DataTables, for sorting by multiple columns
+    addUnsortedOrderStep(dataTable) {
+        const settings = dataTable.settings()[0];
+        const columnSettings = settings.aoColumns;
+
+        dataTable.columns().every(function(colIndex) {
+            const header = this.header();
+            if (header.dataset.unsortedOrderStep) return;
+            header.dataset.unsortedOrderStep = "true";
+
+            const onSortAction = (event) => {
+                if (event.shiftKey || (event.type == "keypress" && event.which != KeyboardCodes.Enter)) return;
+
+                const order = dataTable.order();
+                const orderSequence = columnSettings[colIndex].asSorting;
+                const lastDirection = orderSequence[orderSequence.length - 1];
+                if (order.length != 1 || order[0][0] != colIndex || order[0][1] != lastDirection) return;
+
+                // run before the DataTables listener on the header and stop it from sorting again
+                event.stopImmediatePropagation();
+
+                // DataTables 1.10 breaks ties in the sorting by using the current position of the rows,
+                //  so put the rows back in their original order to not keep the previous sorting
+                settings.aiDisplayMaster.sort((a, b) => a - b);
+                dataTable.order([]).draw();
+            };
+
+            header.addEventListener("click", onSortAction, true);
+            header.addEventListener("keypress", onSortAction, true);
+        });
     }
 
     // addCheckbox(checkboxLst, checkLstName, checkboxVal, checkboxId, checkboxText, isChecked): 
@@ -103,14 +141,16 @@ export class BasePage {
     }
 
     // updateDropdownSelect(dropdownSelector, selections, input, onChange): Update the selections for the dropdown select widget
-    updateDropdownSelect({dropdownSelector, selections, input, onChange = undefined, noneOption = null} = {}) {
+    updateDropdownSelect({dropdownSelector, selections, input, onChange = undefined, noneOption = null, sortCmpFunc = null} = {}) {
         let dropdown = d3.select(dropdownSelector);
 
         const selectionIsArr = Array.isArray(selections);
         const orderedSelections = selectionIsArr ? selections : Array.from(selections);
 
-        if (selectionIsArr) {
+        if (selectionIsArr && sortCmpFunc === null) {
             orderedSelections.sort((a, b) => a.text.localeCompare(b.text));
+        } else if (sortCmpFunc !== null) {
+            orderedSelections.sort(sortCmpFunc);
         } else {
             orderedSelections.sort();
         }
@@ -138,8 +178,235 @@ export class BasePage {
         }
     }
 
-    // updateMultiSelect(dropdownSelector, selections, inputs, onChange, translations): Updates the selections for the multi-select dropdown select widget
-    updateMultiSelect({dropdownSelector, selections, inputs, onChange = undefined, noneSelectedText = ""} = {}) {
+    // fixMultiSelectKeys(): Fixes the keyboard controls inside the menu of a multi-select dropdown
+    static fixMultiSelectKeys() {
+        if (BasePage.multiSelectKeysFixed) return;
+        BasePage.multiSelectKeysFixed = true;
+
+        const handledKeys = new Set(["Escape", "ArrowUp", "ArrowDown", "Tab", "Enter"]);
+        const selectpickerKeySelector = '.bootstrap-select [role="listbox"], .bootstrap-select .bs-searchbox input';
+
+        // runs bootstrap-select's own key handler for a key event on one of the parts of the menu that it listens to
+        const runSelectpickerKeydown = (keyTarget, selectpickerEvent) => {
+            selectpickerEvent.currentTarget = keyTarget;
+            $.fn.selectpicker.Constructor.prototype.keydown.call(keyTarget, selectpickerEvent);
+        };
+
+        // moves the focus to the highlighted option
+        // Note:
+        // - bootstrap-select only draws the options around the scroll position of the list, and draws the other options
+        //   once the list scrolls (on the 'scroll' event, which the browser fires later). Its 'scroll' handler is run right away,
+        //   so that the highlighted option is drawn before focusing it
+        // - the focus does not scroll the list, since bootstrap-select already scrolled it, and an extra scroll would
+        //   redraw the options again and lose the focus
+        const focusHighlightedOption = (menuContainer) => {
+            const listbox = menuContainer.querySelector('[role="listbox"]');
+            if (listbox !== null) $(listbox).triggerHandler("scroll");
+
+            const highlightedOption = menuContainer.querySelector("li.active > a");
+            if (highlightedOption !== null) highlightedOption.focus({preventScroll: true});
+        };
+
+        // moves the focus into the list of options, highlighting an option if none is
+        const focusList = (menuContainer, listbox) => {
+            if (menuContainer.querySelector("li.active") === null) {
+                runSelectpickerKeydown(listbox, $.Event("keydown", {which: 40, keyCode: 40, key: "ArrowDown"}));
+            }
+
+            focusHighlightedOption(menuContainer);
+        };
+
+        window.addEventListener("keydown", (event) => {
+            if (!handledKeys.has(event.key) || !(event.target instanceof Element)) return;
+
+            // TAB from the button of an open dropdown moves into its menu, since the menu is at the end of the <body>
+            //  and the browser would otherwise skip it
+            const dropdownButton = event.target.closest('.bootstrap-select > button[aria-owns^="bs-select-"]');
+            if (event.key === "Tab" && !event.shiftKey && dropdownButton !== null && dropdownButton.getAttribute("aria-expanded") === "true") {
+                const buttonMenuInner = document.getElementById(dropdownButton.getAttribute("aria-owns"));
+                const buttonMenuContainer = (buttonMenuInner === null) ? null : buttonMenuInner.closest(".bs-container");
+                if (buttonMenuContainer === null) return;
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const firstControl = buttonMenuContainer.querySelector(".bs-searchbox input, .bs-actionsbox button");
+                if (firstControl !== null) {
+                    firstControl.focus();
+                } else {
+                    focusList(buttonMenuContainer, buttonMenuInner);
+                }
+                return;
+            }
+
+            const menuContainer = event.target.closest(".bs-container");
+            const menuInner = (menuContainer === null) ? null : menuContainer.querySelector("[id^='bs-select-']");
+            if (menuInner === null) return;
+
+            const listbox = menuContainer.querySelector('[role="listbox"]');
+            const onOption = listbox !== null && listbox.contains(event.target);
+
+            // ENTER is only changed in the list of options; elsewhere bootstrap-select handles it as usual
+            if (event.key === "Enter" && !onOption) return;
+
+            event.stopPropagation();
+
+            const button = document.querySelector(`button[aria-owns="${menuInner.id}"]`);
+            const menu = menuContainer.querySelector(":scope > .dropdown-menu");
+            const highlightedOption = menuContainer.querySelector("li.active");
+
+            if (event.key === "Tab") {
+                if (button === null) return;
+
+                const menuControls = Array.from(menuContainer.querySelectorAll(".bs-searchbox input, .bs-actionsbox button"));
+                const lastControl = menuControls[menuControls.length - 1];
+
+                // TAB/SHIFT + TAB in the list of options moves to the next/previous option, until it gets past
+                //  the last option or before the first option
+                const selectpicker = (menu === null) ? undefined : $(menu).data("this");
+                if (onOption && selectpicker !== undefined) {
+                    const optionPos = selectpicker.selectpicker.current.data.findIndex((option) => option.index === selectpicker.activeIndex);
+                    const canHighlight = selectpicker.selectpicker.view.canHighlight;
+                    const atEnd = (optionPos !== -1) && (event.shiftKey ? optionPos <= canHighlight.indexOf(true) : optionPos >= canHighlight.lastIndexOf(true));
+
+                    if (!atEnd) {
+                        event.preventDefault();
+                        const arrowKey = event.shiftKey ? {which: 38, keyCode: 38, key: "ArrowUp"} : {which: 40, keyCode: 40, key: "ArrowDown"};
+                        runSelectpickerKeydown(listbox, $.Event("keydown", arrowKey));
+                        focusHighlightedOption(menuContainer);
+                        return;
+                    }
+                }
+
+                // SHIFT + TAB from the first option moves back to the last control above the list
+                if (event.shiftKey && onOption && lastControl !== undefined) {
+                    event.preventDefault();
+                    lastControl.focus();
+                    return;
+                }
+
+                // TAB from the last control moves into the list of options, highlighting an option if none is
+                if (!event.shiftKey && event.target === lastControl && listbox !== null) {
+                    event.preventDefault();
+                    focusList(menuContainer, listbox);
+                    return;
+                }
+
+                const leaveForward = !event.shiftKey && onOption;
+                const leaveBackward = event.shiftKey && event.target === menuControls[0];
+                if (!leaveForward && !leaveBackward) return;
+
+                event.preventDefault();
+
+                const dropdown = button.closest(".bootstrap-select");
+                BasePage.closeMultiSelect(button);
+
+                const nextElement = leaveForward ? BasePage.getNextFocusable(dropdown) : null;
+                (nextElement === null ? button : nextElement).focus();
+                return;
+            }
+
+            if (event.key === "Escape" && menu !== null && (onOption || highlightedOption !== null)) {
+                event.preventDefault();
+
+                const selectpicker = $(menu).data("this");
+                if (highlightedOption !== null && selectpicker !== undefined) {
+                    selectpicker.defocusItem(highlightedOption);
+                    selectpicker.activeIndex = undefined;
+                }
+
+                menu.setAttribute("tabindex", "-1");
+                menu.focus();
+                return;
+            }
+
+            // the parts of the menu that bootstrap-select listens to (the search box and the list of options)
+            const keyTarget = event.target.closest(selectpickerKeySelector);
+            if (keyTarget !== null) {
+                runSelectpickerKeydown(keyTarget, $.event.fix(event));
+                if (onOption) focusHighlightedOption(menuContainer);
+                return;
+            }
+
+            // other parts of the menu (e.g. the menu itself or the select all buttons): ESC closes the dropdown
+            if (event.key !== "Escape" || button === null) return;
+
+            event.preventDefault();
+            BasePage.closeMultiSelect(button);
+            button.focus();
+        }, true);
+    }
+
+    // closeMultiSelect(button): Closes the menu of a multi-select dropdown, given the dropdown's button
+    // Note:
+    // - bootstrap-select's 'close' checks whether the dropdown is open from a class on the dropdown, which is not set
+    //   when the menu is moved to the <body>, so the button's 'aria-expanded' is checked instead
+    static closeMultiSelect(button) {
+        if (button.getAttribute("aria-expanded") !== "true") return;
+        $(button).closest(".bootstrap-select").find("select").selectpicker("toggle");
+    }
+
+    // getNextFocusable(element): Retrieves the first element after 'element' (and outside of it) that TAB can move the focus to
+    static getNextFocusable(element) {
+        const focusables = document.querySelectorAll("a[href], button, input, select, textarea, [tabindex]");
+
+        for (const focusable of focusables) {
+            if (focusable.disabled || focusable.tabIndex < 0 || focusable.getClientRects().length == 0) continue;
+            if (element.contains(focusable) || focusable.closest(".bs-container") !== null) continue;
+            if (element.compareDocumentPosition(focusable) & Node.DOCUMENT_POSITION_FOLLOWING) return focusable;
+        }
+
+        return null;
+    }
+
+    // setMultiSelectSearch(dropdown, selections, searchFunc): Replaces the search of a multi-select dropdown with searchFunc
+    static setMultiSelectSearch(dropdown, selections, searchFunc) {
+        const selectpicker = dropdown.data("selectpicker");
+        if (selectpicker === undefined) return;
+
+        const optionsByValue = new Map(Array.from(dropdown[0].options).map((option) => [option.value, option]));
+
+        selectpicker.$searchbox.on("input propertychange", () => {
+            const searchTerm = selectpicker.$searchbox[0].value;
+            if (!searchTerm) return;
+
+            const mainData = selectpicker.selectpicker.main.data;
+            const mainElements = selectpicker.selectpicker.main.elements;
+            const results = [];
+
+            for (const selection of searchFunc(searchTerm, selections)) {
+                const option = optionsByValue.get(String(selection.value));
+                if (option !== undefined && mainData[option.liIndex] !== undefined) results.push(mainData[option.liIndex]);
+            }
+
+            selectpicker.selectpicker.search.data = results;
+            selectpicker.selectpicker.search.elements = results.map((result) => mainElements[result.index]);
+
+            selectpicker.activeIndex = undefined;
+            selectpicker.noScroll = true;
+            selectpicker.$menuInner.scrollTop(0);
+            selectpicker.createView(true);
+
+            // show the message for no results, the same way as bootstrap-select
+            const optionList = selectpicker.$menuInner[0].firstChild;
+            optionList.querySelectorAll(".no-results").forEach((noResults) => noResults.remove());
+
+            if (results.length == 0) {
+                const noResults = document.createElement("li");
+                noResults.className = "no-results";
+                noResults.textContent = selectpicker.options.noneResultsText.replace("{0}", `"${searchTerm}"`);
+                optionList.appendChild(noResults);
+            }
+        });
+    }
+
+    // updateMultiSelect(dropdownSelector, selections, inputs, onChange, translations, searchFunc, maxOptions, maxOptionsText):
+    //  Updates the selections for the multi-select dropdown select widget
+    // Note:
+    // - maxOptions is the most options that can be selected, and maxOptionsText is the message shown when the limit is reached.
+    //   bootstrap-select's select all button does not follow this limit, so the button is hidden when there is a limit
+    updateMultiSelect({dropdownSelector, selections, inputs, onChange = undefined, noneSelectedText = "", searchFunc = null,
+                       maxOptions = undefined, maxOptionsText = undefined} = {}) {
         // destroy the select picker, so that when adding the new selections
         //  to the dropdown, the dropdown will not fire extra events
         let dropdown = $(dropdownSelector);
@@ -163,12 +430,47 @@ export class BasePage {
             .attr("value", (d) => selectionIsArr ? d.value : null)
             .text((d) => selectionIsArr ? d.text : d);
 
-        dropdown = $(dropdownSelector).selectpicker({
-            deselectAllText: Translation.translate("DeselectAll"), 
+        const selectpickerOpts = {
+            deselectAllText: Translation.translate("DeselectAll"),
             selectAllText: Translation.translate("SelectAll"),
             container: 'body',
-            noneSelectedText});
-        
+            noneSelectedText
+        };
+
+        if (maxOptions !== undefined) {
+            selectpickerOpts.maxOptions = maxOptions;
+        }
+
+        if (maxOptionsText !== undefined) {
+            selectpickerOpts.maxOptionsText = () => [maxOptionsText, maxOptionsText];
+        }
+
+        dropdown = $(dropdownSelector).selectpicker(selectpickerOpts);
+
+        const selectpicker = dropdown.data("selectpicker");
+        if (maxOptions !== undefined && selectpicker !== undefined) {
+            selectpicker.$menu.find(".bs-select-all").addClass("d-none");
+
+            // when the limit is reached, bootstrap-select unselects the clicked <option> but its own fix for the
+            //  option's tick does not work in this version (it passes an index instead of the option's data),
+            //  so remove the tick from any option that is shown as selected but whose <option> is not selected
+            dropdown.on("maxReached.bs.select", () => {
+                setTimeout(() => {
+                    for (const optionData of selectpicker.selectpicker.main.data) {
+                        if (optionData.selected && optionData.option && !optionData.option.selected) {
+                            selectpicker.setSelected(optionData, false);
+                        }
+                    }
+                }, 20);
+            });
+        }
+
+        if (searchFunc !== null && selectionIsArr) {
+            BasePage.setMultiSelectSearch(dropdown, orderedSelections, searchFunc);
+        }
+
+        BasePage.fixMultiSelectKeys();
+
         if (orderedSelections.length == inputs.size) {
             dropdown.selectpicker('selectAll');
         } else {
@@ -302,7 +604,9 @@ export class BaseSearchPage extends BasePage {
             servingSizeInput: "servingSizeInput",
             servingSizeOpt: "servingSizeOpt",
             portionValCell: "nutrientPortionValCell",
-            highlightedNutrientCell: "highlightedNutrientCell"
+            highlightedNutrientCell: "highlightedNutrientCell",
+            searchTableActionBtn: "searchTableActionBtn",
+            searchTableOptSelected: "searchTableOptSelected"
         }
 
         this.htmlSelectors = {
@@ -361,6 +665,10 @@ export class BaseSearchPage extends BasePage {
 
         d3.select("#about-tool-details summary h2").html(Translation.translate("InstructionsTitle"));
 
+        d3.select("#legendTitle").html(Translation.translate("LegendTitle"));
+        d3.select("#legendContent p").html(Translation.translate("LegendText"));
+        d3.select("#closeLegendText").html(Translation.translate("CloseLegend"));
+
         d3.selectAll(".toTopBtnText").each((data, ind, nodes) => {
             const textNode = d3.select(nodes[ind]);
             textNode.html(Translation.translate("BackToTop")); 
@@ -393,11 +701,91 @@ export class BaseSearchPage extends BasePage {
         elements.searchCSVDownloadBtn.on("click", () => {
             this.model.downloadSearchCSV(this.searchOpt);
         });
+
+        d3.select("#closeLegend").on("click", () => {
+            elements.legendAccordion.attr("open", null);
+        });
     }
 
     // loadPageInputs(): Setup any initial inputs for the page
     loadPageInputs() {
 
+    }
+
+    // buildDropdownLstCompare(noneOption): Builds the compare function for the dropdown so that
+    //  the "none" option appears at the top of the list
+    buildDropdownLstCompare(noneOption = null) {
+        if (noneOption === null) return (a, b) => a.text.localeCompare(b.text);
+
+        return (a, b) => {
+            if (a.text == noneOption) {
+                return -1;
+            } else if (b.text == noneOption) {
+                return 1;
+            }
+
+            return a.text.localeCompare(b.text);
+        };
+    }
+
+    buildSearchTableSelectBtn() {
+        return `<button type="button" class="btn btn-primary searchTableActionBtn" aria-label="${Translation.translate("SearchTableInspect")}"><i class="fa fa-search"></i></button>`;
+    }
+
+    // buildSearchTableSelectCol(): Builds the column of the search table with the buttons to select (inspect) or unselect a food
+    buildSearchTableSelectCol() {
+        return {
+            data: null,
+            orderable: false,
+            searchable: false,
+            width: "80px",
+            className: "searchTableActionCol",
+            render: (data, type, row) => {
+                return this.buildSearchTableSelectBtn();
+            }
+        };
+    }
+
+    setupSearchTableSelect(optSelected = false) {
+        const self = this;
+
+        const selectBtns = d3.selectAll(`.${this.htmlNames.searchTableActionBtn}`);
+
+        if (optSelected) {
+            selectBtns.classed("btn-primary", false)
+                .classed("btn-danger", true)
+                .attr("aria-label", Translation.translate("SearchTableClose"))
+                .html(null)
+                .append("i")
+                .classed("fa", true)
+                .classed("fa-times", true);
+        }
+
+        // listen on the table instead of the buttons, so that the buttons in rows that are not drawn yet
+        //  (rows on other pages or rows shown after sorting) also work
+        const selectBtnSelector = `.${this.htmlNames.searchTableActionBtn}`;
+        $(this.htmlSelectors.foodSearchTable).off("click", selectBtnSelector).on("click", selectBtnSelector, function() {
+            const row = this.closest("tr");
+            const rowData = self.searchTable.row(row).data();
+            if (rowData === undefined) return;
+
+            const foodCode = rowData[TableCols.FoodCode];
+            self.model.selectedFoodCodes[self.searchOpt] = [foodCode];
+
+            const foodSelected = !self.model.foodSelected[self.searchOpt];
+            self.model.foodSelected[self.searchOpt] = foodSelected;
+
+            self.updateSearchTable(foodSelected);
+
+            // the X button closes the food's nutrient info
+            if (!foodSelected) {
+                self.hideFoodNutrientStats();
+                return;
+            }
+
+            self.model.clearNutrientStatsInputs(self.searchOpt);
+            self.showFoodNutrientStats(foodCode);
+        });
     }
 
     // setupSearchTable(): Setup the search table
@@ -408,24 +796,6 @@ export class BaseSearchPage extends BasePage {
         if (this.searchTable === undefined) return;
 
         const self = this;
-
-        $(`${this.htmlSelectors.foodSearchTable} tbody`).on('click', 'tr', function () {
-            const rowData = self.searchTable.row(this).data();
-            if (rowData === undefined) return;
-
-            const foodCode = rowData[TableCols.FoodCode];
-            self.model.selectedFoodCodes[self.searchOpt] = [foodCode];
-
-            const foodSelected = !self.model.foodSelected[self.searchOpt];
-            self.model.foodSelected[self.searchOpt] = foodSelected;
-            
-            self.updateSearchTable(foodSelected);
-
-            if (!foodSelected) return;
-
-            self.model.clearNutrientStatsInputs(self.searchOpt);
-            self.showFoodNutrientStats(foodCode);
-        });
 
         this.searchTable.on('search.dt', function() {
             self.model.searchInputs[self.searchOpt][SearchAtts.FilterHelper] = self.searchTable.search();
@@ -509,6 +879,9 @@ export class BaseSearchPage extends BasePage {
 
         tableColInfo.splice(2, 0, ...measureTableColInfo);
 
+        // the nutrient group goes in the last column
+        tableColInfo.push({title: translations[DataCols.NutrientGroup], data: Translation.getDataCol(DataCols.NutrientGroup), name: DataCols.NutrientGroup, orderable: false});
+
         const dataTable = this.updateTable({
             selector: this.htmlSelectors.nutrientTable, 
             columnInfo: tableColInfo, 
@@ -517,22 +890,6 @@ export class BaseSearchPage extends BasePage {
                 pageLength: -1,
                 orderFixed: {
                     pre: [0, 'asc'] // Fix the order for the nutrients
-                },
-                rowGroup: {
-                    dataSrc: Translation.getDataCol(TableCols.NutrientGroup),
-                    startRender: function (rows, group) {
-                        var api = rows.context[0].oInstance.api();
-                        var visibleColumnsCount = api.columns(':visible').count();
-
-                        var stickyWrapper = $('<div class="dtrg-sticky-window"/>')
-                            .append($('<span class="dtrg-sticky-text"/>').text(group));
-
-                        return $('<tr class="dtrg-group dtrg-start dtrg-level-0"/>')
-                            .append(
-                                $(`<th colspan="${visibleColumnsCount}" scope="row"/>`)
-                                    .append(stickyWrapper)
-                            );
-                    }
                 },
                 columnDefs: [
                     {
@@ -554,10 +911,6 @@ export class BaseSearchPage extends BasePage {
         dataTable.column(`${colName}:name`).visible(show); 
         if (!updateDatable) return;
 
-        if (dataTable.rowGroup) {
-            dataTable.rowGroup().draw();
-        }
-
         dataTable.columns.adjust().draw(false); 
     }
 
@@ -568,10 +921,6 @@ export class BaseSearchPage extends BasePage {
         }
 
         if (!updateDatable) return;
-
-        if (dataTable.rowGroup) {
-            dataTable.rowGroup().draw();
-        }
 
         dataTable.columns.adjust().draw(false); 
     }
@@ -684,10 +1033,6 @@ export class BaseSearchPage extends BasePage {
             self.updateNutrientTableConvCols(dataTable, measureConvId, this.checked);
             self.updateNutrientTableExtraCols(dataTable, showExtraDetails);
 
-            if (dataTable.rowGroup) {
-                dataTable.rowGroup().draw();
-            }
-
             dataTable.columns.adjust().draw(false); 
         });
 
@@ -757,6 +1102,10 @@ export class BaseComparePage extends BasePage {
 
         d3.select("#about-tool-details summary h2").html(Translation.translate("InstructionsTitle"));
 
+        d3.select("#legendTitle").html(Translation.translate("LegendTitle"));
+        d3.select("#legendContent p").html(Translation.translate("LegendText"));
+        d3.select("#closeLegendText").html(Translation.translate("CloseLegend"));
+
         d3.selectAll(".toTopBtnText").each((data, ind, nodes) => {
             const textNode = d3.select(nodes[ind]);
             textNode.html(Translation.translate("BackToTop")); 
@@ -777,6 +1126,10 @@ export class BaseComparePage extends BasePage {
 
         elements.searchCSVDownloadBtn.on("click", () => {
             this.model.downloadSearchCSV(this.searchOpt);
+        });
+
+        d3.select("#closeLegend").on("click", () => {
+            elements.legendAccordion.attr("open", null);
         });
     }
 

@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, CompFoodSearchTableCols, TableCols } from "../constants.js";
+import { SearchOpts, SearchAtts, DataCols, CompFoodSearchTableCols } from "../constants.js";
 import { Translation } from "../tools.js";
 import { BaseComparePage } from "./basePage.js";
 import { Model } from "../backend.js";
@@ -42,6 +42,10 @@ export class CompareByFood extends BaseComparePage {
         elements.searchCSVDownloadBtn.on("click", () => {
             this.model.downloadSearchCSV();
         });
+
+        d3.select("#closeLegend").on("click", () => {
+            elements.legendAccordion.attr("open", null);
+        });
     }
 
     clearSearch() {
@@ -83,6 +87,9 @@ export class CompareByFood extends BaseComparePage {
             tableColInfo.push({title: colName, data: dataCol, orderable: false});
         }
 
+        // the nutrient group goes in the last column
+        tableColInfo.push({title: translations[DataCols.NutrientGroup], data: Translation.getDataCol(DataCols.NutrientGroup), orderable: false});
+
         const dataTable = this.updateTable({selector: this.htmlSelectors.foodSearchTable, 
                                             columnInfo: tableColInfo, 
                                             data: tableData.data, 
@@ -94,22 +101,6 @@ export class CompareByFood extends BaseComparePage {
                                                 pageLength: -1,
                                                 orderFixed: {
                                                     pre: [0, 'asc'] // Fix the order for the nutrients
-                                                },
-                                                rowGroup: {
-                                                    dataSrc: Translation.getDataCol(TableCols.NutrientGroup),
-                                                    startRender: function (rows, group) {
-                                                        var api = rows.context[0].oInstance.api();
-                                                        var visibleColumnsCount = api.columns(':visible').count();
-
-                                                        var stickyWrapper = $('<div class="dtrg-sticky-window"/>')
-                                                            .append($('<span class="dtrg-sticky-text"/>').text(group));
-
-                                                        return $('<tr class="dtrg-group dtrg-start dtrg-level-0"/>')
-                                                            .append(
-                                                                $(`<th colspan="${visibleColumnsCount}" scope="row"/>`)
-                                                                    .append(stickyWrapper)
-                                                            );
-                                                    }
                                                 },
                                                 columnDefs: [
                                                     {
@@ -132,12 +123,31 @@ export class CompareByFood extends BaseComparePage {
         elements.foodInput.setChoiceByValue(inputs[SearchAtts.FoodName]);
     }
 
+    moveFoodBubblesBelowInput() {
+        const select = document.querySelector(this.htmlSelectors.foodInput);
+        const container = select.closest(".choices");
+        const inner = container.querySelector(".choices__inner");
+        const selectedItems = inner.querySelector(".choices__list--multiple");
+        const dropdown = container.querySelector(".choices__list--dropdown");
+
+        if (!selectedItems || !dropdown) return;
+
+        // Keep the results dropdown positioned against the search field.
+        inner.appendChild(dropdown);
+
+        // Place the existing selected bubbles below the search field.
+        inner.after(selectedItems);
+
+        container.classList.add("food-bubbles-below");
+    }
+
     loadPageInputs() {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt];
         const selections = this.model.searchSelections[this.searchOpt];
 
         const foodNameSelections = selections[SearchAtts.FoodName];
+
         elements.foodInput = this.setupAutoCompleteSelect({elementSelector: this.htmlSelectors.foodInput, 
                                                             selections: foodNameSelections, 
                                                             inputs: new Set([inputs[SearchAtts.FoodName]]),
@@ -155,7 +165,8 @@ export class CompareByFood extends BaseComparePage {
                                                                     threshold: 0.15 // range of 0-1, 0 = exact match
                                                                 }
                                                              }});
-
+        
+        this.moveFoodBubblesBelowInput();
         this.clearSearch();
     } 
 }

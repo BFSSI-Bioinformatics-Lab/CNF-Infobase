@@ -61,10 +61,22 @@ export class SearchByNutrientPage extends BaseSearchPage {
 
         elements.searchTableTitle.html(Translation.translate((nutrientCode != "") ? "NutrientSearchTableTitle" : "SearchTableTitle", {nutrientName: nutrientNameWithUnit}));
 
+        // fixed column widths, so that the widths do not change with the rows shown (e.g. when a food is selected);
+        //  the food name column takes the rest of the width
+        const colWidths = {
+            [DataCols.FoodCode]: "7%",
+            [DataCols.FoodGroupDescription]: "14%",
+            [DataCols.MeasureDescription]: "14%",
+            [TableCols.NutrientAmountView]: "10%",
+            [TableCols.WeightView]: "10%"
+        };
+
         for (const tableAtt of NutrientSearchTableCols) {
             let title = translations[tableAtt];
-            tableColInfo.push({title: title, data: Translation.getDataCol(tableAtt)});
+            tableColInfo.push({title: title, data: Translation.getDataCol(tableAtt), width: colWidths[tableAtt]});
         }
+
+        tableColInfo.push(this.buildSearchTableSelectCol());
 
         const nutrientAmountColName = Translation.translate(`SearchTableCols.${this.searchOpt}.${TableCols.NutrientAmountView}`, 
                                                             {nutrient: nutrientName, 
@@ -78,14 +90,17 @@ export class SearchByNutrientPage extends BaseSearchPage {
 
         const dataTable = this.updateTable({
             selector: this.htmlSelectors.foodSearchTable, columnInfo: tableColInfo, 
-            data: tableData.data, 
-            searchTxt: (searchTxt !== null) ? searchTxt : undefined, 
+            data: tableData.data,
+            dataTableAtts: {autoWidth: false},
+            searchTxt: (searchTxt !== null) ? searchTxt : undefined,
             order: (resetSort) ? [] : null,
             columnNameUpdates: {
                 [NutrientSearchTableCols.length - 2]: nutrientAmountColName,
                 [NutrientSearchTableCols.length - 1]: nutrientWeightColName
             }
         });
+
+        this.setupSearchTableSelect(selectFood);
         return dataTable;
     }
 
@@ -120,7 +135,8 @@ export class SearchByNutrientPage extends BaseSearchPage {
         // add in the food groups and nutrient dropdowns
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.foodGroupInput, 
                                    selections: selections[SearchAtts.FoodGroup], 
-                                   inputs: new Set([inputs[SearchAtts.FoodGroup]])});
+                                   inputs: new Set([inputs[SearchAtts.FoodGroup]]),
+                                   sortCmpFunc: this.buildDropdownLstCompare(Translation.translate("NoneSelected"))});
 
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.nutrientInput, 
                                 selections: selections[SearchAtts.Nutrient], 

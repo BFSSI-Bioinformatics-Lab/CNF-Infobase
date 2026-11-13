@@ -12,7 +12,8 @@
               content="REMPLACER MOI: Description">
 
         <!-- JQuery -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <!-- Downgraded to the jQuery version WET v4.0.32 is built for -->
+        <script src="./static/wet-boew/js/jquery/2.2.4/jquery.min.js"></script>
 
         <!-- Popper.js: Needed for the multiselect widgets -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
@@ -28,8 +29,8 @@
         <link rel="stylesheet" href="./static/css/global.css">
 
         <!-- Jquery Datatables: https://datatables.net -->
-        <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.1.8/rg-1.6.0/datatables.min.css" type="text/css" crossorigin="anonymous">
-        <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.1.8/rg-1.6.0/datatables.min.js"></script>
+        <!-- Downgraded to the DataTables version bundled with WET v4.0.32 -->
+        <script src="./static/wet-boew/js/deps/jquery.dataTables.min.js"></script>
 
         <!-- Multiselect widget: https://developer.snapappointments.com/bootstrap-select/ -->
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" crossorigin="anonymous">
@@ -106,7 +107,7 @@
                         <li><a href="https://canadiensensante.gc.ca/index-fra.php">Santé</a></li>
                         <li><a href="https://canadiensensante.gc.ca/science-research-sciences-recherches/index-fra.php">Science, recherche et données</a></li>
                         <li><a href="https://sante-infobase.canada.ca/">Infobase de la santé publique</a></li>
-                        <li>Fichier Canadien sur les éléments nutritifs (FCÉN)</li>
+                        <li>Fichier canadien sur les éléments nutritifs (FCÉN)</li>
                     </ol>
             </div>
         </nav>
@@ -116,8 +117,8 @@
         <section class="blue-header well well-sm brdr-0 mrgn-bttm-0 mrgn-tp-0">
             <div class="container mrgn-tp-sm">
                 <h1 class="mrgn-tp-md" property="name" id="wb-cont" dir="ltr"><span
-                        class="stacked"><span>Fichier canadien sur les éléments nutritifs (FCÉN) 2026 <small style="color:#fff;">de Santé Canada</small></span>: <span></span></span></h1> <!-- <a class="app-name" href="https://health-infobase.canada.ca/">Health Infobase</a> -->
-                <p>Un outil interactif pour visualiser le profil nutritionnel des aliments inclus dans la base de données 2026</p>
+                        class="stacked"><span>Fichier Canadien sur les Éléments Nutritifs (FCÉN) 2026 <small style="color:#fff;">de Santé Canada</small></span>: <span></span></span></h1> <!-- <a class="app-name" href="https://health-infobase.canada.ca/">Health Infobase</a> -->
+                <p>Un outil interactif pour explorer le profil nutritionnel des aliments inclus dans le Fichier canadien sur les éléments nutritifs 2026.</p>
                 <ul class="list-inline small mrgn-bttm-sm" style="line-height:1.65em" id="list-inline-desktop-only">
                     <li class="mrgn-rght-lg"> Dernière mise à jour : REMPLACER MOI: (yyyy-mm-dd)</li>
                 </ul>
@@ -129,17 +130,10 @@
                 <div class="row">
                     <div class="mrgn-tp-xl mrgn-bttm-lg justify-content-center">
                         <p>
-                            Cet outil vous aidera à visualiser les valeurs nutritives moyennes pour des aliments offerts au Canada inclus dans le <a href="https://www.canada.ca/fr/sante-canada/services/aliments-nutrition/saine-alimentation/donnees-nutritionnelles/fichier-canadien-elements-nutritifs-propos-nous.html">Fichier canadien sur les éléments nutritifs 2026</a>.  Utilisez l’outil pour trouver les valeurs détaillées jusqu’à 173 éléments nutritifs, notamment :
+                            Utilisez cet outil interactif pour explorer le profil nutritionnel et les teneurs moyennes en nutriments des aliments inclus dans le <a href="https://www.canada.ca/fr/sante-canada/services/aliments-nutrition/saine-alimentation/donnees-nutritionnelles/fichier-canadien-elements-nutritifs-propos-nous.html">Fichier canadien sur les éléments nutritifs 2026</a>. Obtenez des renseignements détaillés sur jusqu’à 173 nutriments, notamment les lipides, les protéines, l’énergie, les vitamines et les minéraux.
                         </p>
-                        <ul>
-                            <li>les lipides,</li>
-                            <li>l’énergie,</li>
-                            <li>les protéines,</li>
-                            <li>les vitamines, et</li>
-                            <li>les minéraux.</li>
-                        </ul>
                         <p class="mrgn-tp-lg">
-                            Pour en savoir plus sur les données du <a href="https://ouvert.canada.ca/data/fr/dataset/1b6139bd-ed7e-4043-bc28-ff00e10f3109/resource/ef889187-1012-45f9-8d37-55481bc61890">FCÉN 2026</a>.
+                            Pour en savoir plus sur le <a href="https://ouvert.canada.ca/data/fr/dataset/1b6139bd-ed7e-4043-bc28-ff00e10f3109/resource/86483321-6c76-4a5f-9061-04b9a0a48a8d">Fichier canadien sur les éléments nutritifs (FCÉN) 2026</a>.
                         </p>
                     </div>
                 </div>
@@ -155,7 +149,7 @@
             </div>
 
             <div class="container foodTableContainer">
-                <details class="mrgn-tp-lg mrgn-bttm-lg" id="about-tool-details">
+                <details class="mrgn-tp-lg" id="about-tool-details">
                     <summary class="wb-toggle" data-toggle='{"print":"on"}'>
                         <h2 class="h3 mrgn-tp-sm"></h2>
                     </summary>
@@ -165,22 +159,6 @@
                         <div class="text-right mrgn-tp-lg">
                             <a href="#about-tool-details" id="closeInstructions">
                                 <span id="closeInstructionsText"></span>
-                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                    </div>
-                </details>
-
-                <details class="mrgn-tp-lg mrgn-bttm-lg" id="legend-accordion">
-                    <summary class="wb-toggle" data-toggle='{"print":"on"}'>
-                        <h2 class="h3 mrgn-tp-sm" id="legendTitle"></h2>
-                    </summary>
-                    <div class="mrgn-lft-md" id="legendContent">
-                        <p></p>
-
-                        <div class="text-right mrgn-tp-lg">
-                            <a href="#legend-accordion" id="closeLegend">
-                                <span id="closeLegendText"></span>
                                 <i class="fa fa-eye-slash" aria-hidden="true"></i>
                             </a>
                         </div>
