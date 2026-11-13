@@ -497,3 +497,45 @@ export class TableTools {
         return downloadCSV({csvContent: csvContent, fileName: data.csvFilename, freePreviousObjects: freePreviousObjects});
     }
 }
+
+
+// SQLTools: Helper class for building SQL queries
+export class SQLTools {
+    // sqlStr(val): Converts a value to a SQL string
+    static sqlStr(val) {
+        return `'${String(val).replace(/'/g, "''")}'`;
+    }
+
+    // sqlList(vals): Converts a list of values to a SQL list
+    static sqlList(vals) {
+        return `(${Array.from(vals).map((val) => this.sqlStr(val)).join(", ")})`;
+    }
+
+    // sqlWhere(conditions): Builds the WHERE clause of a query
+    static sqlWhere(conditions) {
+        return (conditions.length == 0) ? "" : `WHERE ${conditions.join(" AND ")}`;
+    }
+}
+
+
+// EnvTools: Helper class for the settings in env.js
+// Note:
+// - env.js is optional, so it is loaded with a dynamic import: a static import of a missing file
+//   would stop the whole app from loading
+export class EnvTools {
+    static env;
+
+    // load(): Loads the settings from env.js. If env.js is not provided, there are no settings ({})
+    static async load() {
+        if (this.env !== undefined) return this.env;
+
+        try {
+            this.env = await import("../env.js");
+        } catch (error) {
+            console.info("env.js was not found, so the default settings are used.");
+            this.env = {};
+        }
+
+        return this.env;
+    }
+}

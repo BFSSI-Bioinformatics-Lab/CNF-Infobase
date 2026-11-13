@@ -161,6 +161,31 @@ export const KeyboardCodes = {
     Enter: 13
 }
 
+// The Names of the tables from the API
+export const APITableNames = {
+    NutrientAndGrouping: "nutrients_and_grouping_cnf_2026",
+    MeasureType: "measure_type",
+    NutrientSource: "nutrient_source",
+    NutrientName: "nutrient_name",
+    FoodName: "food_name",
+    NutrientAmount: "nutrient_amount",
+    MeasureWeightConversion: "measure_weight_conversion",
+    MeasureName: "measure_name"
+}
+
+// The columns from the API that are named differently from the columns in the CSV files (see 'DataCols')
+// Note: Columns that end with "_" are followed by the language code (eg. "EN")
+export const APIDataCols = {
+    NutrientShortUnit: "Nutrient_Unit_Short",
+    NutrientOrder: "Display_Order",
+    NutrientNameWithUnit: "Nutrient_Unit_Long_"
+}
+
+// Where the app gets its data from (set 'DataSource' in env.js)
+export const DataSources = {
+    File: "file", // the CSV files in the 'data' folder
+    API: "api"    // the backend API (some of the data still comes from the CSV files)
+}
 
 // ================= ENGLISH TRANSLATIONS =======================
 
