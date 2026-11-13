@@ -862,7 +862,7 @@ const LangFR = {
         FoodSearchButton: "Recherche",
         FoodSearchResetButton: "Réinitialiser",
 
-        NoneSelected: "Aucune sélectionnée",
+        NoneSelected: "Aucun sélectionné",
         SelectAll: "Tout sélectionner",
         DeselectAll: "Tout désélectionner",
 
