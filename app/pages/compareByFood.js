@@ -1,4 +1,4 @@
-import { SearchOpts, SearchAtts, DataCols, CompFoodSearchTableCols } from "../constants.js";
+import { SearchOpts, SearchAtts, DataCols, TableCols, CompFoodSearchTableCols } from "../constants.js";
 import { Translation } from "../tools.js";
 import { BaseComparePage } from "./basePage.js";
 import { Model } from "../backend.js";
