@@ -539,3 +539,111 @@ export class EnvTools {
         return this.env;
     }
 }
+
+
+// LazyTable: A cached table whose rows are only retrieved the first time they are needed
+// Note:
+// - The rows are retrieved by the values of some key columns (eg. by food code), then added to the table
+// - The table has a hash table index for each key column (see BaseDataLoader.createIndexedTable)
+// - Where the rows come from (eg. the API or a CSV file) is decided by the 'retrieveRows' function
+export class LazyTable {
+    // constructor(loader, keyCols, getRowId, retrieveRows):
+    // - loader: the data loader that owns the table
+    // - keyCols: the columns that the rows can be retrieved by
+    // - getRowId(row): the id of a row, so that the same row is not added twice
+    // - retrieveRows(keyCol, keys): retrieves the rows whose 'keyCol' column is one of 'keys'
+    //   (if 'keyCol' is null, retrieves all the rows)
+    constructor(loader, keyCols, getRowId, retrieveRows) {
+        this.loader = loader;
+        this.getRowId = getRowId;
+        this.retrieveRows = retrieveRows;
+
+        this.table = loader.createIndexedTable([], keyCols);
+
+        // the keys whose rows are all in the table, and the requests that are retrieving the rows of some keys
+        this.loadedKeys = Object.fromEntries(keyCols.map((col) => [col, new Set()]));
+        this.requests = Object.fromEntries(keyCols.map((col) => [col, new Map()]));
+
+        // the rows in the table by their ids, so that the same row is not added twice
+        this.rowsById = new Map();
+
+        // whether all the rows are in the table, and the request that is retrieving all the rows
+        this.allLoaded = false;
+        this.allRowsRequest;
+    }
+
+    // getAllRows(): Retrieves all the rows of the table
+    async getAllRows() {
+        if (this.allLoaded) return this.table.data;
+
+        if (this.allRowsRequest === undefined) {
+            this.allRowsRequest = this.retrieveRows(null, null)
+                .then((rows) => {
+                    this.addRows(rows);
+
+                    // rebuild the table in the same order as the retrieved rows, since the rows that were retrieved
+                    //  by key before are in the order that they were needed
+                    const orderedRowIds = new Set(rows.map((row) => this.getRowId(row)));
+                    const orderedRows = Array.from(orderedRowIds).map((rowId) => this.rowsById.get(rowId));
+                    this.table = this.loader.createIndexedTable(orderedRows, Object.keys(this.table.indices));
+
+                    this.allLoaded = true;
+                })
+                .finally(() => { this.allRowsRequest = undefined; });
+        }
+
+        await this.allRowsRequest;
+        return this.table.data;
+    }
+
+    // load(keyCol, keys): Retrieves the rows for the keys whose rows are not in the table yet
+    async load(keyCol, keys) {
+        // all the rows are in the table, or are being retrieved
+        if (this.allLoaded) return;
+        if (this.allRowsRequest !== undefined) {
+            await this.allRowsRequest;
+            return;
+        }
+
+        const loadedKeys = this.loadedKeys[keyCol];
+        const requests = this.requests[keyCol];
+
+        keys = Array.from(new Set(keys));
+        const missingKeys = keys.filter((key) => !loadedKeys.has(key) && !requests.has(key));
+
+        if (missingKeys.length > 0) {
+            const request = this.retrieveRows(keyCol, missingKeys)
+                .then((rows) => {
+                    this.addRows(rows);
+                    missingKeys.forEach((key) => loadedKeys.add(key));
+                })
+                .finally(() => missingKeys.forEach((key) => requests.delete(key)));
+
+            missingKeys.forEach((key) => requests.set(key, request));
+        }
+
+        // wait for the rows of all the keys, including the rows that other searches are already retrieving
+        const pendingRequests = new Set(keys.map((key) => requests.get(key)).filter((request) => request !== undefined));
+        await Promise.all(pendingRequests);
+    }
+
+    // addRows(rows): Adds the rows that are not already in the table
+    addRows(rows) {
+        const newRows = rows.filter((row) => {
+            const rowId = this.getRowId(row);
+            if (this.rowsById.has(rowId)) return false;
+
+            this.rowsById.set(rowId, row);
+            return true;
+        });
+
+        this.loader.addIndexedRows(this.table, newRows);
+    }
+
+    // getRows(keyCol, keys, filters): Retrieves the rows whose 'keyCol' column is one of 'keys', and that also match
+    //  the other key columns in 'filters' ({keyCol: values})
+    async getRows(keyCol, keys, filters = {}) {
+        await this.load(keyCol, keys);
+        return this.loader.getRowsByManyIds(this.table, {[keyCol]: keys, ...filters});
+    }
+}

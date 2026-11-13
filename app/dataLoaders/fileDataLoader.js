@@ -1,7 +1,22 @@
 import { BaseDataLoader } from "./baseDataLoader.js";
-import { DataCols, TableCols, RAMeasureTypeCode, HighlightedNutrientCodes } from "../constants.js";
-import { Translation, TableTools, ListTools } from "../tools.js";
-import { Model } from "../backend.js";
+import { DataCols, TableCols } from "../constants.js";
+import { DictTools, LazyTable } from "../tools.js";
+
+
+// The CSV files of the data
+const CSVFiles = {
+    FoodName: "data/Food_Name.csv",
+    FoodGroup: "data/CNF_Food_Group.csv",
+    FoodSource: "data/Food_Source.csv",
+    NutrientAmount: "data/Nutrient_Amount.csv",
+    NutrientName: "data/Nutrient_Name.csv",
+    NutrientGroup: "data/Nutrients and grouping_CNF_2026.csv",
+    NutrientSource: "data/Nutrient_Source.csv",
+
+    // the reference amount (RA) measures come after the other measures
+    MeasureName: ["data/Measure_Name.csv", "data/Measure_Name_RA for Health Infobase.csv"],
+    MeasureWeightConv: ["data/Measure_Weight_Conversion.csv", "data/Measure_Weight_Conversion_RA for Health Infobase.csv"]
+};
 
 
 // FileDataLoader: Retrieves the data from the CSV files
@@ -9,268 +24,85 @@ export class FileDataLoader extends BaseDataLoader {
     constructor(backend) {
         super(backend);
 
-        this.foodGroupTable;
-        this.foodNameTable;
-        this.measureConvTable;
-        this.nutrientTable;
-        this.nutrientNameTable;
+        // the request that reads and indexes the nutrient amounts, so that they are only read once
+        this._nutrientAmountTableRequest;
 
-        this.highlightedNutrientNames = new Set();
+        this._foodGroupTable = this.createCSVTable(CSVFiles.FoodGroup, [DataCols.FoodGroupCode]);
+        this._foodSourceTable = this.createCSVTable(CSVFiles.FoodSource, [DataCols.FoodSourceCode]);
+        this._nutrientSourceTable = this.createCSVTable(CSVFiles.NutrientSource, [DataCols.NutrientSrcCode]);
+
+        this._foodTable = new LazyTable(this,
+            [DataCols.FoodCode],
+            (row) => row[DataCols.FoodCode],
+            async (keyCol, keys) => this.setupFoodRows(await this.filterCSVRows(CSVFiles.FoodName, keyCol, keys)));
+
+        // the nutrient names, joined with the nutrient groups
+        this._nutrientNameTable = new LazyTable(this,
+            [DataCols.NutrientCode],
+            (row) => row[DataCols.NutrientCode],
+            async (keyCol, keys) => {
+                const [nutrientNames, nutrientGroups] = await Promise.all([this.filterCSVRows(CSVFiles.NutrientName, keyCol, keys),
+                                                                          this.getCSVRows(CSVFiles.NutrientGroup)]);
+
+                const nutrientGroupTable = this.createIndexedTable(nutrientGroups, [DataCols.NutrientCode]);
+                const rows = nutrientNames.map((row) => DictTools.combine([row, this.getRowById(nutrientGroupTable, DataCols.NutrientCode, row[DataCols.NutrientCode]) ?? {}]));
+                return this.setupNutrientNameRows(rows);
+            });
+
+        // the nutrient amounts, joined with the foods, nutrient names and nutrient sources
+        this._nutrientTable = new LazyTable(this,
+            [DataCols.FoodCode, DataCols.NutrientCode, DataCols.FoodGroupCode],
+            (row) => `${row[DataCols.FoodCode]}_${row[DataCols.NutrientCode]}`,
+            async (keyCol, keys) => {
+                const nutrientAmountTable = await this.getNutrientAmountTable();
+                return await this.joinNutrientAmountRows(this.getRowsByIds(nutrientAmountTable, keyCol, keys));
+            });
+
+        // the measure names (the RA measure names come after the other measure names)
+        this._measureNameTable = this.createCSVTable(CSVFiles.MeasureName, [DataCols.MeasureCode]);
+
+        // the measure weight conversions (with their measure names), including the RA measures
+        const measureConvTable = new LazyTable(this,
+            [DataCols.FoodCode, DataCols.MeasureTypeCode],
+            (row) => row[TableCols.MeasureWeightConvId],
+            async (keyCol, keys) => this.setupMeasureConvRows(await this.addMeasureNames(await this.filterCSVRows(CSVFiles.MeasureWeightConv, keyCol, keys))));
+
+        this._measureConvTables = [measureConvTable];
+        this._raMeasureConvTable = measureConvTable;
     }
 
+    // load(): Starts reading the nutrient amounts in the background, once the browser is idle after the app starts
+    //  (the other tables are only read the first time they are needed)
     async load() {
-        const [foodNameTable,
-               foodGroupTable,
-               foodSourceTable,
-               measureTypeTable,
-               measureNameTable,
-               measureWeightConvTable,
-               nutrientAmtTable,
-               nutrientNameTable,
-               nutrientSrcTable,
-               nutrientGroupTable,
-               raMeasureTypeTable,
-               raMeasureNameTable,
-               raMeasureWeightConvTable] = await Promise.all([this.loadCSV(`data/Food_Name.csv`),
-                           this.loadCSV(`data/CNF_Food_Group.csv`),
-                           this.loadCSV(`data/Food_Source.csv`),
-                           this.loadCSV(`data/Measure_Type.csv`),
-                           this.loadCSV(`data/Measure_Name.csv`),
-                           this.loadCSV(`data/Measure_Weight_Conversion.csv`),
-                           this.loadCSV(`data/Nutrient_Amount.csv`),
-                           this.loadCSV(`data/Nutrient_Name.csv`),
-                           this.loadCSV(`data/Nutrient_Source.csv`),
-                           this.loadCSV(`data/Nutrients and grouping_CNF_2026.csv`),
-                           this.loadCSV(`data/Measure_Type_RA for Health Infobase.csv`),
-                           this.loadCSV(`data/Measure_Name_RA for Health Infobase.csv`),
-                           this.loadCSV(`data/Measure_Weight_Conversion_RA for Health Infobase.csv`)]);
+        const readNutrientAmounts = () => this.getNutrientAmountTable().catch(() => {});
 
-        // add the reference amount (RA) measures to the other measures
-        measureTypeTable.data.push(...(raMeasureTypeTable.data));
-        measureNameTable.data.push(...(raMeasureNameTable.data));
-        measureWeightConvTable.data.push(...(raMeasureWeightConvTable.data));
-
-        // the food table needs to be loaded before the nutrient table, since the nutrient table joins with the food table
-        this.loadFoodTable(foodNameTable, foodGroupTable, foodSourceTable);
-        this.loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable);
-        this.loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable, nutrientGroupTable);
-    }
-
-    // ----- Loading the tables -----
-
-    loadFoodTable(foodNameTable, foodGroupTable, foodSourceTable) {
-        this.foodGroupTable = foodGroupTable;
-        this.foodNameTable = foodNameTable;
-
-        this._foodTable = TableTools.dataLeftJoinById(foodNameTable, foodGroupTable, DataCols.FoodGroupCode, DataCols.FoodGroupCode);
-        this._foodTable = TableTools.dataLeftJoinById(this._foodTable, foodSourceTable, DataCols.FoodSourceCode, DataCols.FoodSourceCode);
-
-        this.setupFoodTableIndices(this._foodTable);
-        this.setupFoodNameTableIndices();
-    }
-
-    setupFoodNameTableIndices() {
-        const foodNameTableData = this.foodNameTable.data;
-        const foodCodeIndex = {};
-        const getFoodCodeVal = (row) => row[DataCols.FoodCode];
-
-        const foodNameTableIndices = {[DataCols.FoodCode]: foodCodeIndex};
-        this.foodNameTable.indices = foodNameTableIndices;
-
-        const foodNameTableLen = foodNameTableData.length;
-        for (let i = 0; i < foodNameTableLen; ++i) {
-            const row = foodNameTableData[i];
-            this.addIndexVal(row, i, foodCodeIndex, getFoodCodeVal);
+        if (window.requestIdleCallback) {
+            window.requestIdleCallback(readNutrientAmounts, {timeout: 3000});
+        } else {
+            setTimeout(readNutrientAmounts, 1000);
         }
     }
 
-    loadMeasureConvTable(measureWeightConvTable, measureTypeTable, measureNameTable) {
-        this.measureConvTable = TableTools.dataLeftJoinById(measureWeightConvTable, measureTypeTable, DataCols.MeasureTypeCode, DataCols.MeasureTypeCode);
-        this.measureConvTable = TableTools.dataLeftJoinById(this.measureConvTable, measureNameTable, DataCols.MeasureCode, DataCols.MeasureCode);
-
-        // there are duplicate rows in the original data that needs to be filtered out
-        this.measureConvTable.data = ListTools.getUnique(this.measureConvTable.data, (row) => {
-            const result = Model.getMeasureWeightConvIdFromRow(row);
-            row[TableCols.MeasureWeightConvId] = result;
-            return result;
-        });
-
-        const measureConvTableData = this.measureConvTable.data;
-
-        const foodCodeIndex = {};
-        const measureTypeCodeIndex = {};
-        const measureCodeIndex = {};
-        const getFoodCodeVal = (row) => row[DataCols.FoodCode];
-        const getMeasureTypeCodeVal = (row) => row[DataCols.MeasureTypeCode];
-        const getMeasureCodeVal = (row) => row[DataCols.MeasureCode];
-
-        this.measureConvTable.indices = {
-            [DataCols.FoodCode]: foodCodeIndex,
-            [DataCols.MeasureTypeCode]: measureTypeCodeIndex,
-            [DataCols.MeasureCode]: measureCodeIndex
-        };
-
-        const measureWeightConvTableLen = measureConvTableData.length;
-        for (let i = 0; i < measureWeightConvTableLen; ++i) {
-            const row = measureConvTableData[i];
-            this.addIndexVal(row, i, foodCodeIndex, getFoodCodeVal);
-            this.addIndexVal(row, i, measureTypeCodeIndex, getMeasureTypeCodeVal);
-            this.addIndexVal(row, i, measureCodeIndex, getMeasureCodeVal);
-        }
-    }
-
-    setupNutrientTableIndices() {
-        const foodCodeIndex = {};
-        const getFoodCodeVal = (row) => row[DataCols.FoodCode];
-
-        const nutrientCodeIndex = {};
-        const getNutrientCodeVal = (row) => row[DataCols.NutrientCode];
-
-        this.nutrientTable.indices = {[DataCols.FoodCode]: foodCodeIndex, [DataCols.NutrientCode]: nutrientCodeIndex};
-
-        const nutrientTableData = this.nutrientTable.data;
-        const nutrientTableDataLen = nutrientTableData.length;
-
-        for (let i = 0; i < nutrientTableDataLen; ++i) {
-            const row = nutrientTableData[i];
-            this.addIndexVal(row, i, foodCodeIndex, getFoodCodeVal);
-            this.addIndexVal(row, i, nutrientCodeIndex, getNutrientCodeVal);
-        }
-    }
-
-    setupNutrientNameTableIndices() {
-        const nutrientCodeIndex = {};
-        const getNutrientCodeVal = (row) => row[DataCols.NutrientCode];
-
-        this.nutrientNameTable.indices = {[DataCols.NutrientCode]: nutrientCodeIndex};
-
-        const nutrientTableData = this.nutrientNameTable.data;
-        const nutrientTableDataLen = nutrientTableData.length;
-
-        for (let i = 0; i < nutrientTableDataLen; ++i) {
-            const row = nutrientTableData[i];
-            this.addIndexVal(row, i, nutrientCodeIndex, getNutrientCodeVal);
-        }
-    }
-
-    loadNutrientTable(nutrientAmtTable, nutrientNameTable, nutrientSrcTable, nutrientGroupTable) {
-        this.nutrientNameTable = TableTools.dataLeftJoinById(nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
-
-        // update which nutrients should be bolded in the nutrient table and
-        //  modify the nutrient names column with the updated nutrient names
-        const nutrientNameCol = Translation.getDataCol(DataCols.NutrientName);
-        const nutrientNameWithUnitCol = Translation.getDataCol(DataCols.NutrientNameWithUnit);
-
-        for (const row of this.nutrientNameTable.data) {
-            const nutrientCode = row[DataCols.NutrientCode];
-            row[nutrientNameCol] = Model.getNutrientName(row[nutrientNameWithUnitCol]);
-
-            if (HighlightedNutrientCodes.has(nutrientCode)) {
-                this.highlightedNutrientNames.add(row[nutrientNameWithUnitCol]);
-            }
+    // getNutrientAmountTable(): Retrieves all the nutrient amounts (not joined with the other tables),
+    //  with an index on the food code and the nutrient code
+    async getNutrientAmountTable() {
+        if (this._nutrientAmountTableRequest === undefined) {
+            this._nutrientAmountTableRequest = this.getCSVRows(CSVFiles.NutrientAmount)
+                .then((rows) => this.createIndexedTable(rows, [DataCols.FoodCode, DataCols.NutrientCode]))
+                .catch((error) => {
+                    this._nutrientAmountTableRequest = undefined;
+                    throw error;
+                });
         }
 
-        // join the different parts of the nutrients
-        nutrientNameTable = TableTools.dataLeftJoinById(nutrientNameTable, nutrientGroupTable, DataCols.NutrientCode, DataCols.NutrientCode);
-        this.nutrientTable = TableTools.dataLeftJoinById(nutrientAmtTable, nutrientNameTable, DataCols.NutrientCode, DataCols.NutrientCode);
-        this.nutrientTable = TableTools.dataLeftJoinById(this.nutrientTable, nutrientSrcTable, DataCols.NutrientSrcCode, DataCols.NutrientSrcCode);
-        this.nutrientTable = TableTools.dataLeftJoinById(this.nutrientTable, this._foodTable, DataCols.FoodCode, DataCols.FoodCode);
-
-        this.setupNutrientTableIndices();
-        this.setupNutrientNameTableIndices();
+        return await this._nutrientAmountTableRequest;
     }
 
-    // ----- Selections for the dropdowns -----
+    // addMeasureNames(rows): Adds the measure names to the measure weight conversions
+    async addMeasureNames(rows) {
+        await this._measureNameTable.load(DataCols.MeasureCode, rows.map((row) => row[DataCols.MeasureCode]));
 
-    async getFoodGroups() {
-        let result = this.foodGroupTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodGroupDescription)], value: row[DataCols.FoodGroupCode]}});
-        result.push({text: Translation.translate("NoneSelected"), value: ""});
-        return result;
-    }
-
-    async getFoodNames() {
-        return this.foodNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodDescription)], value: row[DataCols.FoodCode], exactMatchCount: 0, prefixedMatchCount: 0, startInd: Infinity}});
-    }
-
-    async getNutrients() {
-        const result = this.nutrientNameTable.data.map((row) => { return {text: row[Translation.getDataCol(DataCols.NutrientNameWithUnit)], value: row[DataCols.NutrientCode]}});
-        result.sort((a, b) => a.text.localeCompare(b.text));
-        return result;
-    }
-
-    async getHighlightedNutrientNames() {
-        return this.highlightedNutrientNames;
-    }
-
-    // ----- Foods -----
-
-    async getFoodNamesByCodes(foodCodes) {
-        return this.getRowsByIds(this.foodNameTable, DataCols.FoodCode, foodCodes);
-    }
-
-    // ----- Measures -----
-
-    async getMeasureWeightConvByFoodCode(foodCode) {
-        return this.getRowsById(this.measureConvTable, DataCols.FoodCode, foodCode);
-    }
-
-    async getRAMeasureWeightConvByFoodCodes(foodCodes) {
-        return this.getRowsByManyIds(this.measureConvTable, {[DataCols.MeasureTypeCode]: [RAMeasureTypeCode], [DataCols.FoodCode]: foodCodes});
-    }
-
-    // ----- Nutrients -----
-
-    async getNutrientByCode(nutrientCode) {
-        return this.getRowById(this.nutrientNameTable, DataCols.NutrientCode, nutrientCode);
-    }
-
-    async getNutrientNamesByCodes(nutrientCodes) {
-        return this.getRowsByIds(this.nutrientNameTable, DataCols.NutrientCode, nutrientCodes);
-    }
-
-    async getNutrientsByFoodCode(foodCode) {
-        return this.getRowsById(this.nutrientTable, DataCols.FoodCode, foodCode);
-    }
-
-    async filterNutrientSearchTable(nutrientCode, foodGroupCode, foodCode) {
-        let result = this.nutrientTable.data;
-        if (nutrientCode == "") return [];
-
-        if (foodCode != "") {
-            result = this.getRowsById(this.nutrientTable, DataCols.FoodCode, foodCode);
-            if (result === undefined) return [];
-        }
-
-        if (foodGroupCode != "") {
-            result = result.filter((row) => row[DataCols.FoodGroupCode] == foodGroupCode);
-        }
-
-        return result.filter((row) => row[DataCols.NutrientCode] == nutrientCode);
-    }
-
-    async filterCompareFoodTable(foodCodes) {
-        if (foodCodes.length <= 0) return [];
-
-        foodCodes = new Set(foodCodes);
-        return this.nutrientTable.data.filter((row) => foodCodes.has(row[DataCols.FoodCode]));
-    }
-
-    async filterCompareNutrientTable(nutrientCodes, foodGroupCode) {
-        let result = this.nutrientTable.data;
-        const foodGroupEmpty = foodGroupCode == "";
-        const nutrientCodesEmpty = nutrientCodes.length <= 0;
-
-        if (foodGroupEmpty && nutrientCodesEmpty) return [];
-
-        if (!foodGroupEmpty) {
-            result = result.filter((row) => row[DataCols.FoodGroupCode] == foodGroupCode);
-        }
-
-        if (!nutrientCodesEmpty) {
-            nutrientCodes = new Set(nutrientCodes);
-            result = result.filter((row) => nutrientCodes.has(row[DataCols.NutrientCode]));
-        }
-
-        return result;
+        const measureNameTable = this._measureNameTable.table;
+        return rows.map((row) => DictTools.combine([row, this.getRowById(measureNameTable, DataCols.MeasureCode, row[DataCols.MeasureCode]) ?? {}]));
     }
 }

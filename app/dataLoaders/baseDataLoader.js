@@ -1,38 +1,32 @@
-import { DataCols, TableCols, RAMeasureTypeCode } from "../constants.js";
-import { Translation, SetTools } from "../tools.js";
+import { DataCols, TableCols, RAMeasureTypeCode, HighlightedNutrientCodes } from "../constants.js";
+import { Translation, SetTools, ListTools, DictTools, LazyTable } from "../tools.js";
+import { Model } from "../backend.js";
 
 
-// BaseDataLoader: The interface for retrieving the data used by the backend
-// Note:
-// - All the data retrieval functions are async, so that the data can come from either the CSV files or the API
+// BaseDataLoader: Base class to retrieve data from the backend
 export class BaseDataLoader {
+    static MaxFoodsForFoodMeasures = 50;
+
     constructor(backend) {
         this.backend = backend;
 
-        // protected: the table of all the foods (with their food groups and food sources)
-        this._foodTable;
-    }
+        // the requests that read the CSV files, so that each CSV file is only read once
+        this._csvRequests = new Map();
 
-    // getFoodTable(): Retrieves the table of all the foods
-    async getFoodTable() {
-        return this._foodTable;
+        // protected: the tables, created by the subclasses (see the notes above)
+        this._foodTable;
+        this._foodGroupTable;
+        this._foodSourceTable;
+        this._nutrientNameTable;
+        this._nutrientSourceTable;
+        this._nutrientTable;
+        this._measureConvTables = [];
+        this._raMeasureConvTable;
     }
 
     // load(): Load any necessary data at startup
     async load() {
 
-    }
-
-    // notImplemented(funcName): Throws an error for a function that the subclass needs to implement
-    notImplemented(funcName) {
-        throw new Error(`${this.constructor.name}.${funcName} is not implemented`);
-    }
-
-    // loadCSV(file): Loads the table and its columns from a CSV file
-    async loadCSV(file) {
-        const data = await d3.csv(file);
-        const columns = data.length > 0 ? Object.keys(data[0]) : [];
-        return {data, columns};
     }
 
     // tokenizeFoodDescription(foodDescription): Split the food description name into different tokens
@@ -94,42 +88,6 @@ export class BaseDataLoader {
         }
     }
 
-    assertFoodCodeIndUnique(index, val) {
-        if (index[val] !== undefined) {
-            throw new TypeError("Food Code is not unique!");
-        }
-    }
-
-    // setupFoodRow(row): Sets up a row of the food table for searching (the search orders and the tokenized food descriptions)
-    setupFoodRow(row) {
-        row[TableCols.FoodNameOrder] = Infinity;
-        row[TableCols.FoodAltNameOrder] = Infinity;
-
-        // tokenize the food descriptions for searching
-        row[Translation.getDataCol(TableCols.FoodDescriptionTokens)] = this.tokenizeFoodDescription(row[Translation.getDataCol(DataCols.FoodDescription)]);
-        row[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)] = this.tokenizeFoodDescription(row[Translation.getDataCol(DataCols.FoodAltDescription)]);
-        return row;
-    }
-
-    // setupFoodTableIndices(foodTable): Sets up the food code index of the food table
-    //  and tokenizes the food descriptions for searching
-    setupFoodTableIndices(foodTable) {
-        const foodTableData = foodTable.data;
-
-        const foodCodeIndex = {};
-        foodTable.indices = {[DataCols.FoodCode]: foodCodeIndex};
-
-        const foodTableLen = foodTableData.length;
-        for (let i = 0; i < foodTableLen; ++i) {
-            const row = foodTableData[i];
-            const indexVal = row[DataCols.FoodCode]
-            this.assertFoodCodeIndUnique(foodCodeIndex, indexVal);
-            foodCodeIndex[indexVal] = new Set([i]);
-
-            this.setupFoodRow(row);
-        }
-    }
-
     // ----- Retrieving rows from the indices of the tables -----
 
     getRowById(table, indexName, id) {
@@ -179,41 +137,172 @@ export class BaseDataLoader {
         return [...result].map((ind) => table.data[ind]);
     }
 
+    // ----- CSV files -----
+
+    // loadCSV(file): Loads the table and its columns from a CSV file
+    async loadCSV(file) {
+        const data = await d3.csv(file);
+        const columns = data.length > 0 ? Object.keys(data[0]) : [];
+        return {data, columns};
+    }
+
+    // getCSVRows(file): Retrieves the rows of a CSV file. The CSV file is only read the first time it is needed
+    async getCSVRows(file) {
+        if (!this._csvRequests.has(file)) {
+            const request = this.loadCSV(file)
+                .then((table) => table.data)
+                .catch((error) => {
+                    this._csvRequests.delete(file);
+                    throw error;
+                });
+
+            this._csvRequests.set(file, request);
+        }
+
+        return await this._csvRequests.get(file);
+    }
+
+    // filterCSVRows(files, keyCol, keys): Retrieves the rows of some CSV files whose 'keyCol' column is one of 'keys'
+    //  (all the rows if 'keyCol' is null). The rows are in the order of the files
+    async filterCSVRows(files, keyCol, keys) {
+        files = Array.isArray(files) ? files : [files];
+        const rows = (await Promise.all(files.map((file) => this.getCSVRows(file)))).flat();
+        if (keyCol === null) return rows;
+
+        keys = new Set(Array.from(keys).map((key) => String(key)));
+        return rows.filter((row) => keys.has(String(row[keyCol])));
+    }
+
+    // createCSVTable(files, keyCols, getRowId): Creates a LazyTable whose rows come from some CSV files
+    createCSVTable(files, keyCols, getRowId = (row) => row[keyCols[0]]) {
+        return new LazyTable(this, keyCols, getRowId, (keyCol, keys) => this.filterCSVRows(files, keyCol, keys));
+    }
+
+    // ----- Setting up the rows of the tables -----
+
+    // setupFoodRow(row): Sets up a row of the food table for searching (the search orders and the tokenized food descriptions)
+    setupFoodRow(row) {
+        row[TableCols.FoodNameOrder] = Infinity;
+        row[TableCols.FoodAltNameOrder] = Infinity;
+
+        // tokenize the food descriptions for searching
+        row[Translation.getDataCol(TableCols.FoodDescriptionTokens)] = this.tokenizeFoodDescription(row[Translation.getDataCol(DataCols.FoodDescription)]);
+        row[Translation.getDataCol(TableCols.FoodAltDescriptionTokens)] = this.tokenizeFoodDescription(row[Translation.getDataCol(DataCols.FoodAltDescription)]);
+        return row;
+    }
+
+    // setupFoodRows(rows): Adds the food groups and food sources to the rows of the foods, then sets up the rows for searching
+    async setupFoodRows(rows) {
+        await Promise.all([
+            this._foodGroupTable.load(DataCols.FoodGroupCode, rows.map((row) => row[DataCols.FoodGroupCode])),
+            this._foodSourceTable.load(DataCols.FoodSourceCode, rows.map((row) => row[DataCols.FoodSourceCode]))
+        ]);
+
+        const foodGroupTable = this._foodGroupTable.table;
+        const foodSourceTable = this._foodSourceTable.table;
+
+        return rows.map((row) => this.setupFoodRow(DictTools.combine([
+            row,
+            this.getRowById(foodGroupTable, DataCols.FoodGroupCode, row[DataCols.FoodGroupCode]) ?? {},
+            this.getRowById(foodSourceTable, DataCols.FoodSourceCode, row[DataCols.FoodSourceCode]) ?? {}
+        ])));
+    }
+
+    // setupNutrientNameRows(rows): Sets the nutrient name (without the unit) of the nutrient name rows
+    setupNutrientNameRows(rows) {
+        const nutrientNameCol = Translation.getDataCol(DataCols.NutrientName);
+        const nutrientNameWithUnitCol = Translation.getDataCol(DataCols.NutrientNameWithUnit);
+
+        for (const row of rows) {
+            row[nutrientNameCol] = Model.getNutrientName(row[nutrientNameWithUnitCol]);
+        }
+
+        return rows;
+    }
+
+    // setupMeasureConvRows(rows): Adds the ids of the measure weight conversions and removes the duplicate conversions
+    setupMeasureConvRows(rows) {
+        return ListTools.getUnique(rows, (row) => {
+            const result = Model.getMeasureWeightConvIdFromRow(row);
+            row[TableCols.MeasureWeightConvId] = result;
+            return result;
+        });
+    }
+
+    // joinNutrientAmountRows(rows): Joins the nutrient amounts with the nutrient names, nutrient sources and foods
+    async joinNutrientAmountRows(rows) {
+        // retrieve the foods, nutrient names and nutrient sources of the rows that are not cached yet
+        await Promise.all([
+            this._foodTable.load(DataCols.FoodCode, rows.map((row) => row[DataCols.FoodCode])),
+            this._nutrientNameTable.load(DataCols.NutrientCode, rows.map((row) => row[DataCols.NutrientCode])),
+            this._nutrientSourceTable.load(DataCols.NutrientSrcCode, rows.map((row) => row[DataCols.NutrientSrcCode]))
+        ]);
+
+        const foodTable = this._foodTable.table;
+        const nutrientNameTable = this._nutrientNameTable.table;
+        const nutrientSourceTable = this._nutrientSourceTable.table;
+
+        return rows.map((row) => DictTools.combine([
+            row,
+            this.getRowById(nutrientNameTable, DataCols.NutrientCode, row[DataCols.NutrientCode]) ?? {},
+            this.getRowById(nutrientSourceTable, DataCols.NutrientSrcCode, row[DataCols.NutrientSrcCode]) ?? {},
+            this.getRowById(foodTable, DataCols.FoodCode, row[DataCols.FoodCode]) ?? {}
+        ]));
+    }
+
     // ----- Selections for the dropdowns -----
 
     // getFoodGroups(): Retrieves the food group selections ({text, value})
     async getFoodGroups() {
-        this.notImplemented("getFoodGroups");
+        const foodGroups = await this._foodGroupTable.getAllRows();
+        let result = foodGroups.map((row) => { return {text: row[Translation.getDataCol(DataCols.FoodGroupDescription)], value: row[DataCols.FoodGroupCode]}});
+        result.push({text: Translation.translate("NoneSelected"), value: ""});
+        return result;
     }
 
     // getFoodNames(): Retrieves the food name selections ({text, value, ...})
     async getFoodNames() {
-        this.notImplemented("getFoodNames");
+        const foodTable = await this.getFoodTable();
+        const foodDescriptionCol = Translation.getDataCol(DataCols.FoodDescription);
+        return foodTable.data.map((row) => { return {text: row[foodDescriptionCol], value: row[DataCols.FoodCode], exactMatchCount: 0, prefixedMatchCount: 0, startInd: Infinity}});
     }
 
     // getNutrients(): Retrieves the nutrient selections ({text, value}), sorted by their name
     async getNutrients() {
-        this.notImplemented("getNutrients");
+        const nutrientNames = await this._nutrientNameTable.getAllRows();
+        const nutrientNameWithUnitCol = Translation.getDataCol(DataCols.NutrientNameWithUnit);
+        const result = nutrientNames.map((row) => { return {text: row[nutrientNameWithUnitCol], value: row[DataCols.NutrientCode]}});
+
+        // sort from the client side to sort properly special characters like "é"
+        result.sort((a, b) => a.text.localeCompare(b.text));
+        return result;
     }
 
     // getHighlightedNutrientNames(): Retrieves the names (with units) of the nutrients to highlight in the tables
     async getHighlightedNutrientNames() {
-        this.notImplemented("getHighlightedNutrientNames");
+        const nutrientNameWithUnitCol = Translation.getDataCol(DataCols.NutrientNameWithUnit);
+        const rows = await this._nutrientNameTable.getRows(DataCols.NutrientCode, HighlightedNutrientCodes);
+        return new Set(rows.map((row) => row[nutrientNameWithUnitCol]));
     }
 
     // ----- Foods -----
-    // Note: These functions use the food table, since the food table has the tokenized food descriptions needed for searching
+
+    // getFoodTable(): Retrieves the table of all the foods (with its food code index)
+    // Note: The whole food table is needed for searching the foods by their names (the food descriptions are tokenized)
+    async getFoodTable() {
+        await this._foodTable.getAllRows();
+        return this._foodTable.table;
+    }
 
     // getFoodByCode(foodCode): Retrieves the food with the food code. Returns undefined if the food is not found
     async getFoodByCode(foodCode) {
-        const foodTable = await this.getFoodTable();
-        return this.getRowById(foodTable, DataCols.FoodCode, foodCode);
+        const rows = await this._foodTable.getRows(DataCols.FoodCode, [foodCode]);
+        return rows[0];
     }
 
     // getFoodNamesByCodes(foodCodes): Retrieves the food names for the food codes
     async getFoodNamesByCodes(foodCodes) {
-        const foodTable = await this.getFoodTable();
-        return this.getRowsByIds(foodTable, DataCols.FoodCode, foodCodes);
+        return await this._foodTable.getRows(DataCols.FoodCode, foodCodes);
     }
 
     // filterFoodSearchTableByCodes(foodGroupCode, foodCode): Retrieves the foods that match the food group code and the food code
@@ -240,12 +329,25 @@ export class BaseDataLoader {
     // getMeasureWeightConvByFoodCode(foodCode): Retrieves the measure weight conversions for the food.
     //  Returns undefined if the food has no conversions
     async getMeasureWeightConvByFoodCode(foodCode) {
-        this.notImplemented("getMeasureWeightConvByFoodCode");
+        const rowLists = await Promise.all(this._measureConvTables.map((table) => table.getRows(DataCols.FoodCode, [foodCode])));
+
+        const result = ListTools.getUnique(rowLists.flat(), (row) => row[TableCols.MeasureWeightConvId]);
+        return (result.length == 0) ? undefined : result;
     }
 
     // getRAMeasureWeightConvByFoodCodes(foodCodes): Retrieves the reference amount (RA) measure weight conversions for the foods
     async getRAMeasureWeightConvByFoodCodes(foodCodes) {
-        this.notImplemented("getRAMeasureWeightConvByFoodCodes");
+        foodCodes = Array.from(foodCodes);
+        const allRALoaded = this._raMeasureConvTable.loadedKeys[DataCols.MeasureTypeCode].has(RAMeasureTypeCode);
+
+        // for a few foods (eg. the food selected in the search table), use the measures of the foods instead of retrieving
+        //  all the RA measures, since the measures of the foods are usually already cached by the food's nutrient stats
+        if (!allRALoaded && foodCodes.length <= BaseDataLoader.MaxFoodsForFoodMeasures) {
+            const rows = await this._raMeasureConvTable.getRows(DataCols.FoodCode, foodCodes);
+            return rows.filter((row) => row[DataCols.MeasureTypeCode] == RAMeasureTypeCode);
+        }
+
+        return await this._raMeasureConvTable.getRows(DataCols.MeasureTypeCode, [RAMeasureTypeCode], {[DataCols.FoodCode]: foodCodes});
     }
 
     // getFoodMeasureWeightConv(foodCode, measureCodes): Retrieves the measure weight conversions for the food, including
@@ -278,33 +380,61 @@ export class BaseDataLoader {
 
     // getNutrientByCode(nutrientCode): Retrieves the nutrient name data for the nutrient code. Returns undefined if not found
     async getNutrientByCode(nutrientCode) {
-        this.notImplemented("getNutrientByCode");
+        const rows = await this._nutrientNameTable.getRows(DataCols.NutrientCode, [nutrientCode]);
+        return rows[0];
     }
 
     // getNutrientNamesByCodes(nutrientCodes): Retrieves the nutrient name data for the nutrient codes
     async getNutrientNamesByCodes(nutrientCodes) {
-        this.notImplemented("getNutrientNamesByCodes");
+        return await this._nutrientNameTable.getRows(DataCols.NutrientCode, nutrientCodes);
+    }
+
+    // getNutrientRows(keyCol, keys, foodGroupCode): Retrieves the rows of the nutrient table for some food codes or nutrient codes
+    //  ('keyCol'), only for the foods in the food group (an empty string means to not filter by the food group)
+    async getNutrientRows(keyCol, keys, foodGroupCode = "") {
+        const filters = (foodGroupCode == "") ? {} : {[DataCols.FoodGroupCode]: [foodGroupCode]};
+        return await this._nutrientTable.getRows(keyCol, keys, filters);
     }
 
     // getNutrientsByFoodCode(foodCode): Retrieves the nutrient amounts for the food. Returns undefined if not found
     async getNutrientsByFoodCode(foodCode) {
-        this.notImplemented("getNutrientsByFoodCode");
+        const result = await this.getNutrientRows(DataCols.FoodCode, [foodCode]);
+        return (result.length == 0) ? undefined : result;
     }
 
     // filterNutrientSearchTable(nutrientCode, foodGroupCode, foodCode): Retrieves the nutrient amounts of a nutrient,
     //  for the foods in the food group/with the food code (an empty string means to not filter by that code)
     async filterNutrientSearchTable(nutrientCode, foodGroupCode, foodCode) {
-        this.notImplemented("filterNutrientSearchTable");
+        if (nutrientCode == "") return [];
+
+        // the food's rows are cached when the food is selected, so they are used instead of all the rows of the nutrient
+        if (foodCode != "") {
+            const foodRows = await this.getNutrientRows(DataCols.FoodCode, [foodCode], foodGroupCode);
+            return foodRows.filter((row) => row[DataCols.NutrientCode] == nutrientCode);
+        }
+
+        return await this.getNutrientRows(DataCols.NutrientCode, [nutrientCode], foodGroupCode);
     }
 
     // filterCompareFoodTable(foodCodes): Retrieves the nutrient amounts for the foods
     async filterCompareFoodTable(foodCodes) {
-        this.notImplemented("filterCompareFoodTable");
+        if (foodCodes.length <= 0) return [];
+        return await this.getNutrientRows(DataCols.FoodCode, foodCodes);
     }
 
     // filterCompareNutrientTable(nutrientCodes, foodGroupCode): Retrieves the nutrient amounts for the nutrients,
     //  for the foods in the food group
     async filterCompareNutrientTable(nutrientCodes, foodGroupCode) {
-        this.notImplemented("filterCompareNutrientTable");
+        const foodGroupEmpty = foodGroupCode == "";
+        const nutrientCodesEmpty = nutrientCodes.length <= 0;
+        if (foodGroupEmpty && nutrientCodesEmpty) return [];
+
+        // with only a food group, the compare table only lists the foods in the food group (no nutrient amounts are shown),
+        //  so the foods come from the food table instead of the nutrient amounts of all the foods in the food group
+        if (nutrientCodesEmpty) {
+            return await this.filterFoodSearchTableByCodes(foodGroupCode, "");
+        }
+
+        return await this.getNutrientRows(DataCols.NutrientCode, nutrientCodes, foodGroupCode);
     }
 };
