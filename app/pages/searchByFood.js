@@ -48,8 +48,8 @@ export class SearchByFoodPage extends BaseSearchPage {
         elements.foodCodeInput.on("keydown", () => {this.submitSearchKeyboardListener()});
     }
 
-    updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {
-        const tableData = (selectFood) ? this.model.getFoodSearchSelectedData(this.searchOpt) : this.model.getFoodSearchTableData(this.searchOpt);
+    async updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {
+        const tableData = await ((selectFood) ? this.model.getFoodSearchSelectedData(this.searchOpt) : this.model.getFoodSearchTableData(this.searchOpt));
         let searchTable = this.htmlElements.searchTable;
 
         searchTable.toggleClass(this.htmlNames.foodSelected, selectFood);
@@ -95,7 +95,7 @@ export class SearchByFoodPage extends BaseSearchPage {
         return dataTable;
     }
 
-    submitSearch() {
+    async submitSearch() {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt]; 
 
@@ -107,7 +107,7 @@ export class SearchByFoodPage extends BaseSearchPage {
 
         inputs[SearchAtts.FilterHelper] = this.searchTable.search();
 
-        super.submitSearch();
+        await super.submitSearch();
     }
 
     syncInputs() {
@@ -119,7 +119,7 @@ export class SearchByFoodPage extends BaseSearchPage {
         elements.foodCodeInput.property("value", inputs[SearchAtts.FoodCode]);
     }
 
-    loadPageInputs() {
+    async loadPageInputs() {
         const inputs = this.model.searchInputs[this.searchOpt];
         const selections = this.model.searchSelections[this.searchOpt];
 
@@ -129,11 +129,11 @@ export class SearchByFoodPage extends BaseSearchPage {
                                    inputs: new Set([inputs[SearchAtts.FoodGroup]]),
                                    sortCmpFunc: this.buildDropdownLstCompare(Translation.translate("NoneSelected"))});
 
-        this.clearSearch();
+        await this.clearSearch();
 
         const selectedFoodCodes = this.model.selectedFoodCodes[this.searchOpt];
         if (selectedFoodCodes === undefined || selectedFoodCodes.length == 0) return;
 
-        this.showFoodNutrientStats(selectedFoodCodes[0]);
+        await this.showFoodNutrientStats(selectedFoodCodes[0]);
     }
 }

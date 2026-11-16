@@ -10,6 +10,9 @@ export class CompareByFood extends BaseComparePage {
 
         this.htmlSelectors.foodInput = "#foodInput";
         this.maxFoodsCount = 3;
+
+        // the max number of foods shown in the dropdown of the food search
+        this.maxShownFoodsCount = 100;
     }
 
     updateHTMLElements() {
@@ -48,10 +51,10 @@ export class CompareByFood extends BaseComparePage {
         });
     }
 
-    clearSearch() {
+    async clearSearch() {
         this.model.clearSearchInputs(this.searchOpt);
         this.syncInputs();
-        this.updateSearchTable("", true);
+        await this.updateSearchTable("", true);
     }
 
     getInputs() {
@@ -62,8 +65,8 @@ export class CompareByFood extends BaseComparePage {
         inputs[SearchAtts.FoodName] = (foods.length == 0) ? [] : foods;
     }
 
-    updateSearchTable(searchTxt = null, resetSort = false) {
-        const tableData = this.model.getCompareFoodTableData(this.searchOpt);
+    async updateSearchTable(searchTxt = null, resetSort = false) {
+        const tableData = await this.model.getCompareFoodTableData(this.searchOpt);
         let searchTable = this.htmlElements.searchTable;
         if (tableData === undefined) return;
 
@@ -141,7 +144,7 @@ export class CompareByFood extends BaseComparePage {
         container.classList.add("food-bubbles-above");
     }
 
-    loadPageInputs() {
+    async loadPageInputs() {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt];
         const selections = this.model.searchSelections[this.searchOpt];
@@ -158,7 +161,10 @@ export class CompareByFood extends BaseComparePage {
                                                             searchFunc: (searchTerm, selections) => this.model.filterFoodNameSelections(searchTerm, selections),
                                                             sort: false,
                                                             selectAtts: {
-                                                                searchResultLimit: foodNameSelections.length,
+                                                                // only draw some of the foods in the dropdown, since drawing all the foods
+                                                                //  makes selecting a food slow (the search still searches all the foods)
+                                                                renderChoiceLimit: this.maxShownFoodsCount,
+                                                                searchResultLimit: this.maxShownFoodsCount,
                                                                 
                                                                 // fuzzy matching engine
                                                                 fuseOptions: {
@@ -167,6 +173,6 @@ export class CompareByFood extends BaseComparePage {
                                                              }});
         
         this.moveFoodBubblesAboveInput();
-        this.clearSearch();
+        await this.clearSearch();
     } 
 }

@@ -40,9 +40,9 @@ export class SearchByNutrientPage extends BaseSearchPage {
         elements.instructionsText.html(Translation.translate(`InstructionsText.${this.searchOpt}`));
     }
 
-    updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {
+    async updateSearchTable(selectFood = false, searchTxt = null, resetSort = false) {
         const elements = this.htmlElements;
-        const tableData = (selectFood) ? this.model.getNutrientSearchSelectedData(this.searchOpt) : this.model.getNutrientSearchTableData(this.searchOpt);
+        const tableData = await ((selectFood) ? this.model.getNutrientSearchSelectedData(this.searchOpt) : this.model.getNutrientSearchTableData(this.searchOpt));
         let searchTable = this.htmlElements.searchTable;
 
         searchTable.toggleClass(this.htmlNames.foodSelected, selectFood);
@@ -104,7 +104,7 @@ export class SearchByNutrientPage extends BaseSearchPage {
         return dataTable;
     }
 
-    submitSearch() {
+    async submitSearch() {
         const elements = this.htmlElements;
         const inputs = this.model.searchInputs[this.searchOpt]; 
 
@@ -116,7 +116,7 @@ export class SearchByNutrientPage extends BaseSearchPage {
 
         inputs[SearchAtts.FilterHelper] = this.searchTable.search();
 
-        super.submitSearch();
+        await super.submitSearch();
     }
 
     syncInputs() {
@@ -127,7 +127,7 @@ export class SearchByNutrientPage extends BaseSearchPage {
         elements.nutrientInput.property("value", inputs[SearchAtts.Nutrient]);
     }
 
-    loadPageInputs() {
+    async loadPageInputs() {
         const inputs = this.model.searchInputs[this.searchOpt];
         const selections = this.model.searchSelections[this.searchOpt];
         const elements = this.htmlElements;
@@ -143,11 +143,11 @@ export class SearchByNutrientPage extends BaseSearchPage {
                                 inputs: new Set([inputs[SearchAtts.Nutrient]]),
                                 noneOption: {value: "", text: Translation.translate("NoneSelected")}});
 
-        this.clearSearch();
+        await this.clearSearch();
 
         const selectedFoodCodes = this.model.selectedFoodCodes[this.searchOpt];
         if (selectedFoodCodes === undefined || selectedFoodCodes.length == 0) return;
 
-        this.showFoodNutrientStats(selectedFoodCodes[0]);
+        await this.showFoodNutrientStats(selectedFoodCodes[0]);
     }
 }
