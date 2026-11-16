@@ -123,7 +123,7 @@ export class CompareByFood extends BaseComparePage {
         elements.foodInput.setChoiceByValue(inputs[SearchAtts.FoodName]);
     }
 
-    moveFoodBubblesBelowInput() {
+    moveFoodBubblesAboveInput() {
         const select = document.querySelector(this.htmlSelectors.foodInput);
         const container = select.closest(".choices");
         const inner = container.querySelector(".choices__inner");
@@ -135,10 +135,10 @@ export class CompareByFood extends BaseComparePage {
         // Keep the results dropdown positioned against the search field.
         inner.appendChild(dropdown);
 
-        // Place the existing selected bubbles below the search field.
-        inner.after(selectedItems);
+        // Place the selected bubbles above the search field.
+        inner.before(selectedItems);
 
-        container.classList.add("food-bubbles-below");
+        container.classList.add("food-bubbles-above");
     }
 
     loadPageInputs() {
@@ -166,7 +166,7 @@ export class CompareByFood extends BaseComparePage {
                                                                 }
                                                              }});
         
-        this.moveFoodBubblesBelowInput();
+        this.moveFoodBubblesAboveInput();
         this.clearSearch();
     } 
 }

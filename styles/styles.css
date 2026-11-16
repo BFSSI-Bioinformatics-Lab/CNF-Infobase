@@ -404,36 +404,63 @@ select.form-control {
     margin: 0 0 0 4px !important;
 }
 
-.choices__list--multiple .choices__item {
-    padding: 0 0 0 5px !important;
-    background-color: var(--primary) !important;
-    border: 1px solid var(--primary) !important;
-    color: var(--onPrimary) !important;
-    margin-bottom: 0px !important;
-    line-height: 1.65em;
+/* The list of selected options has no glow (the glow above is for the results dropdown) */
+.choices__list--multiple {
+    box-shadow: none;
 }
 
+/* Selected options: the same light grey background and text colour as the page selection tabs (no visible border)
+   - the option is a flex row, so that long text wraps (vertically centered) while the remove button stays on the right */
+.choices__list--multiple .choices__item {
+    display: inline-flex !important;
+    align-items: center;
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    padding: 3px 0 3px 8px !important;
+    background-color: var(--secondaryBgColour) !important;
+    border: 1px solid transparent !important;
+    color: var(--fontColour) !important;
+    font-size: 15px !important;
+    margin-bottom: 0px !important;
+    line-height: 1.3;
+}
+
+/* The remove button of a selected option: a dark cross (the default cross is white), that does not shrink or wrap,
+   with its divider line on the full height of the option */
 .choices__list--multiple .choices__button {
-    border-left: 1px solid var(--onPrimary) !important;
+    flex: 0 0 auto;
+    align-self: stretch;
+    margin: -3px 0 -3px 8px !important;
+    border-left: 1px solid var(--secondaryBorderColour) !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='21' height='21' viewBox='0 0 21 21'%3E%3Cg fill='%23333333' fill-rule='evenodd'%3E%3Cpath d='M2.592.044l18.364 18.364-2.548 2.548L.044 2.592z'/%3E%3Cpath d='M0 18.364L18.364 0l2.548 2.548L2.548 20.912z'/%3E%3C/g%3E%3C/svg%3E") !important;
 }
 
 /* Anchor the results dropdown to the search field. */
-#foodInputContainer .food-bubbles-below .choices__inner {
+#foodInputContainer .food-bubbles-above .choices__inner {
     position: relative;
     overflow: visible;
 }
 
 /* Let the search input use the available width. */
-#foodInputContainer .food-bubbles-below .choices__input--cloned {
+#foodInputContainer .food-bubbles-above .choices__input--cloned {
     box-sizing: border-box;
     width: 100% !important;
     min-width: 0 !important;
     margin-bottom: 0;
 }
 
-/* Keep the selected bubbles below the field. */
-#foodInputContainer .food-bubbles-below > .choices__list--multiple {
-    margin-top: 8px;
+/* Keep the selected bubbles above the field, with some space in between (no space when nothing is selected).
+   Choices.js makes the list inline, which ignores the margin, so the list is a block here */
+#foodInputContainer .food-bubbles-above > .choices__list--multiple {
+    display: block;
+}
+
+#foodInputContainer .food-bubbles-above > .choices__list--multiple:not(:empty) {
+    margin-bottom: 8px;
 }
 
 /* =================================================== */
