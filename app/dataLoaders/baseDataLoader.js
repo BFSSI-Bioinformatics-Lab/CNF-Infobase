@@ -20,6 +20,7 @@ export class BaseDataLoader {
         this._nutrientNameTable;
         this._nutrientSourceTable;
         this._nutrientTable;
+        this._measureNameTable;
         this._measureConvTables = [];
         this._raMeasureConvTable;
     }
@@ -227,6 +228,15 @@ export class BaseDataLoader {
             row[TableCols.MeasureWeightConvId] = result;
             return result;
         });
+    }
+
+    // addMeasureNames(rows): Adds the measure names to the measure weight conversions
+    // Note: All the measure names are retrieved at once, since there are not many measure names
+    async addMeasureNames(rows) {
+        await this._measureNameTable.getAllRows();
+
+        const measureNameTable = this._measureNameTable.table;
+        return rows.map((row) => DictTools.combine([row, this.getRowById(measureNameTable, DataCols.MeasureCode, row[DataCols.MeasureCode]) ?? {}]));
     }
 
     // joinNutrientAmountRows(rows): Joins the nutrient amounts with the nutrient names, nutrient sources and foods

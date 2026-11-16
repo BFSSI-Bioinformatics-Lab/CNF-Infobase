@@ -97,12 +97,4 @@ export class FileDataLoader extends BaseDataLoader {
 
         return await this._nutrientAmountTableRequest;
     }
-
-    // addMeasureNames(rows): Adds the measure names to the measure weight conversions
-    async addMeasureNames(rows) {
-        await this._measureNameTable.load(DataCols.MeasureCode, rows.map((row) => row[DataCols.MeasureCode]));
-
-        const measureNameTable = this._measureNameTable.table;
-        return rows.map((row) => DictTools.combine([row, this.getRowById(measureNameTable, DataCols.MeasureCode, row[DataCols.MeasureCode]) ?? {}]));
-    }
 }
