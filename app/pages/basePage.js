@@ -723,7 +723,10 @@ export class BaseSearchPage extends BasePage {
                 .classed("fa-times", true);
         }
 
-        selectBtns.on("click", function(d) {
+        // listen on the table instead of the buttons, so that the buttons in rows that are not drawn yet also work
+        //  (DataTables only creates the rows when they are first shown, eg. after sorting, searching or changing the page)
+        const selectBtnSelector = `.${this.htmlNames.searchTableActionBtn}`;
+        $(this.htmlSelectors.foodSearchTable).off("click", selectBtnSelector).on("click", selectBtnSelector, function() {
             const row = this.closest("tr");
             const rowData = self.searchTable.row(row).data();
             if (rowData === undefined) return;
