@@ -417,6 +417,7 @@ select.form-control {
     max-width: 100%;
     box-sizing: border-box;
     white-space: normal;
+    word-break: normal !important; /* wrap between words (Choices.js breaks the text anywhere, even in the middle of a word) */
     overflow-wrap: anywhere;
     padding: 3px 0 3px 8px !important;
     background-color: var(--secondaryBgColour) !important;
@@ -437,6 +438,18 @@ select.form-control {
     background-position: center !important;
     background-repeat: no-repeat !important;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='21' height='21' viewBox='0 0 21 21'%3E%3Cg fill='%23333333' fill-rule='evenodd'%3E%3Cpath d='M2.592.044l18.364 18.364-2.548 2.548L.044 2.592z'/%3E%3Cpath d='M0 18.364L18.364 0l2.548 2.548L2.548 20.912z'/%3E%3C/g%3E%3C/svg%3E") !important;
+}
+
+/* long names wrap between words (Choices.js breaks the names anywhere, even in the middle of a word) */
+.choices__list--dropdown,
+.choices__list[aria-expanded] {
+    word-break: normal !important;
+    overflow-wrap: anywhere;
+}
+
+.choices__list--dropdown .choices__item--selectable,
+.choices__list[aria-expanded] .choices__item--selectable {
+    padding-right: 10px !important;
 }
 
 /* Anchor the results dropdown to the search field. */
