@@ -819,7 +819,7 @@ const LangFR = {
             <p class="mrgn-tp-lg">Les valeurs nutritives sont présentées pour 100 g de portion comestible.</p>
 
             <div class="alert alert-info mrgn-tp-lg" role="alert">
-                <strong class="mrgn-bttm-md">Tip</strong>
+                <strong class="mrgn-bttm-md">Astuce</strong>
                 <p>Une fois les résultats affichés, utilisez la boîte de recherche située au-dessus du tableau des résultats pour filtrer rapidement la liste.</p>
             </div>`
         },
@@ -888,7 +888,7 @@ const LangFR = {
         MultiNutrientPlaceholder: "Rechercher et sélectionner les éléments nutritifs",
         MultiFoodsPlaceholder: "Rechercher et sélectionner les aliments",
         MultiNutrientInputTitle: "Éléments nutritifs",
-        MultiFoodInputTitle: "Les Aliments",
+        MultiFoodInputTitle: "Les aliments",
 
         FoodSearchButton: "Recherche",
         FoodSearchResetButton: "Réinitialiser",
