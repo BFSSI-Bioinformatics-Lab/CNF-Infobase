@@ -85,9 +85,6 @@ export class SearchByNutrientPage extends BaseSearchPage {
                                                             {nutrient: nutrientName,
                                                              unit: nutrientData[DataCols.NutrientUnitShort]});
 
-        const headerRow = this.model.searchResultData[2];
-        headerRow.splice(-2, 2, nutrientAmountColName, nutrientWeightColName);
-
         const dataTable = this.updateTable({
             selector: this.htmlSelectors.foodSearchTable, columnInfo: tableColInfo, 
             data: tableData.data,

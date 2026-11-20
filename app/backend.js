@@ -29,7 +29,7 @@ export class Model {
 
         this.dataLoader = (DataLoaderClass === null) ? undefined : new DataLoaderClass(this);
 
-        this.searchResultData;
+        this.searchResultTable;
         this.searchedNutrientData;
         this.webSearchedNutrientTable;
         this.csvSearchedAllNutrientTable;
@@ -387,7 +387,7 @@ export class Model {
     async getFoodSearchTableData(searchOpt) {
         const inputs = this.searchInputs[searchOpt];
         const result = await this.filterFoodSearchTable(inputs[SearchAtts.FoodName], "", inputs[SearchAtts.FoodGroup], inputs[SearchAtts.FoodCode]);
-        this.searchResultData = this.getSearchCSVDownload(searchOpt, {data: result});
+        this.searchResultTable = {data: result};
         return result;
     }
 
@@ -441,10 +441,10 @@ export class Model {
         result = TableTools.leftJoinById(result, measureWeightConv, DataCols.FoodCode);
 
         this.formatNutrientSearchTable(result);
-        this.searchResultData = this.getSearchCSVDownload(searchOpt, {data: result}, false);
 
         const nutrientData = await this.getNutrientSearchNutrientData(nutrientCode);
-        return {data: result, nutrientData};
+        this.searchResultTable = {data: result, nutrientData};
+        return this.searchResultTable;
     }
 
     // getNutrientSearchSelectedData(searchOpt): Retrieves the nutrient search data for the selected food
@@ -479,7 +479,7 @@ export class Model {
 
         if (result.length == 0) {
             result = {data: [], foodNames: foodNameData};
-            this.searchResultData = this.getSearchCSVDownload(searchOpt, result);
+            this.searchResultTable = result;
             return result;
         };
 
@@ -529,7 +529,7 @@ export class Model {
         }
 
         result = {data: result, foodNames: foodNameData};
-        this.searchResultData = this.getSearchCSVDownload(searchOpt, result);
+        this.searchResultTable = result;
         return result;
     }
 
@@ -545,7 +545,7 @@ export class Model {
 
         if (result.length == 0) {
             result = {data: [], nutrientNames: nutrientNameData};
-            this.searchResultData = this.getSearchCSVDownload(searchOpt, result);
+            this.searchResultTable = result;
             return result;
         };
 
@@ -595,7 +595,7 @@ export class Model {
         }
 
         result = {data: result, nutrientNames: nutrientNameData};
-        this.searchResultData = this.getSearchCSVDownload(searchOpt, result);
+        this.searchResultTable = result;
         return result;
     }
 
@@ -703,7 +703,8 @@ export class Model {
         return measureWeightConv;
     }
 
-    getSearchCSVDownload(searchOpt, searchTable, toStr = true) {
+    // getSearchCSVDownload(searchOpt, searchTable): Creates the CSV content of the search table
+    getSearchCSVDownload(searchOpt, searchTable) {
         let translations = Translation.translate(`SearchTableCols`,{ returnObjects: true });
         translations = translations[searchOpt];
         if (translations === undefined) return null;
@@ -722,6 +723,18 @@ export class Model {
 
             tableAtts.push(Translation.getDataCol(tableCol));
             tableColDisplay.push(translations[tableCol]);
+        }
+
+        // the names of the nutrient amount columns include the searched nutrient
+        if (searchOpt == SearchOpts.SearchByNutrient) {
+            const nutrientData = searchTable.nutrientData ?? this.getDefaultNutrientSearchNutrientData();
+            const colNameInputs = {nutrient: nutrientData[Translation.getDataCol(DataCols.NutrientName)], unit: nutrientData[DataCols.NutrientUnitShort]};
+
+            for (const tableCol of [TableCols.NutrientAmountView, TableCols.WeightView]) {
+                const colInd = tableAtts.indexOf(Translation.getDataCol(tableCol));
+                if (colInd == -1) continue;
+                tableColDisplay[colInd] = Translation.translate(`SearchTableCols.${searchOpt}.${tableCol}`, colNameInputs);
+            }
         }
 
         if (searchOpt == SearchOpts.CompareNutrients) {
@@ -771,11 +784,11 @@ export class Model {
             tableHeading.push(display);
         }
 
-        const tableData = searchTable.data;
+        let tableData = searchTable.data;
 
         // sort nutrients by their nutrient order
         if (searchOpt == SearchOpts.CompareFoods) {
-            tableData.sort((rowA, rowB) => rowA[DataCols.NutrientOrder] - rowB[DataCols.NutrientOrder]);
+            tableData = [...tableData].sort((rowA, rowB) => rowA[DataCols.NutrientOrder] - rowB[DataCols.NutrientOrder]);
         }
 
         for (const row of tableData) {
@@ -798,12 +811,7 @@ export class Model {
         footer[1][0] = Translation.translate("CSVDownload.Date", {date: today});
 
         result.push(...footer);
-
-        if (toStr) {
-            result = TableTools.createCSVContent(result);
-        }
-
-        return result;
+        return TableTools.createCSVContent(result);
     }
 
     getNutrientCSVDownload(food, webSearchedNutrientTable, measureWeightConv, nutrientStatsInputs = null) {
@@ -970,14 +978,18 @@ export class Model {
         return nutrientStatInputs[NutrientStatAtts.MeasureCodesSelected].has(DefaultMeasureCode);
     }
 
-    // downloadSearchCSV(): Downloads the CSV for the search table
-    downloadSearchCSV(searchOpt) {
-        if (searchOpt == SearchOpts.SearchByNutrient) {
-            this.searchResultData = TableTools.createCSVContent(this.searchResultData);
-        }
+    // downloadSearchCSV(searchOpt, rows): Downloads the CSV for the search table
+    // Note: 'rows' are the rows shown in the search table (in the order they are shown, after the table's search bar filters them).
+    //  If 'rows' is null, all the results of the latest search are downloaded
+    downloadSearchCSV(searchOpt, rows = null) {
+        if (this.searchResultTable === undefined) return;
+
+        const searchTable = (rows === null) ? this.searchResultTable : {...this.searchResultTable, data: rows};
+        const csvContent = this.getSearchCSVDownload(searchOpt, searchTable);
+        if (csvContent === null) return;
 
         const csvFileName = Translation.translate("CSVDownload.SearchFileName");
-        TableTools.downloadCSV({csvContent: this.searchResultData, fileName: csvFileName});
+        TableTools.downloadCSV({csvContent, fileName: csvFileName});
     }
 
     // downloadAllNutrientCSV(searchOpt): Downloads the CSV for all the serving sizes in the nutrient table
