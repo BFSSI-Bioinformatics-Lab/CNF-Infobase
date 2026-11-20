@@ -43,7 +43,7 @@ export class CompareByFood extends BaseComparePage {
         });
 
         elements.searchCSVDownloadBtn.on("click", () => {
-            this.model.downloadSearchCSV();
+            this.downloadSearchCSV();
         });
 
         d3.select("#closeLegend").on("click", () => {

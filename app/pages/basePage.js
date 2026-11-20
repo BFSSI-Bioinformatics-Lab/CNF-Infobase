@@ -84,6 +84,20 @@ export class BasePage {
         return dataTable;
     }
 
+    // getShownSearchTableRows(): Retrieves the rows shown in the search table, in the order they are shown
+    //  (only the rows kept by the table's search bar, including the rows on the other pages of the table)
+    getShownSearchTableRows() {
+        const selector = this.htmlSelectors.foodSearchTable;
+        if (!DataTable.isDataTable(selector)) return null;
+
+        return $(selector).DataTable().rows({order: "applied", search: "applied"}).data().toArray();
+    }
+
+    // downloadSearchCSV(): Downloads the CSV of the rows shown in the search table
+    downloadSearchCSV() {
+        this.model.downloadSearchCSV(this.searchOpt, this.getShownSearchTableRows());
+    }
+
     // addCheckbox(checkboxLst, checkLstName, checkboxVal, checkboxId, checkboxText, isChecked): 
     //  Adds a checkbox to some container
     addCheckbox({checkboxLst, checkLstName, checkboxVal, checkboxId, checkboxText = "", isChecked = false} = {}) {
@@ -588,6 +602,9 @@ export class BaseSearchPage extends BasePage {
         this.htmlElements = {};
         this.searchOpt = searchOpt;
         this.searchTable;
+
+        // the rows shown in the search table before a food got selected (the search table only shows the selected food)
+        this.rowsBeforeFoodSelected = null;
     }
 
     // updateHtmlElements(): Updates the common HTML elements for the search page
@@ -651,10 +668,8 @@ export class BaseSearchPage extends BasePage {
         const elements = this.htmlElements;
         const self = this;
 
-        elements.searchButton.on("click", () => { 
-            this.model.clearSelectedFoods(this.searchOpt);
-            this.htmlElements.searchTable.removeClass(this.htmlNames.foodSelected);
-            this.submitSearch(); 
+        elements.searchButton.on("click", () => {
+            this.submitSearch();
         });
 
         elements.resetSearchButton.on("click", () => {
@@ -670,12 +685,20 @@ export class BaseSearchPage extends BasePage {
         });
 
         elements.searchCSVDownloadBtn.on("click", () => {
-            this.model.downloadSearchCSV(this.searchOpt);
+            this.downloadSearchCSV();
         });
 
         d3.select("#closeLegend").on("click", () => {
             elements.legendAccordion.attr("open", null);
         });
+    }
+
+    // downloadSearchCSV(): Downloads the CSV of the rows shown in the search table
+    // Note: When a food is selected, the rows shown before the food got selected are downloaded
+    downloadSearchCSV() {
+        const foodSelected = this.model.foodSelected[this.searchOpt];
+        const rows = foodSelected ? this.rowsBeforeFoodSelected : this.getShownSearchTableRows();
+        this.model.downloadSearchCSV(this.searchOpt, rows);
     }
 
     // loadPageInputs(): Setup any initial inputs for the page
@@ -745,6 +768,7 @@ export class BaseSearchPage extends BasePage {
 
             const foodSelected = !self.model.foodSelected[self.searchOpt];
             self.model.foodSelected[self.searchOpt] = foodSelected;
+            self.rowsBeforeFoodSelected = foodSelected ? self.getShownSearchTableRows() : null;
 
             await self.updateSearchTable(foodSelected);
 
@@ -802,7 +826,12 @@ export class BaseSearchPage extends BasePage {
     }
     
     // submitSearch(): Submits the search inputs to retrieve the search results in the search table
+    // Note: A new search unselects the selected food (whether the search is submitted by the search button or by the Enter key)
     async submitSearch() {
+        this.model.clearSelectedFoods(this.searchOpt);
+        this.htmlElements.searchTable.removeClass(this.htmlNames.foodSelected);
+        this.rowsBeforeFoodSelected = null;
+
         this.scrollToElement(this.htmlElements.searchContainer.node());
         const inputs = this.model.searchInputs[this.searchOpt];
         await this.updateSearchTable(false, inputs[SearchAtts.FilterHelper]);
@@ -1096,7 +1125,7 @@ export class BaseComparePage extends BasePage {
         });
 
         elements.searchCSVDownloadBtn.on("click", () => {
-            this.model.downloadSearchCSV(this.searchOpt);
+            this.downloadSearchCSV();
         });
 
         d3.select("#closeLegend").on("click", () => {
