@@ -1,5 +1,5 @@
 import { DataCols, TableCols, RAMeasureTypeCode, HighlightedNutrientCodes } from "../constants.js";
-import { Translation, SetTools, ListTools, DictTools, LazyTable } from "../tools.js";
+import { Translation, SetTools, ListTools, DictTools, LazyTable, TextTools } from "../tools.js";
 import { Model } from "../backend.js";
 
 
@@ -278,13 +278,14 @@ export class BaseDataLoader {
     }
 
     // getNutrients(): Retrieves the nutrient selections ({text, value}), sorted by their name
+    //  (the names that start with a letter come before the names that start with a number)
     async getNutrients() {
         const nutrientNames = await this._nutrientNameTable.getAllRows();
         const nutrientNameWithUnitCol = Translation.getDataCol(DataCols.NutrientNameWithUnit);
         const result = nutrientNames.map((row) => { return {text: row[nutrientNameWithUnitCol], value: row[DataCols.NutrientCode]}});
 
         // sort from the client side to sort properly special characters like "é"
-        result.sort((a, b) => a.text.localeCompare(b.text));
+        result.sort((a, b) => TextTools.compareLettersFirst(a.text, b.text));
         return result;
     }
 

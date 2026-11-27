@@ -1,5 +1,5 @@
 import { SearchOpts, SearchAtts, NutrientSearchTableCols, TableCols, DataCols } from "../constants.js";
-import { Translation } from "../tools.js";
+import { Translation, TextTools } from "../tools.js";
 import { BaseSearchPage } from "./basePage.js";
 
 
@@ -138,7 +138,8 @@ export class SearchByNutrientPage extends BaseSearchPage {
         this.updateDropdownSelect({dropdownSelector: this.htmlSelectors.nutrientInput, 
                                 selections: selections[SearchAtts.Nutrient], 
                                 inputs: new Set([inputs[SearchAtts.Nutrient]]),
-                                noneOption: {value: "", text: Translation.translate("NoneSelected")}});
+                                noneOption: {value: "", text: Translation.translate("NoneSelected")},
+                                sortCmpFunc: (a, b) => TextTools.compareLettersFirst(a.text, b.text)});
 
         await this.clearSearch();
 
