@@ -176,6 +176,20 @@ export class ListTools {
 
 // TextTools: Helper class for text
 export class TextTools {
+    // compareLettersFirst(textA, textB): Compares 2 texts so that the texts that start with a letter come before
+    //  the texts that start with a number or some other character
+    // Note: Numbers are compared by their value (e.g. "4:0" comes before "10:0")
+    static compareLettersFirst(textA, textB) {
+        textA = textA.trim();
+        textB = textB.trim();
+
+        const startsWithLetterA = /^\p{L}/u.test(textA);
+        const startsWithLetterB = /^\p{L}/u.test(textB);
+        if (startsWithLetterA != startsWithLetterB) return startsWithLetterA ? -1 : 1;
+
+        return textA.localeCompare(textB, undefined, {numeric: true});
+    }
+
     // buildAhoCorasickDFA(keywords): Builds the DFA for AhoCorasick
     static buildAhoCorasickDFA(keywords) {
         const result = new AhoCorasick(keywords);

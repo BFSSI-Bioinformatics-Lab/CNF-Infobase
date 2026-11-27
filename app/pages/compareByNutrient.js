@@ -1,5 +1,5 @@
 import { SearchOpts, SearchAtts, DataCols, CompNutrientSearchTableCols } from "../constants.js";
-import { Translation } from "../tools.js";
+import { Translation, TextTools } from "../tools.js";
 import { BaseComparePage } from "./basePage.js";
 import { Model } from "../backend.js";
 
@@ -124,6 +124,9 @@ export class CompareByNutrient extends BaseComparePage {
                                                                noResultsText: Translation.translate("multiselectAutoComplete.noResultsText"),
                                                                selectAtts: {
                                                                     searchResultLimit: nutrientSelections.length,
+
+                                                                    // the nutrients that start with a letter come before the nutrients that start with a number
+                                                                    sorter: (a, b) => TextTools.compareLettersFirst(a.label, b.label),
 
                                                                     // fuzzy matching engine
                                                                     fuseOptions: {
